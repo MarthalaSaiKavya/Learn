@@ -27372,4 +27372,8365 @@ the next one
 
 ##v46:
 
+0:00
+hello everybody this is your third
+0:02
+favorite systems design YouTuber Jordan
+0:04
+back at it with another video still
+0:05
+hungover at 4 P.M on a Saturday so
+0:08
+hoping to get through this one kind of
+0:10
+quickly anyways today's we'll be talking
+0:11
+about search indexes which is yet
+0:14
+another Niche type of data store so
+0:16
+let's go ahead and get into it we're
+0:18
+looking at the tail end of the system's
+0:20
+design concept videos now so let's plow
+0:22
+through these and then we can get to
+0:23
+some questions alrighty so at this point
+Text searching
+0:26
+we've spoken about quite a few different
+0:28
+types of problems but today we are going
+0:30
+to address a different one which is
+0:33
+searching specifically probably text
+0:35
+searching so as you can see right here
+0:37
+I've got my beautifully artistically
+0:39
+drawn search bar think of us as on
+0:41
+Amazon and I am searching for tissues as
+0:44
+I often am because I'm frequently
+0:45
+running out of them so we might get a
+0:47
+few options back and as you can see the
+0:49
+word tissues just has to be contained
+0:51
+really in any of the text for that
+0:53
+listing so in this case you know
+0:55
+highlight that guy there as you can see
+0:56
+it doesn't necessarily just have to be
+0:57
+at the start of the term
+Search Indexes
+0:59
+so databases don't really handle this
+1:02
+problem very well why well our first
+1:04
+instinct might be to make an index or a
+1:07
+secondary index perhaps on this text
+1:09
+field that we're searching for so let's
+1:11
+say we wanted to search the term apple
+1:12
+and so we put an index on our actual
+1:15
+text field right here as you can see and
+1:18
+so that would mean we were sorting them
+1:19
+by the first character of the text and
+1:21
+and so on but in this case even though
+1:24
+Apple starts with a so you would think
+1:25
+that it would be at the top of our index
+1:27
+as you can see we've got this listing
+1:29
+right here which contains the word apple
+1:30
+and it is at the bottom of our index the
+1:33
+reason being that when doing a search
+1:34
+for text that text could be a substring
+1:37
+at any single part of the term and as a
+1:40
+result of that a traditional index isn't
+1:42
+going to work for us here we have to do
+1:43
+something a little bit more intelligent
+1:45
+than that so databases are not going to
+1:47
+solve a problem we need to use a
+1:49
+different type of technology and or data
+1:52
+structure so what are we actually going
+1:54
+to go ahead and do well we're going to
+1:56
+use something known as a search index
+1:58
+and so search indexes are actually
+2:00
+capable of solving our problem in a much
+2:02
+better way the reason for this is they
+2:04
+take a typical document something that
+2:06
+we might see in a database where we've
+2:08
+got something like an ID and a piece of
+2:10
+text that we want to be able to search
+2:12
+later down the line and it does
+2:14
+something called tokenizing We're
+2:15
+tokenizing you know is basically
+2:17
+scrubbing down the text in a way such
+2:19
+that it makes it easier to search down
+2:20
+the line for example if we have the
+2:22
+Apple computer symbol right there with
+2:25
+some sort of like trademark logo we
+2:27
+don't care about that we want to make
+2:28
+this lowercase we want to make this a
+2:30
+lowercase C we don't really care about
+2:32
+our space and so then we end up getting
+2:34
+two different tokens apple and computer
+2:36
+and in what we eventually create we're
+2:39
+going to basically have the actual token
+2:42
+right here
+2:43
+and then all of the document IDs so this
+2:46
+is going to be a list of document IDs
+2:50
+that correspond to it or that contain
+2:52
+that token
+2:53
+and so what this is known as is called
+2:55
+the inverted index and our search index
+2:58
+is effectively an inverted index or
+3:00
+sometimes possibly even multiple
+3:02
+inverted indexes so we can do multiple
+3:05
+interesting cool types of searching so
+3:07
+the example of the introverted index
+3:09
+that we just made is going to help us do
+Prefix Searching
+3:12
+something called prefix searching where
+3:14
+basically you know it's very easy for us
+3:16
+to search for terms based on the prefix
+3:19
+of those terms so here's an example
+3:21
+here's our inverted Index right here
+3:23
+hold on let me be able to draw that so
+3:25
+we've got our inverted index
+3:28
+and let's say we want to search for all
+3:30
+of the documents that have words
+3:32
+starting with the letter c well the nice
+3:35
+thing that we do in our inverted index
+3:37
+in a search index is we actually keep it
+3:39
+sorted so as you can see we've got a
+3:41
+first then B then C then you know
+3:43
+another word with C but is
+3:44
+lexicographically later and so what we
+3:47
+can do now is we can actually binary
+3:49
+search as we would with a typical index
+3:51
+and so we would say oh you know is this
+3:52
+less than C is this greater than C oh
+3:54
+this is less than C so let's look down
+3:56
+here blah blah here are C terms and so
+3:59
+now we know all of the documents where
+4:01
+we have terms with cantaloupe and Cherry
+4:03
+which both start with C which is really
+4:05
+really nice so prefix sorting like I
+4:08
+mentioned super easy with an inverted
+4:10
+index because we're doing all of this
+4:11
+work up front to tell us where all of
+4:13
+the documents are that contain the terms
+4:15
+that we're interested in
+Suffix Searching
+4:17
+another cool thing that we can do is
+4:19
+suffix searching so I gotta make this a
+4:22
+little bit bigger because I'm bad at
+4:23
+making my slides a consistent size so
+4:25
+let's imagine we've got this guy over
+4:27
+here which is like our prefix inverted
+4:29
+index
+4:31
+what we can do is whenever we take in a
+4:33
+new document we can actually keep a
+4:35
+second copy of the inverted index
+4:37
+specifically for searching words by
+4:39
+their suffix so as you can see we've got
+4:42
+Apple over here but what we'll do is
+4:44
+we'll actually reverse that word so
+4:46
+Apple becomes e-l-ppa and we'll put it
+4:49
+in our basically suffix inverted index
+4:56
+and note that even though the order of
+4:59
+the words here is Apple blackberry
+5:00
+blueberry raspberry
+5:02
+in our suffix inverted index we're still
+5:04
+ordering our terms alphabetically so
+5:07
+it's actually Apple then I believe it is
+5:09
+blueberry then it's Blackberry then it's
+5:11
+raspberry so note that this is still
+5:14
+ordered
+5:16
+by suffix
+5:17
+and why does this help us because again
+5:19
+let's say we wanted to search for all of
+5:21
+our fruit that end in the word Berry
+5:23
+this is super easy Berry all we have to
+5:26
+do is reverse it we know that reversing
+5:28
+Berry turns into y r r e b
+5:32
+and then we can binary search our index
+5:34
+for all of the terms that start with y r
+5:37
+r e b which is this guy right here and
+5:40
+so this allows us to really search for
+5:42
+terms that end with a certain suffix so
+5:45
+we get 92 43 19 and then we could join
+5:49
+those on our SQL database or we could
+5:51
+even keep the entire record in our index
+5:53
+itself if we want to lower our latency
+5:56
+at the cost of storing more data
+Apache Lucian
+5:59
+okay so now that we've gone over the
+6:02
+general premise of a search index and
+6:04
+some of the things we could do with it
+6:05
+for both prefix and suffix searching
+6:07
+let's talk about Apache leucine so
+6:09
+Lucian is a very popular open source
+6:12
+search index which is effectively just
+6:14
+built on top of an LSM tree architecture
+6:16
+however the really really nice thing
+6:18
+about it is that in addition to things
+6:20
+like prefix search and suffix search
+6:22
+which are Super basic it supports a
+6:24
+bunch of other complex types of
+6:26
+searching where you can do like
+6:27
+levinstein distance find words that are
+6:29
+close to the word that you typed in
+6:31
+coordinate searching time searching
+6:34
+anything like that and so as a result
+6:36
+it's got all of these really rich
+6:37
+features that make search indexes super
+6:40
+useful in order to greatly speed up
+6:42
+those General searchings as opposed to
+6:44
+searching specifically by an indexed
+6:46
+value and so Lucian is something or
+6:49
+rather it's just a piece of technology
+6:50
+that is going to be super super useful
+6:52
+whenever you're trying to build a search
+6:54
+index of course Lucian is one of those
+6:57
+pieces of technology that typically is
+6:58
+meant to be used on a single node so in
+7:01
+our next video we're going to be talking
+7:03
+about how we might distribute something
+7:04
+like Apache Lucian make a distributed
+7:07
+search index and make it run efficiently
+7:09
+anyways guys I will see you for that one
+7:11
+have a great rest of your day
+
+##v47:
+
+0:00
+hello everybody and welcome back to the
+0:02
+channel so in our last video we talked
+0:04
+about an introduction to search indexes
+0:07
+and like the idiot I am I decided to
+0:09
+split this kind of category into two
+0:11
+parts both search indexes and
+0:13
+elasticsearch the issue though is that
+0:15
+there wasn't that much content for
+0:17
+either of them so what I'm going to do
+0:19
+is give you guys the Jordan boyfriend
+0:21
+experience and try and take something
+0:23
+that normally takes about 30 seconds to
+0:25
+two minutes and make it last around five
+0:28
+minutes anyways let's go ahead and get
+0:30
+into elasticsearch I am going to stall
+0:33
+as long as I possibly can let's get
+0:35
+started alright so like I mentioned
+What is ElasticSearch
+0:37
+today we would be talking about
+0:39
+elasticsearch so what actually is
+0:41
+elasticsearch as I have three percent on
+0:44
+my iPad and try and uh run this one out
+0:46
+before it dies elasticsearch is
+0:48
+effectively a convenience wrapper around
+0:50
+Lucian now we spoke about Lucy in our
+0:52
+last video leucine is literally just a
+0:55
+search index and what that means is it
+0:58
+allows you to do all sorts of complex
+1:00
+search functionality
+1:02
+and that includes things like prefix
+1:04
+text searching suffix text searching
+1:06
+geolocation searching number searching
+1:08
+date searching all of that and so as a
+1:11
+result leucine in itself is really great
+1:13
+but it is not really meant to be a fully
+1:16
+managed service there's a lot that you
+1:18
+would have to do on your own in order to
+1:19
+make sure that it's running across a
+1:21
+bunch of nodes in a cluster so
+1:24
+elasticsearch instead it takes care of a
+1:27
+lot of that inconvenience for you and it
+1:29
+makes it all really easily managed how
+1:31
+do they do so well they give you a rest
+1:32
+API so you can go ahead and easily
+1:35
+basically add documents to the
+1:37
+elasticsearch query documents from the
+1:39
+elasticsearch it actually has its own
+1:41
+query language it deals with replication
+1:44
+and partitioning for you I think there's
+1:46
+probably a zookeeper or something
+1:47
+similar at the center of it somewhere
+1:49
+and also it's got some you know kind of
+1:51
+additional services that are nice such
+1:53
+as visualization logging monitoring all
+1:56
+that crap anyways how does elasticsearch
+How does ElasticSearch work
+2:00
+actually work in a way that uh you know
+2:03
+we can talk about how we best want to be
+2:05
+using it well elasticsearch is actually
+2:08
+going to be maintaining a local index so
+2:11
+if you remember from forever ago when we
+2:13
+started talking about partitioning we
+2:15
+discussed what a local versus a global
+2:18
+index was now a global index basically
+2:20
+means that for a given key on one of our
+2:23
+partitions we have all of the possible
+2:25
+values for it so that would be like over
+2:28
+here on the right as you hear there are
+2:30
+sirens in Chicago this is an unfortunate
+2:33
+reality of living in the city
+2:35
+I'm going to give that about another two
+2:37
+seconds before I get pissed off that
+2:39
+they're stopping at a light okay they
+2:41
+fully got caught in traffic and that
+2:42
+took like 30 more seconds than it needed
+2:44
+to anyways like I was starting to talk
+2:47
+about one thing that you could do with
+2:49
+elasticsearch is a global Index right
+2:51
+where unlike the left side over here
+2:53
+where you can see that on two partitions
+2:56
+we've got the key cherry we would have
+2:58
+cherry and all of its values on one
+3:00
+partition however when it comes to
+3:02
+elasticsearch that's actually pretty
+3:04
+tough because keep in mind that normally
+3:07
+in actual elasticsearch these document
+3:09
+IDs right here that might correspond to
+3:11
+documents might not just be IDs but the
+3:14
+full document so let's imagine each of
+3:16
+those is like a megabyte or something
+3:18
+because this is an inverted index and
+3:21
+each document ID could appear many many
+3:23
+times in the inverted index having a
+3:26
+global index means that you might
+3:27
+actually have to send that document to
+3:30
+many many different partitions and then
+3:32
+that effectively is going to eat up a
+3:33
+ton of space and it pretty much destroys
+3:35
+the point of partitioning in the first
+3:37
+place instead what we could do on our
+3:39
+local partitions is just make like a
+3:41
+reference to the document so you know
+3:43
+you store the document somewhere in
+3:44
+memory and then this is just like a you
+3:47
+know a low storage pointer so it's
+3:49
+obviously going to be a lot more
+3:50
+efficient however using local
+3:52
+partitioning comes at a pretty major
+3:54
+cost which is that if I now want to get
+3:57
+all of the documents that have cherry
+3:58
+and I'm over here on the left
+4:01
+I have to query multiple partitions and
+4:03
+then aggregate them over here on some
+4:05
+aggregator node
+4:07
+and that of course is going to increase
+4:09
+latency by quite a bit and so in reality
+4:12
+when we're using elasticsearch if
+4:14
+possible it isn't always we would like
+4:17
+to keep all of our searches limited to
+4:18
+just one partition at a time so what's
+4:20
+an example of this let's imagine I ran a
+4:23
+chat app like Facebook messenger and we
+4:25
+want to be able to search through one
+4:27
+chat at a time well obviously if every
+4:30
+single message is a document we want to
+4:32
+keep all of our documents in the same
+4:34
+chat on the same note because the whole
+4:36
+point is that we are going to be
+4:38
+partitioning those by chat ID because we
+4:40
+can only search the messages of one chat
+4:42
+at a time now of course if you're
+4:44
+someone like Amazon and you just have a
+4:46
+search bar and you know you're able to
+4:48
+search any single product on the site
+4:50
+with that search bar then you're kind of
+4:52
+screwed out of luck it would be nice if
+4:54
+you could partition products somehow
+4:56
+according to like the type of thing they
+4:58
+are for example Like Home and Garden or
+5:00
+cooking or anything like that and then
+5:02
+maybe you would have to select a drop
+5:03
+down before you searched but sometimes
+5:05
+the reality of the situation is is you
+5:07
+just can't partition that easily and
+5:09
+then you would have to aggregate all of
+5:11
+those search results
+Caching
+5:13
+okay the last thing that makes
+5:15
+elasticsearch kind of unique and makes
+5:17
+it perform very well is its caching
+5:20
+mechanisms so in most part you know when
+5:23
+we talk about caching generally speaking
+5:25
+we're either going to take a piece of
+5:27
+our index and cache basically that whole
+5:30
+thing in memory or we would take an
+5:33
+entire query result that someone ran and
+5:35
+we would cache that because if it were
+5:37
+popular if a bunch of people were
+5:38
+running that particular query result
+5:40
+let's say everyone was you know
+5:42
+searching for the same post on Twitter
+5:43
+at the same time or the same group of
+5:45
+posts then it would be a popular query
+5:47
+result and we would want the whole thing
+5:50
+at the same time though sometimes you
+5:52
+can actually be a little bit smarter
+5:54
+than that and that's what elasticsearch
+5:55
+tries to do so it will actually cache
+5:57
+part of a query If part of a query is
+6:00
+very common or very popular so let's
+6:02
+imagine I go on Amazon as I do
+6:05
+and I go ahead and search for tissues as
+6:08
+I do no reason in particular and also
+6:12
+for you know tissues that are on sale
+6:14
+because I'm cheap that's just how Jews
+6:16
+are or maybe me in particular the point
+6:19
+is not everyone is such a degenerate as
+6:22
+myself to be searching for tissues but
+6:25
+most people are pretty cheap and they
+6:28
+are going to be looking for items that
+6:29
+are on sale so if we cash this part
+6:32
+right here of all the items that are on
+6:34
+sale and that was say on multiple
+6:36
+different nodes especially so it was a
+6:38
+slow query being able to Cache that
+6:40
+result would help speed up queries by a
+6:42
+bit and when everyone else is searching
+6:43
+for on sale items even if it's only just
+6:46
+part of their query being able to Cache
+6:48
+that result will help a lot anyways guys
+6:51
+like I mentioned I know this was going
+6:52
+to be a short video tried to drag it out
+6:54
+a little bit and just you know have some
+6:56
+substance to it but I hope it helps and
+6:58
+I will see you all in the next one
+
+##v48:
+
+0:00
+hey everyone and welcome back to the
+0:02
+channel sorry I haven't posted in a
+0:03
+little bit been doing some traveling
+0:05
+seeing some family uh good news is I am
+0:08
+going to post a little bit more in the
+0:09
+next coming weeks and also I have
+0:11
+another collaboration coming up which is
+0:13
+great because it means I'm yet again
+0:14
+increasing my chances of accidentally
+0:16
+doxing myself and getting fired at work
+0:18
+so if that happens I'll be posting
+0:21
+plenty more anyways let's talk about
+0:22
+time series databases
+What is a Time Series Database
+0:25
+so what exactly is a Time series
+0:27
+database well if you guess that it helps
+0:29
+you handle graph data you are a bozo and
+0:32
+incorrect it helps you handle time
+0:34
+series data which is really just a fancy
+0:36
+way of saying any piece of data that you
+0:39
+mainly care about the time series range
+0:41
+that it's a part of basically any type
+0:43
+of graph or line plot or anything like
+0:45
+that and so that could be logs it could
+0:47
+be metrics it could be sensor readings
+0:48
+it could be any piece of data where the
+0:50
+main access pattern that we want to use
+0:52
+is accessing it by some sort of time
+0:54
+range and so there are many different
+0:56
+types of Time series databases this
+0:58
+video is most going to be inspired by
+1:00
+time scale DB but there's also influx DB
+1:03
+and Apache Druid so feel free to look
+1:05
+into those as well
+Column Oriented Storage
+1:07
+so how is it that time series databases
+1:09
+are going to allow us to optimize reads
+1:12
+writes and actually as well deletes
+1:15
+let's start talking about them so one
+1:18
+way that it does things is pretty simple
+1:20
+we've spoken about this a lot on this
+1:22
+channel which is using column oriented
+1:24
+storage so because time series databases
+1:27
+will typically tend to include many
+1:28
+different Columns of data but typically
+1:31
+we only care about one or two at a time
+1:32
+using column oriented storage ensures
+1:35
+that we are only fetching The Columns
+1:37
+that we care about and ensures that
+1:39
+we're getting better data locality and
+1:40
+because we're only say fetching one
+1:43
+column at a time instead of fetching an
+1:45
+entire row at a time we can do some
+1:47
+handy things with compression and just
+1:50
+improving our caching in general to make
+1:51
+sure that our cache only contains the
+1:53
+data that we want so like I said better
+1:55
+dislocality can cash more less data to
+1:58
+fetch column oriented storage obviously
+2:00
+going to help a lot in any type of
+2:02
+analytical workflow and time series
+2:04
+databases are often going to be using
+Chunk Tables
+2:06
+that
+2:07
+so what else can we do to continue to
+2:09
+optimize our reads
+2:11
+okay so this is something that is kind
+2:14
+of unique to the time series database
+2:16
+and it is also going to help us a lot
+2:18
+with both our rights and our delete and
+2:20
+that is using something known as a hyper
+2:23
+table and so this is our hyper table
+2:25
+right here you can see we've got this
+2:26
+three by three grid and each of these
+2:29
+pieces of the grid I will call a chunk
+2:32
+table
+2:33
+so if you think about it for something
+2:35
+like a Time series database the reason
+2:37
+that we want to be using something like
+2:38
+this is because we're effectively
+2:40
+parameterizing our data by two main
+2:42
+things one is where it's coming from so
+2:45
+let's imagine we have some sensors you
+2:47
+know you've got Sensor One sensor two
+2:49
+and sensor three and another typical
+2:51
+thing that we would do is the actual
+2:52
+range of time that that data belongs in
+2:54
+so we've got one o'clock to two o'clock
+2:56
+two o'clock to three o'clock three
+2:58
+o'clock to four o'clock
+2:59
+so typically if we were to be using a
+3:02
+traditional database what you would do
+3:03
+is you would just have a single index
+3:05
+over all of that data right and that's
+3:07
+great it helps a lot uh and you can even
+3:10
+be pretty smart about that index where
+3:12
+you you know first sort based on sensor
+3:13
+and then you sort based on the timestamp
+3:16
+however
+3:17
+actually using a bunch of little chunk
+3:19
+tables like this are really useful
+3:21
+because it means that we can be very
+3:23
+precise with the amount of data that
+3:25
+we're caching right so let's say I just
+3:27
+took this guy right here you know I only
+3:30
+care about sensor 3 from one o'clock to
+3:33
+two o'clock and I know that in advance
+3:34
+that's where all my queries are going I
+3:36
+can just place this entire thing in our
+3:38
+cache whereas for example you know if
+3:42
+are we were just using a normal database
+3:44
+perhaps I would do a couple of reads
+3:46
+that went in this range right here and
+3:48
+then we would naively cache this whole
+3:51
+thing when we really just want this area
+3:54
+in our cache so the chunk table is going
+3:57
+to help us a little bit more in writes
+3:58
+and deletes and we'll talk about that in
+4:00
+a second but this is how it helps us
+4:01
+with reads
+Chunk Table Optimization
+4:03
+so how does our chunk table help us with
+4:05
+optimizing rights well for starters
+4:08
+basically like I mentioned every single
+4:11
+chunk table is going to be maintaining
+4:13
+its own index so like for a given sensor
+4:16
+right here sensor one we've got our
+4:18
+chunk that is corresponding to it same
+4:21
+thing with sensor 2. and the really nice
+4:23
+thing about splitting these tables up
+4:25
+this way is that we can actually do
+4:27
+something like keep this chunk local to
+4:29
+the same node that the sensor is on so
+4:32
+that way we don't incur any extra
+4:34
+Network latency had we partitioned our
+4:36
+system in a different manner where say
+4:38
+you could have multiple sensors to a
+4:41
+chunk then you might have to write a
+4:43
+bunch of data over the network but by
+4:44
+keeping all of these chunks local we can
+4:46
+make ingestions or rights really really
+4:49
+fast additionally if we want to make
+4:51
+writes faster what something like time
+4:53
+scale DB will use is use a typical LSM
+4:56
+tree plus SS table architecture which is
+4:59
+fast because rights first go to memory
+5:02
+go to memory and then eventually they'll
+5:06
+be written to disk and compacted and do
+5:07
+all that fun stuff which we've spoken
+5:09
+about extensively on this channel so
+5:12
+again we are getting the best data
+5:14
+locality here because our chunk tables
+5:16
+are actually on the nodes where we're
+5:17
+writing from they don't necessarily have
+5:19
+to be but this is a great optimization
+5:21
+if you care about fast write speeds
+Deleting Data
+5:24
+and then the last aspect of this is
+5:26
+actually going to be delete so the
+5:28
+interesting thing or interesting
+5:30
+compromise perhaps about using SS tables
+5:33
+and LSM trees is that they're basically
+5:35
+when you're deleting an item it is just
+5:38
+as expensive as a right so the delete
+5:40
+would first go into here right into your
+5:43
+table and eventually it is going to be
+5:45
+put into an SS table and so you can see
+5:47
+for the Key C over here we write that we
+5:50
+delete it and then in an older version
+5:52
+of the SS table we have the old value of
+5:54
+the key and then after we compact these
+5:56
+two files what we would have is that a
+5:59
+is 10 because we're using the new value
+6:01
+of a we have that b is eight we have
+6:05
+that c is deleted or actually when you
+6:08
+compact those we probably wouldn't even
+6:09
+have C in this file and then you would
+6:11
+have that f is 15. so the point is
+6:14
+whenever you delete a key it's actually
+6:16
+just as expensive as doing a right and
+6:18
+in Time series databases a typical use
+6:20
+case is to drop data once it gets too
+6:22
+old and so we don't want to have to drop
+6:24
+a ton of data and effectively just right
+6:27
+over it that's super expensive and there
+6:29
+are a lot better ways of doing this so
+6:31
+again this is where having chunk tables
+6:33
+is going to help us a lot so instead you
+6:36
+know let's imagine this is like our one
+6:38
+o'clock range this is our two o'clock
+6:40
+range and this is sensor A
+6:43
+and this is sensor b
+6:47
+this guy right here
+6:48
+is just a bunch of files on disk
+6:52
+and so instead of doing all these rights
+6:54
+to memory and letting them propagate to
+6:56
+disk we can pretty much just say well we
+6:58
+can overwrite this data now we don't
+7:00
+care about it it's free it's overridden
+7:02
+we just drop the table which is a lot
+7:04
+less expensive than having to do an
+7:06
+equal amount of rights to the amount of
+7:08
+data on that disk so again chunk table
+7:10
+is super useful in this regard
+7:12
+deleting significant portions of data is
+7:15
+a pretty unique taste to time series
+7:17
+databases and so it is actually
+7:19
+something that we want to be able to
+7:20
+optimize or else that would be a super
+7:22
+expensive operation
+Conclusion
+7:24
+so what's our conclusion well pretty
+7:26
+simple basically time series databases
+7:28
+will come up from time to time in
+7:30
+interview questions and also hopefully
+7:32
+in your career because whenever you have
+7:34
+something like metrics or logs and you
+7:36
+want to be able to store and access them
+7:38
+efficiently being able to leverage a
+7:40
+Time series database for its interesting
+7:42
+properties that make both reading
+7:44
+writing and deleting faster is going to
+7:46
+help us a lot of course when it comes to
+7:48
+something like an interview it's not
+7:49
+enough to just say hey we have time
+7:51
+series data let's use a Time series
+7:53
+database you also need to know how they
+7:56
+work under the hood or else the
+7:57
+interviewer is going to call you out and
+7:59
+you're going to look like a bozo anyways
+8:01
+guys hope you have a great weekend I
+8:03
+will see you in the next video and I'm
+8:04
+looking forward to it
+
+##v49:
+
+Intro
+0:00
+hello everyone and welcome back to the
+0:03
+channel uh right now it is just starting
+0:05
+to get cold over here in Chicago and as
+0:07
+a result the down Badness is hitting me
+0:09
+like a truck uh but anyways I'm gonna
+0:11
+persevere through it and talk about some
+0:13
+graph databases so let's get into things
+What are graph databases
+0:16
+alrighty so today's video is all about
+0:19
+graph databases which as you may have
+0:22
+guessed are specifically useful for
+0:24
+holding storing and reading and writing
+0:27
+quickly graph data so graph data is
+0:30
+anything that is best represented by a
+0:32
+bunch of nodes and vertices or edges
+0:34
+whatever you want to call them and as
+0:36
+you can see I have presented one here
+0:38
+below where even things like the edges
+0:41
+themselves can have values the nodes
+0:43
+themselves can have keys and or values
+0:45
+and in particular this graph is going to
+0:47
+represent who is trying to flirt with
+0:50
+who as you can see it's a direct graph
+0:51
+so you've got Megan Fox and Kate Upton
+0:54
+over here trying to flirt with Jordan
+0:55
+unsurprising and then you've got a few
+0:58
+uh Bozo celebrities trying to flirt with
+1:00
+them but uh you know they're not really
+1:02
+reciprocating that so you've got Shia
+1:03
+LaBeouf Machine Gun Kelly of course
+1:05
+going to shoot his shot with both and
+1:07
+then Justin Verlander who to my
+1:09
+disappointment is actually now married
+1:11
+to Kate Upton so the graph database
+1:13
+video itself is mostly inspired by neo4j
+1:16
+which we'll talk talk about towards the
+1:18
+end of this one but for now let's think
+1:19
+about this a little bit more abstractly
+Native vs nonnative graph databases
+1:21
+so I'm going to start the video Itself
+1:23
+by basically covering the concept of
+1:26
+native versus non-native graph databases
+1:29
+now the meaning of that effectively is
+1:31
+that a non-native graph database is one
+1:34
+that takes a typical existing database
+1:37
+and basically writes a query language on
+1:39
+top of it such that you can perform
+1:41
+graph traversals relatively easily so
+1:44
+let's see how we would actually perform
+1:45
+something like a graph traversal using a
+1:48
+relational database so keep in mind with
+1:50
+a relational database whenever we have
+1:52
+many to many relationships like we
+1:53
+require in a graph we would typically
+1:55
+use a table that basically just has the
+1:58
+primary keys of the nodes that you're
+1:59
+joining and that would indicate an edge
+2:02
+so again here's our people table over
+2:04
+here on the left we've got all of our
+2:06
+lovely characters and then of course
+2:08
+we've got our flirting table with a from
+2:10
+and a two column now keep in mind to
+2:12
+keep this thing as fast as possible we
+2:14
+probably want to put an index on the
+2:16
+from column and then we also want to put
+2:18
+an index on our ID column so we can find
+2:21
+people as quickly as possible
+2:22
+so why is it that this implementation of
+2:25
+a graph is a little bit less than ideal
+2:27
+well let's try and demonstrate that by
+2:29
+answering the question who has Machine
+2:30
+Gun Kelly hit on so first by doing this
+2:33
+we would start by finding Machine Gun
+2:34
+Kelly so that is going to be node with
+2:37
+ID number five and then we would check
+2:39
+out our flirting table so the first
+2:41
+thing we would have to do is because
+2:42
+this is an index we have to binary
+2:43
+search it so we binary search it and we
+2:47
+end up seeing that he's flirted with
+2:48
+people too and person three and
+2:51
+basically from there now we have to go
+2:53
+back to our people table and binary
+2:55
+search that and we can see that
+2:57
+eventually he's flirted with Megan Fox
+2:59
+and Kate Upton as was the case in our
+3:01
+original graph that's basically what
+3:03
+we're going to be relying on for the
+3:04
+rest of this video there are a couple of
+3:06
+problems with that though it takes a lot
+3:08
+of time to actually find that result for
+3:10
+starters in order to find you know the
+3:13
+primary keys of who we flirted with that
+3:15
+is a logarithmic operation relative to
+3:18
+the number of edges in our graph and to
+3:20
+actually go ahead and then take those
+3:21
+kind of primary key ease and get the
+3:24
+people from them that is a logarithmic
+3:26
+operation
+3:27
+relative to the number of people or
+3:30
+nodes in our graph and so as a result of
+3:32
+that that is going to be pretty slow
+3:33
+when we think of a graph typically when
+3:35
+we have an edge we can just jump to the
+3:37
+other node right we can do it in uh
+3:39
+basically constant time complexity and
+3:41
+so using a relational database to build
+3:44
+a graph probably isn't your best idea
+3:47
+it shouldn't be the case that as we add
+3:49
+more nodes to the graph it literally
+3:51
+gets slower to Traverse that shouldn't
+3:53
+really matter at all
+3:54
+okay so let's think about a
+Nonrelational graph databases
+3:56
+non-relational implementation of a graph
+3:59
+this could be a little bit better so as
+4:01
+you can see since we have more data
+4:03
+locality since we don't have a set of a
+4:05
+structure we can actually just have a
+4:07
+field that's a list and it stores the
+4:09
+IDS of the people that we've hit on so
+4:11
+again let's use Machine Gun Kelly as our
+4:13
+example so we can see pretty easily
+4:15
+right off the bat due to our great data
+4:17
+locality that he's hit on people two and
+4:19
+three so we don't have to go to another
+4:21
+table and do a binary search so we got
+4:23
+rid of you know scaling our complexity
+4:25
+due to the number of edges however in
+4:28
+this case we still do have to take two
+4:30
+and take three and do a binary search
+4:32
+over here in order to find them and so
+4:35
+it's still becoming more and more
+4:37
+expensive to Traverse our graph
+4:39
+as the number of nodes in our graph
+4:41
+increases like I mentioned this is the
+4:43
+size of the nodes and so as a result of
+4:45
+that again just not an ideal
+4:47
+implementation now you may say to
+4:49
+yourself well oh you know like couldn't
+4:51
+we just go right back to Megan Fox over
+4:53
+here couldn't we go right back to Kate
+4:55
+Upton over here
+4:56
+yeah we could but keep in mind that they
+4:59
+also have edges and as a result if we
+5:02
+wanted to store the actual full node and
+5:04
+do traversals we would potentially be
+5:06
+just duplicating our graph n times over
+5:09
+it could be very very bad storage wise
+Native graph databases
+5:12
+so
+5:13
+let's now talk about the last piece of
+5:15
+this video the last piece of our puzzle
+5:17
+which is going to be the native
+5:19
+implementation or basically what neo4j
+5:22
+does which is why it is so popular as a
+5:24
+graph database so as you can see right
+5:27
+here we've got a couple of unique Fields
+5:28
+we've got an address field which is
+5:30
+representing basically the address of
+5:32
+this thing on disk or memory whichever
+5:34
+you want to use and then additionally
+5:36
+we've also got a nodes and an edges
+5:39
+table so the edges themselves are
+5:41
+effectively objects in our database so
+5:43
+as you can see for every single person
+5:45
+we've got a pointer in the database to
+5:49
+an edge address and what that's going to
+5:51
+do is then actually point us right over
+5:54
+here to our edges table where it's
+5:56
+corresponding and then our Edge in turn
+5:58
+is going to point right back to the
+6:01
+original node and what that does is
+6:03
+instead of having to actually just
+6:04
+binary search our index over and over
+6:06
+and over again we can just jump to the
+6:08
+proper place on disk now do keep in mind
+6:11
+that disks generally speaking are meant
+6:13
+for sequential access they're not really
+6:15
+meant for random accesses however if you
+6:18
+can save this much time complexity it's
+6:20
+still going to make a super significant
+6:22
+difference so another thing you may note
+6:24
+that's actually kind of interesting is
+6:26
+for MGK for example recall that he's got
+6:29
+multiple edges and meanwhile there's
+6:30
+only one address for him the reason for
+6:33
+that being that that's what this next
+6:34
+address field is doing over here so if
+6:38
+we go to the edge that is at the address
+6:40
+10 we can see that it's pointing to node
+6:42
+two so that's pointing back to Megan Fox
+6:44
+however at the same time it also points
+6:48
+to the next Edge right here so that if
+6:50
+we're trying to Traverse all of Machine
+6:52
+Gun Kelly's nodes or the ones that it
+6:54
+points to we can go quickly from this
+6:56
+Edge to this Edge over here see that
+6:58
+it's pointing to the thing in address
+7:00
+three and then jump right back to see
+7:02
+that Machine Gun Kelly is also hitting
+7:04
+on Kate Upton
+7:06
+now the really nice thing about this
+7:08
+like I mentioned is it is constant time
+7:10
+complexity we're just jumping around we
+7:12
+don't have to Loop through the number of
+7:14
+nodes every single time the amount of
+7:16
+computation that we have to do does not
+7:18
+scale relative to the number of nodes or
+7:20
+edges in our graph and so as a result
+7:22
+this thing is a lot more efficient the
+7:24
+term that neo4j officially uses for it
+7:27
+is called index free adjacency because
+7:29
+we don't have to use an index it speeds
+7:32
+things up pretty considerably
+Acid transactions
+7:34
+okay so the last kind of point to make
+7:37
+over here is that in neo4j in particular
+7:39
+we have a lot of acid transactions that
+7:41
+we need to make the reason being that a
+7:43
+lot of times there are operations that
+7:45
+we may want to basically perform them on
+7:47
+multiple nodes that are connected to one
+7:48
+another for example let's say we said
+7:50
+take this node here and every single
+7:52
+node that's connected to it add three so
+7:55
+that would look like this right here and
+7:56
+it's important that all these operations
+7:58
+go through or they all fail or just in
+8:01
+general we want them to be Atomic so of
+8:03
+course for doing something like this it
+8:05
+would be the same as our other asset
+8:06
+transactions in normal databases we need
+8:08
+to write ahead log we need to put locks
+8:10
+on all of those nodes so we don't incur
+8:12
+any race conditions and as a result of
+8:14
+course that can slow things down and
+8:16
+even more problematic scenario is going
+8:19
+to be when these things are distributed
+8:21
+across different partitions of the graph
+8:23
+so as you can see if I want to add 3 to
+8:26
+all of these nodes over here here and
+8:28
+here they're physically on different
+8:29
+computers and unfortunately what that
+8:31
+does mean is that we're going to have to
+8:33
+run a two-phase commit the nice thing
+8:34
+that neo4j does do for us is it'll
+8:37
+basically say okay well it's only these
+8:38
+three nodes involved in the two-phase
+8:41
+commit so let's make this guy the
+8:43
+coordinator
+8:44
+and these two are listening basically to
+8:47
+the two-phase commit
+8:49
+and then this fourth node over here we
+8:53
+don't really have to worry about that it
+8:55
+can proceed as normal
+8:56
+proceed as normal
+8:59
+and that is obviously going to be super
+9:01
+useful because if every single node was
+9:03
+involved in the two phase commit then
+9:05
+our entire system would basically have
+9:06
+to wait while that right went through so
+9:09
+in conclusion graph to databases are
+Conclusion
+9:12
+probably not going to come up too much
+9:13
+in your system design interviews and
+9:15
+frankly probably not even that much in
+9:17
+your career either but not only is it an
+9:19
+interesting topic but if they do ever
+9:21
+come up you're going to want to know why
+9:22
+native graph databases are a lot quicker
+9:24
+and a lot better and of course why that
+9:27
+is anyways guys hope this video was
+9:29
+useful and I will see you in the next
+9:31
+one
+
+##v50:
+
+0:00
+hey guys glad to have you back and
+0:01
+looking forward to making another video
+0:03
+today we'll be talking about geospatial
+0:05
+indexes now this is one of those things
+0:07
+where for some reason it comes up in the
+0:09
+systems design interview a lot and
+0:11
+frankly I have no idea why because it's
+0:12
+super Niche and most people are probably
+0:14
+never going to use these in their career
+0:15
+but I've been asked about it multiple
+0:18
+times at this point so uh I guess we
+0:19
+just have to learn it and uh get the
+0:22
+hacky way out and do that so let's get
+0:24
+into the video and uh I'll start
+0:25
+explaining things all right so what does
+0:28
+something like a geospatial index allow
+0:30
+us to solve what type of problems are we
+0:32
+going to have to bring this up for well
+0:34
+the main ones that I'm thinking of here
+0:36
+things like Yelp Uber Tinder Etc
+0:39
+basically the main problem that this
+0:41
+type of database or this type of index
+0:42
+is going to solve for us is finding all
+0:44
+the points within some distance so if
+0:46
+you've got a cartisian plane and you're
+0:48
+over here and you've got a bunch of
+0:49
+points scattered around you it's going
+0:51
+to help find that close radius of points
+0:54
+so let's go ahead and look at an example
+Example Problem
+0:57
+problem because that is probably going
+0:58
+to make this most concrete and then you
+0:59
+you'll see why the need for specialized
+1:02
+kind of Technology arises here so one
+1:05
+thing that most men have heard if there
+1:07
+somewhat online is that there are lots
+1:09
+of singles in their area just waiting to
+1:12
+hang out with them but let's see can we
+1:14
+verify how true this is let's imagine
+1:16
+that all of the ladies in our radius are
+1:19
+plotted on a cartisian plane as shown
+1:21
+below I've got a 2d plane and then
+1:23
+you're over here in this case I'm right
+1:26
+over here at 2 comma 2 so that's our x
+1:29
+coordinate is two and then our
+1:30
+y-coordinate is also two so let's
+1:33
+imagine that we tried to use a
+1:34
+traditional database in order to solve
+1:36
+this problem and a traditional database
+1:38
+index so let's imagine that we indexed
+1:40
+all of our points by their x coordinate
+1:43
+so we would start from the left side we
+1:44
+would go towards our right side and then
+1:47
+yeah that's uh pretty simple enough
+1:49
+basically then what would happen is that
+1:51
+you know as you can see the Jordan point
+1:53
+is over here in the index and if we
+1:55
+wanted to find all of the closest points
+1:57
+in the graph we would probably start by
+1:59
+looking at all the points with the
+2:00
+closest x value which in this case is
+2:02
+going to be these guys over here which
+2:05
+on the map is this so you can see that
+2:09
+that is going to get us our closest
+2:11
+points from the X distance but at the
+2:13
+same time assuming that our map is
+2:15
+actually big enough we might have points
+2:17
+way out here in the distance which are
+2:18
+Super far away and if you're actually
+2:20
+looking at our graph you can see we've
+2:21
+got 3 comma 1 over here which is still
+2:24
+closer to me but because it's not
+2:26
+perfectly aligned with my x coordinate I
+2:28
+probably wouldn't have even checked that
+2:30
+so indexing by the x coordinate isn't
+2:32
+going to work what about indexing by the
+2:34
+y-coordinate well you would probably
+2:36
+have a similar phenomenon where what
+2:38
+would end up happening is because my
+2:40
+y-coordinate is at 0 2 we would end up
+2:43
+looking for all of the things with a y
+2:45
+coordinate of two it would return all of
+2:48
+these results and yet again we would
+2:50
+look first at these two before again
+2:52
+looking at three comma 1 which is
+2:54
+actually the closer point and so as you
+2:57
+can see it's clear that for something
+2:58
+like a two-dimensional coordinate plane
+3:00
+using a single dimensional index value
+3:03
+isn't going to help us really filter
+3:04
+down our points to get the closest one
+3:07
+especially as the Earth that you're
+3:08
+considering and the number of points
+3:09
+that you're considering becomes bigger
+3:11
+and bigger so what can we actually do
+Geohashes
+3:14
+well basically we are going to use a
+3:16
+technology called geohashes or quad
+3:19
+trees and so they're not entirely the
+3:21
+same but the idea behind the two of them
+3:23
+is similar what I'm going to be showing
+3:24
+in this video is technically not the
+3:26
+same as either of them it's my own
+3:27
+little stupid representation but it
+3:29
+pretty much encapsulates the idea of the
+3:31
+goash and the quad tree and so the point
+3:34
+is that we're taking our 2D coordinate
+3:35
+plane we're taking every single point
+3:37
+which has two coordinates and we're
+3:39
+basically going to compress them down
+3:41
+into one single point known as a geohash
+3:44
+so how do we actually go ahead and do
+3:46
+this let's imagine that you know we've
+3:48
+got our coordinate plane right here as
+3:50
+you can see we've got our axes drawn out
+3:54
+and then every single area of the
+3:55
+coordinate plane we break it into a box
+3:57
+and so first I start by lab in the
+4:00
+outermost quadrants so the first
+4:02
+quadrant is a the second quadrant is B
+4:03
+the third quadrant is C and the fourth
+4:05
+quadrant is D now I'm just for the sake
+4:08
+of uh keeping this simple we're going to
+4:09
+dive into breaking down the C quadrant a
+4:11
+little bit more I'm going to break that
+4:13
+down into four pieces as you can see
+4:15
+we've got the following lines right here
+4:17
+and basically what's going to happen
+4:18
+once I break that down is that we now
+4:20
+have a CA a CB a cc and a CD and then we
+4:25
+can even go further than that in fact
+4:27
+let's break down CB to show what's going
+4:28
+to happen so let's going to be this box
+4:30
+over here and as you can see we've
+4:32
+broken it into a CBA a CBB a CBC and a
+4:36
+CBD so now imagine we've got this one
+4:39
+point over here let's say that I was
+4:41
+searching for all of the points within
+4:43
+box
+4:44
+CBA in this case what we would basically
+4:47
+do is know that every single point
+4:49
+within a box is going to be prefixed by
+4:52
+the string name of that box so
+4:54
+regardless of you know we breaking CBA
+4:56
+down anymore and let's say this was box
+4:58
+CBD uh CB a d the point is we know that
+5:02
+any point in this area start with the
+5:06
+string CBA and so that's super important
+5:09
+to us because it means that if we want
+5:11
+to find all of the points that are
+5:13
+within a certain box all we have to do
+5:16
+is search for all of the points that
+5:17
+have that prefix and if our points are
+5:20
+ordered in our database that basically
+5:22
+means that we're searching for all the
+5:24
+points where the string name is between
+5:26
+CBA and CBB because we can
+5:29
+lexicographically sort them and then we
+5:31
+would go ahead and run that search and
+5:34
+of course like a normal database index
+5:36
+if all of our points are sorted right so
+5:39
+if our points are sorted by the geohash
+5:41
+then that's just a binary search and
+5:43
+I'll show a more concrete example of
+5:45
+this in a second so yeah let's do this
+Example
+5:48
+example so imagine that I'm right over
+5:51
+here and I want to find all the points
+5:53
+that are near me as you can see they're
+5:55
+dots on the graph which is good and then
+5:57
+let's imagine as well that because these
+5:59
+geohashes are kind of predefined someone
+6:01
+has already made these we know the set
+6:03
+distance of every size of the box so we
+6:06
+know for example that as you can see uh
+6:09
+this is box BCB that I'm in right here
+6:12
+and we know that if a box is three
+6:15
+letters that means it's equal to 1 mile
+6:18
+by one mile two letters for example is
+6:22
+equal to 2x two so 2 miles by 2 miles
+6:25
+one letter is equal to 4 miles by 4
+6:28
+miles so let's say we wanted to find
+6:31
+basically everyone within one mile of me
+6:34
+and I know that I'm at coordinate 1.7
+6:37
+comma 1.7 I can get that from the GPS on
+6:39
+my phone for example so the first thing
+6:41
+that we're going to do is once I have
+6:43
+1.7 1.7 I'm going to f find what box
+6:47
+that I'm in so for starters I know I'm
+6:50
+in box B right because when we have our
+6:52
+like initial geohash of the world we
+6:54
+have some geohash Library we can start
+6:56
+by saying all right let's Loop through
+6:58
+all of the single letter boxes so let's
+7:01
+Loop through a b c and d and we know the
+7:04
+coordinate bounds of each of these so
+7:06
+for example B is from you know this area
+7:10
+right here it's between 0a 0 0a 4 uh or
+7:16
+rather uh yeah 0 comma Sorry 4 comma 0 0
+7:20
+comma 4 and then 4 comma 4 and so since
+7:23
+I'm 1.7 1.7 I know hey I'm in box B and
+7:27
+then we would do the same thing from
+7:28
+there ba a BC uh oh my God I don't know
+7:32
+letters BB BC and BD and then we would
+7:36
+say which one of these am I in oh
+7:37
+clearly I'm in BC because I know that BC
+7:40
+is basically the one from 0 comma 0 it's
+7:43
+this box right here and so I know I'm in
+7:46
+there and then finally I can say oh now
+7:48
+I know I'm in
+7:50
+BCB okay So eventually I figure out the
+7:52
+fact that I'm in BCB but I also know
+7:55
+that compared to the coordinate
+7:57
+boundaries of Point BCB
+7:59
+I'm in the very top right corner and so
+8:02
+it's possible that my one mile radius
+8:04
+might stretch out into the other
+8:05
+neighboring boxes so just due to the way
+8:08
+that our um geohashes are laid out we
+8:10
+can actually easily figure out that the
+8:12
+boxes that are next to mine are going to
+8:15
+be first of all B A over here because
+8:18
+our radius might stretch into it and
+8:20
+also in addition to that we have uh
+8:23
+let's see
+8:24
+BDA so our radius is in there as well
+8:28
+and so now we know that we need to
+8:29
+search for all of the points in those
+8:31
+three boxes and then once we have them
+8:33
+we can filter that down a little bit and
+8:35
+make sure that all of the points that we
+8:36
+get back are within one mile so like I
+8:39
+said in Step six we take all the points
+8:41
+and then calculate whether they're
+8:42
+actually within a mile and then we
+8:44
+return the result so how would we go
+8:46
+ahead and calculate whether we're
+8:48
+actually within a mile well we could
+8:49
+just use our Pythagorean theorem from
+8:51
+our geometry class back in 8th grade
+8:53
+which is that when you have a
+8:55
+triangle we know that A2 + B2 = c^2
+8:59
+so if we know the distance between the X
+9:02
+and the y-coordinate we can quickly find
+9:04
+the actual distance between them in
+9:05
+terms of a radius this is a little bit
+9:07
+different for latitude and longitude I
+9:09
+believe but it's kind of the same
+9:11
+premise so again how would this actually
+9:13
+look on a database well as you can see
+9:15
+we've got all of our geohashes over here
+9:17
+they're
+9:18
+sorted by
+9:21
+goash so this is where Jordan is so
+9:24
+that's where we're starting that's where
+9:26
+we're looking for the nearest points and
+9:28
+keep in mind if you recall from step
+9:31
+five over here I have three ranges that
+9:34
+I need to be able to search in my
+9:36
+database and so I've outlined those for
+9:39
+myself just so I didn't have to go back
+9:40
+and forth they're here here and here and
+9:44
+these are three independent log n
+9:46
+searches where n is the number of points
+9:49
+in the database because they're all
+9:50
+binary searches the points are all next
+9:52
+to one another in the database which is
+9:53
+why this is so fast and then once we
+9:55
+have them you know we now have like five
+9:58
+possible possible candidate
+10:02
+points and then what do we do we use the
+10:05
+Pythagorean theorem to actually
+10:07
+determine whether they're in one mile of
+10:10
+1.7 1.7 so I would be looking at this
+10:14
+column once I find them in the actual
+10:18
+geohash
+10:20
+area cool so hopefully that makes sense
+GEOS Sharding
+10:24
+let's get to a quick tangent which is
+10:26
+actually going to be called GEOS
+10:28
+sharding because again the whole point
+10:30
+of this channel is that we're working
+10:31
+with distributed systems typically there
+10:33
+is too much data to actually just fit it
+10:36
+all on one computer and as a result of
+10:38
+that we have to be smart about how we
+10:39
+want to partition our results of course
+10:41
+our entire prerogative here is to keep
+10:43
+data that is close to one another in 2D
+10:45
+space close to one another on disk and
+10:48
+we are going to be keeping the same uh
+10:50
+principle with GEOS sharding generally
+10:53
+speaking if you have really population
+10:55
+dense areas here's my super shitty
+10:57
+drawing of the US basically
+10:59
+versus super sparse
+11:02
+areas perhaps even if one bounding box
+11:05
+is bigger or smaller than the other they
+11:07
+can be on the same node so for example
+11:10
+over here we can throw New York City on
+11:12
+its own Shard if you're familiar with
+11:14
+the map of the US maybe some of you are
+11:15
+less so because you're not from here and
+11:17
+then for example you know over here
+11:19
+we've got like Colorado Oklahoma Wyoming
+11:22
+all these states that are kind of just
+11:24
+Fly Over States have a lot less people
+11:26
+we can throw this on their own shard
+11:29
+and so by being smart about how many
+11:31
+points are in there versus kind of the
+11:32
+range that it's going to be putting on a
+11:36
+given computer when we're partitioning
+11:38
+we can basically go ahead and balance
+11:40
+out our partitions so they have
+11:41
+relatively even load po per node in our
+Conclusion
+11:45
+system okay so let's go ahead and get to
+11:47
+a conclusion basically geospatial
+11:49
+indexes are one of those Niche
+11:51
+technologies that in my opinion you're
+11:53
+probably not going to come across that
+11:54
+much unless you happen to work on a team
+11:56
+that's working with a lot of map data
+11:58
+but at the same time uh it seems
+12:00
+companies do love to ask questions about
+12:02
+Yelp Uber Tinder for whatever reason and
+12:05
+as a result it seems like the best thing
+12:07
+to do is uh you know just go ahead and
+12:09
+learn about it so I hope this video is
+12:11
+helpful of course eventually we'll end
+12:13
+up doing those problems and uh this
+12:15
+topic will come back up but for now I
+12:17
+hope it is a good introduction anyways
+12:19
+guys enjoy the video I will see you in
+12:21
+the next one
+
+##v51:
+
+0:00
+hey everyone and welcome back uh hope
+0:03
+you're all glad to be here as you can
+0:04
+see I've changed my camera angle ever so
+0:06
+slightly because I've gone ahead and
+0:09
+switched up my desk setup it's actually
+0:10
+looking decently clean now I may have to
+0:13
+go ahead and show that off in a future
+0:14
+video but as you can see we are getting
+0:17
+pretty close to the end of this system's
+0:20
+design concept series and so right now
+0:23
+I'm currently looking at the light at
+0:24
+the end of the tunnel I mean besides
+0:26
+this I've got a couple of short rant
+0:27
+videos I want to make and then a couple
+0:29
+of collaborations and then soon we're
+0:31
+going to be on to those interview
+0:32
+questions so hope you guys are looking
+0:34
+forward to it let's start talking about
+What is caching
+0:36
+caching okay so as I previously
+0:38
+mentioned today we would be talking
+0:40
+about caching so if you remember from
+0:42
+your operating systems class here is
+0:44
+effectively what a CPU looks like we've
+0:47
+got all of our cores over here as you
+0:49
+can see this will be a two core CPU and
+0:51
+then we've got a few layers of cash
+0:53
+until eventually we reach memory and
+0:55
+then finally we get to our slowest form
+0:57
+of storage which is going to be disk now
+1:00
+for something like a CPU again the whole
+1:02
+point is we have this hierarchy of cash
+1:04
+and cash enables us to do a lot of
+1:06
+things but the biggest thing it's going
+1:08
+to enable us to do is do faster reads
+1:10
+and faster writes and possibly even
+1:12
+Shield some accesses to slower forms of
+1:15
+data like memory and disk and in
+1:17
+distributed systems we basically are
+Benefits of caching
+1:20
+doing the same thing so let's go talk
+1:22
+about some actual benefits of caching in
+1:24
+distributed systems specifically as I
+1:27
+resize my screen
+1:28
+so number one is that typically your
+1:30
+reads and rights should be faster when
+1:33
+using a cache the reason being that
+1:34
+you're probably going to be using a
+1:36
+faster form of storage so in this case
+1:38
+we've got memory which we'll probably be
+1:40
+using as opposed to disk additionally
+1:44
+we might end up saving ourselves quite a
+1:47
+few Network calls so as you can see that
+1:49
+would be over here where we would reach
+1:51
+out to our server which may have an
+1:53
+actual cache built into the actual
+1:55
+computer itself and as a result we
+1:57
+wouldn't have to reach out to the DB
+1:59
+again thus saving us some time and then
+2:01
+finally another nice thing about caching
+2:04
+potentially is that we can place the
+2:06
+cache physically closer to our client
+2:08
+thus saving us time because you know the
+2:11
+internet packets have to travel less
+2:12
+distance additionally caching can also
+2:15
+help us reduce our load on certain key
+2:17
+components so for example over here if
+2:20
+we have one single database node and a
+2:22
+lot of different clients that are trying
+2:23
+to reach out to it if all of those
+2:25
+clients are asking for the same piece of
+2:27
+data for example if they all want to see
+2:29
+their home feed and all of their home
+2:30
+feeds are the same having one single
+2:33
+larger caching layer which can answer
+2:35
+most of those requests is going to allow
+2:37
+our database to do more important
+2:39
+computations that are unique
+Disadvantages of caching
+2:42
+so I've gone over the benefits of
+2:44
+caching but of course just like
+2:46
+everything else in systems design there
+2:48
+are trade-offs and so what are the
+2:50
+drawbacks that we experience well for
+2:52
+one cache misses are super expensive
+2:55
+they're going to slow us down quite
+2:56
+considerably so as you can see we've got
+2:58
+a client over here not only is this
+3:01
+cache Miss physically going to have to
+3:03
+make a network call to get to the cache
+3:05
+but also depending on the type of actual
+3:07
+implementation that we use for our cache
+3:10
+storage actually searching for a key
+3:12
+within the cache could be linear time it
+3:14
+could be logarithmic time ideally it
+3:16
+would be constant time but that's not
+3:17
+always the case and so then only after
+3:20
+we miss in our cache will we go ahead
+3:22
+and reach out to the database thus
+3:24
+wasting time another thing is that data
+3:27
+consistency is complex mainly for
+3:30
+example if we've got two clients and
+3:32
+they're both trying to read from their
+3:33
+respective cache these caches might have
+3:36
+different values and this is of course a
+3:38
+problem that we've seen all throughout
+3:39
+distributed systems for example when we
+3:42
+have multiple different replicas of the
+3:43
+database we often have to deal with
+3:45
+stale data and that can be problematic
+3:47
+now of course this does depend on how
+3:49
+much you care if again you're like fine
+3:52
+I'm okay with eventual consistency I'm
+3:54
+okay with still data or possibly even
+3:55
+incorrect data then of course caching is
+3:58
+not going to be as detrimental to your
+4:00
+system but either way it does still add
+4:02
+quite a bit of complexity
+What can we cache
+4:04
+okay so the next question that we're
+4:07
+actually going to quickly attempt to
+4:08
+answer is what do we cash and this one
+4:10
+should be pretty simple if you start to
+4:12
+think about it but the gist is any form
+4:15
+of computation or anything that could be
+4:17
+remotely expensive to do or load or read
+4:19
+so that could be database results you
+4:21
+know if we have a big query to a table
+4:23
+and we know that we're going to be
+4:24
+reusing that many times over that would
+4:26
+be great to Cache another thing is
+4:28
+computations done by application servers
+4:30
+for example sometimes a database can
+4:32
+give you partial results but you either
+4:34
+want to merge that with some other
+4:35
+results that you have perform some
+4:36
+subsequent computations or anything like
+4:39
+that and so actually performing a
+4:41
+caching of the results of what was on
+4:42
+the server can be very useful as well
+4:44
+and then also just like popular static
+4:47
+content that could be images it could be
+4:49
+web page files anything like that we're
+4:51
+going to devote an entire video to that
+4:53
+topic alone when we talk about cdns okay
+Server local caching
+4:57
+so now I'm going to dub a term called
+4:59
+server local caching because now that
+5:01
+we've answered the question what do we
+5:03
+cache we should probably start talking
+5:05
+about where do we store it so one type
+5:08
+of kind of storing uh this data I would
+5:10
+call server local just made it up so you
+5:13
+know don't quote me on that don't use it
+5:14
+in a systems design interview but the
+5:16
+point is the data that you're caching
+5:18
+can actually be stored on the
+5:20
+application servers themselves and when
+5:22
+I say application server that could mean
+5:24
+many different types of things it could
+5:25
+be a database like this guy over here it
+5:28
+could be a message broker if you're
+5:29
+reading the same message over and over
+5:31
+and over again for example in Kafka it
+5:33
+could also be on your application
+5:35
+servers or zookeeper your coordination
+5:36
+service anything like that so what would
+5:40
+be an example of this let's imagine
+5:41
+we're looking at Tinder over here and I
+5:44
+like the dirty dog that I am keep going
+5:46
+back to my page to check who's liked me
+5:48
+well I'm going to probably run that
+5:50
+query pretty often and it's probably not
+5:52
+going to be updating very often right
+5:54
+it's probably infrequent that I get
+5:56
+likes as many of them as I do have
+5:58
+because I'm a handsome devil they don't
+6:00
+come in that frequently so as a result
+6:02
+if I'm checking them every single five
+6:04
+minutes they're mostly going to stay the
+6:06
+same so rather than having to reach out
+6:08
+to the database and do an extra Network
+6:10
+call
+6:13
+what we can actually do instead is go
+6:15
+ahead and just get it right from the
+6:17
+application server after it's been
+6:19
+returned for the first time and so you
+6:21
+may notice here that when we have
+6:22
+multiple application servers it's very
+6:25
+important that I am going to be reaching
+6:27
+out to the same application server every
+6:29
+single time now we've spoken about
+6:31
+consistent hashing in the past in this
+6:33
+series but this is also something that's
+6:35
+very important in load balancing if I'm
+6:38
+a client and I'm going to reach out to
+6:39
+one of my application servers it's very
+6:42
+important that I'm going to the same
+6:43
+server every single time specifically so
+6:46
+that I can reach the server that is
+6:48
+actually cache the data specific to me
+6:49
+that is why something like consistent
+6:52
+hashing
+6:54
+seems I already wrote it out so that was
+6:55
+kind of redundant but the point is if
+6:57
+you recall it's basically a ring that
+6:59
+splits up all of the traffic and you
+7:02
+know it tells you where you're going to
+7:04
+be routed to the reason being that
+7:06
+consistent hashing as opposed to just
+7:08
+like random routing is going to maximize
+7:11
+our cash hits
+7:13
+you can watch the consistent hashing
+7:15
+video if you're a little unclear on how
+7:17
+that might work but let's actually
+7:19
+quickly before I move on to the next
+7:21
+picture go into some pros and cons the
+7:24
+pros of doing server local caching or
+7:26
+you know just keeping your cash local to
+7:28
+the application server is there fewer
+7:30
+Network calls like I mentioned you're
+7:31
+already going to be hitting this thing
+7:33
+anyway so you may as well check the cash
+7:36
+that makes it faster but on the other
+7:38
+hand well if this guy were to go down
+7:41
+that cash for me is gone and
+7:43
+additionally let's say we wanted even
+7:45
+more caches because not only do we want
+7:47
+to cash you know all the people who've
+7:48
+liked me but we also want to cash let's
+7:50
+say uh all of their photos and and
+7:53
+certain other information about them so
+7:55
+it turns out we need more cash storage
+7:56
+than we thought well the issue in this
+7:59
+case is that we're limited by basically
+8:01
+the number of application servers that
+8:02
+we have because that's where we're
+8:03
+storing the data but it would be nice if
+8:06
+we could scale that cache independently
+8:07
+which leads us to our second possible
+8:09
+implementation of caching which is using
+8:12
+a global caching layer so as you can see
+8:14
+that caching layer would be this guy
+8:16
+right here and when you hit an
+8:17
+application server it could potentially
+8:19
+reach out to any of those caches which
+8:23
+is good because it means that you don't
+8:24
+necessarily have to rely on consistent
+8:26
+hashing as much to hit a certain
+8:28
+application server it might mean that I
+8:30
+could hit any of these but technically
+8:32
+if you know my data was only stored on
+8:35
+one of these nodes then we would
+8:37
+probably need a second load balancer
+8:39
+right here to make sure that we were
+8:40
+hitting that particular cache anyways
+8:43
+let's quickly talk about the pros and
+8:45
+cons of something like this the biggest
+8:47
+Pro of course is going to be that we can
+8:49
+scale it as we need we're not basically
+8:52
+Locked Down based on the number of
+8:53
+application servers that we have this
+8:55
+layer can scale on its own the biggest
+8:57
+con of course is that basically our
+8:59
+cache is no longer local to the
+9:01
+application server so now we have to
+9:03
+make an extra Network call in order to
+9:05
+access that data which could definitely
+9:07
+be expensive additionally we now just
+9:09
+have more moving Parts in our system
+9:11
+which means more things can fail we have
+9:13
+to think about fault tolerance a little
+9:15
+bit more and of course practically
+9:17
+speaking sometimes that is not very good
+Conclusion
+9:20
+so let's quickly do a conclusion so that
+9:23
+I can go ahead and go to sleep but
+9:26
+basically caches are going to seriously
+9:28
+allow us to get much better latencies
+9:30
+within both of our reads and our rights
+9:32
+the reason being that typically they'll
+9:34
+use a faster form of storage than the
+9:36
+kind of naive disk implementation that
+9:38
+we use with our databases additionally
+9:40
+we can put them literally just closer to
+9:42
+us and that helps a lot speed things up
+9:44
+because you know
+9:46
+just less distance for those packets to
+9:49
+travel like I mentioned before another
+9:51
+thing is that we can effectively
+9:53
+establish a wall in front of other
+9:55
+components that are a bit more
+9:56
+performance critical if I'm making the
+9:58
+same request 10 times over there's no
+10:00
+reason the database has to answer it 10
+10:02
+times over because it's going to
+10:04
+re-perform a bunch of computations but
+10:06
+at the same time introducing a cache to
+10:09
+our system has some caveats of course
+10:11
+cache misses are really bad and also we
+10:14
+may have some data consistency issues if
+10:16
+it's important to us if for example I
+10:18
+you know one cache knows what my
+10:20
+password is but I go ahead and change my
+10:22
+password and the cache doesn't realize
+10:24
+that and I keep entering my change
+10:25
+password and the the cache is saying
+10:27
+that's wrong that's going to be a
+10:29
+problem so it is sometimes very
+10:30
+important that we need to basically make
+10:32
+sure that our caches have good data
+10:34
+consistency and that in and of itself is
+10:36
+going to take a full video so of course
+10:39
+that means the next videos that we're
+10:41
+going to be looking at are going to be
+10:42
+cash rights and cash eviction policies
+10:45
+so I hope you guys are looking forward
+10:47
+to those because I will be posting them
+10:49
+soon anyways guys have a great night
+10:51
+looking forward to the next ones and
+10:53
+keep slaying
+
+##v52:
+
+0:00
+hey guys and welcome back to the channel
+0:02
+today we will be doing yet another video
+0:05
+about cashing I'm thinking for the next
+0:06
+few weekends I'm probably going to be
+0:08
+doing some nons systems design related
+0:10
+content uh got a little collaboration
+0:12
+coming up this weekend but of course for
+0:14
+the weekdays we're on our grind so sit
+0:16
+back crack open a Red Bull and let's get
+0:18
+into this thing all right so let's go
+Distributed Cache Recap
+0:20
+ahead and get into it so to get started
+0:23
+since it's been a week since our last
+0:24
+video let's go ahead and do a very quick
+0:26
+distributed caching recap basically
+0:29
+there are a couple of big Pros here uh
+0:31
+the main one being reading of course our
+0:33
+cach might be physically closer to us it
+0:35
+might be using faster storage and
+0:37
+potentially we might even get big
+0:39
+benefits on rights though to that point
+0:41
+that's still a little bit unclear and
+0:43
+we'll discuss that mainly during this
+0:44
+video another thing is that effectively
+0:47
+if we have a nice caching layer it can
+0:49
+act as a little bit of a wall between
+0:52
+our actual database and our users and
+0:54
+thus reduce some of the load another uh
+0:58
+kind of less ideal thing about caching
+1:00
+but still nonetheless there is that cash
+1:03
+misses are expensive and we always want
+1:04
+to be considering this whenever we have
+1:06
+to reach out to the cash that's going to
+1:08
+take an extra Network call and in
+1:10
+addition to that we actually have to go
+1:12
+ahead and search the cache now if this
+1:14
+is a hashmap based cach then that's
+1:16
+really good for us because you know o of
+1:18
+one time complexity is relatively fast
+1:20
+but sometimes caches can be implemented
+1:22
+with something like a tree map that
+1:24
+isn't necessarily constant time
+1:26
+complexity and it could add some extra
+1:28
+time to your data accesses
+1:30
+so again there's extra disk and network
+1:32
+iio there or instead of dis sometimes
+1:34
+maybe memory if that's how we're
+1:36
+choosing to implement our cache then the
+1:38
+last thing is going to be that data
+1:40
+consistency and correctness can be tough
+1:42
+because we have more places to
+1:43
+potentially read and write our data from
+1:46
+and two that is going to complicate
+1:48
+things and that's what we'll mainly be
+1:49
+talking about today so we're going to be
+1:52
+talking about three different ways of
+1:54
+actually going ahead and writing to our
+1:57
+databases and getting that correct data
+1:59
+in our cach so let's start with the
+2:01
+first one which is going to be the most
+2:03
+simple and most similar to what you
+2:04
+would do if you didn't have a cache
+2:06
+which is you would just go ahead and
+2:07
+write to the database like normal so the
+2:09
+reason this is called a write around
+2:10
+cach is because we're literally writing
+2:12
+around it as you can see right here
+2:14
+let's imagine that we've got Kate Upton
+2:16
+lovely lady and she thinks that I'm a 10
+2:17
+out of 10 but previously it was agreed
+2:20
+upon that I'm a nine the first thing
+2:22
+that she would do is write to the
+2:23
+database and that's very typical we've
+2:25
+seen that pretty much all throughout
+2:27
+anything in systems so far however now
+2:30
+we're going to do a couple of extra
+2:32
+things and actually effectively we've
+2:33
+got two options here so one I'm going to
+2:36
+be calling invalidation the other I'll
+2:37
+call a stale read so the stale read
+2:40
+would be Kate Upton has written to the
+2:41
+database but then you know we don't
+2:43
+really do anything and you know when she
+2:45
+next reads from the cache so see that uh
+2:47
+Jordan is nine which is obviously not
+2:49
+going to be the case because she just
+2:51
+wrote 10 so notice that we have this guy
+2:53
+right here a TTL and effectively the TTL
+2:57
+in a cache says like Beyond a point
+2:59
+we're going to EXP fire this data so as
+3:01
+you can see it's Tuesday here so when
+3:02
+Wednesday comes
+3:04
+around what would happen is this whole
+3:06
+thing gets removed kupton is going to
+3:09
+make another read request from the cach
+3:10
+the cach is going to say I don't have it
+3:12
+and then it's going to ask the database
+3:14
+which is going to say Jordan is a 10 so
+3:17
+that's one option and it's pretty simple
+3:18
+it's just you know we get a stale read
+3:20
+until our data expires another option is
+3:23
+we can take a more active approach to
+3:24
+this so let's go ahead and get rid of
+3:27
+this stuff blah blah blah BL blah oh no
+3:29
+I have to to draw another box and
+3:31
+effectively now what Kate Upton would do
+3:33
+is the second that she performs this
+3:35
+right over here she's also going to
+3:39
+invalidate the Jordan
+3:41
+key and what this does is now the cash
+3:44
+is going to either say okay well uh it's
+3:47
+empty now so the next time she
+3:49
+reads the cash is going to say I don't
+3:52
+have Jordan ask the database for it the
+3:54
+database comes back with the value the
+3:56
+cash populates itself with the new value
+3:58
+for Jordan and then then returns it to
+4:00
+Kate Upton with Jordan is 10 so you can
+4:03
+see that in the case of the stale read
+4:05
+it's a matter of incorrect
+4:08
+data in the case of
+4:11
+invalidation we'll get the updated
+4:15
+right and so of course you have to make
+4:17
+the tradeoff of when do you actually
+4:19
+need correct data is it okay to make a
+4:21
+right and then not instantly see it that
+4:23
+of course is use case dependent but the
+4:26
+thing to note here is that in both of
+4:28
+these implementations we have an
+4:30
+expensive cash Miss we now have to
+4:32
+basically route our networking call
+4:33
+through our cash as a result of the fact
+4:36
+that we made a new right and now the
+4:37
+cach doesn't have the data at the same
+4:40
+time wrs are very simple we would do a
+4:42
+write just like normal write to the
+4:44
+database and the database remains our
+4:45
+source of Truth which is good because it
+4:47
+means that adding a bunch of readon
+4:49
+caches doesn't affect the way that we're
+4:51
+already doing our existing rights which
+4:53
+technically makes them a little bit
+4:54
+easier in theory okay now let's talk
+Write Through Cache
+4:57
+about the right through cache this is
+4:58
+when we really start getting cheeky so
+5:00
+again there are a couple of approaches
+5:02
+that we can take here to do this why is
+5:04
+it called a write through cach well of
+5:06
+course when Karina COV here decides that
+5:08
+I am yet again a 10 out of 10 and
+5:10
+updates the cach which previously had me
+5:12
+as a nine this value gets updated to a
+5:15
+10 and then at the same exact time the
+5:17
+cash is also going to write to the
+5:19
+database it's going to proxy that
+5:20
+request say that I'm a 10 out of 10 and
+5:23
+the database is going to update its
+5:25
+value now obviously something should be
+5:27
+standing out to you here which is that
+5:29
+it is always possible that either this
+5:31
+right gets made and then this network
+5:34
+request doesn't go through or you know
+5:36
+just any other thing could happen this
+5:38
+right gets made and this cash like goes
+5:40
+down or something and then you know it
+5:42
+gets loaded back up on a stale replica
+5:44
+but the point is that unless you have
+5:46
+two-phase Commit it is possible here to
+5:48
+have data inconsistencies because at the
+5:50
+end of the day it's possible for your
+5:53
+cash and your database to get out of
+5:54
+sync now if you do use two-phase commit
+5:58
+then that is slow because that's just
+6:00
+how two-phase commit is it would take
+6:02
+quite a few more Network calls I'd first
+6:04
+have to make a network call here I'd
+6:06
+have to make one here they' both have to
+6:08
+respond okay to say they're ready to
+6:10
+commit and then now I'd have to make
+6:13
+even more Network calls back to them to
+6:15
+say commit and that's expensive right
+6:18
+now that being said with the right
+6:20
+through cash you of course can always
+6:21
+take the YOLO approach because sometimes
+6:24
+you just don't need to have super
+6:25
+consistent data it's nice when you do
+6:27
+mostly have that because most of the
+6:29
+time time will be fine but you do open
+6:31
+yourself up to the occasional fault
+6:32
+where you would be in trouble so what
+6:34
+are the overall pros and cons of these
+6:36
+approaches well basically of course we
+6:38
+do have nice data consistency simply
+6:40
+because of the fact that whenever you
+6:42
+write to the cache that write is also
+6:43
+going to the database and vice versa but
+6:46
+at the same time a it's relatively slow
+6:48
+because you have to write data to a
+6:49
+couple of places and B especially in the
+6:52
+two-phase commit case it's super slow so
+6:55
+again kind of use case dependent when
+6:57
+you want to be using this there's
+6:58
+definitely no objective solution here so
+7:01
+the last approach that we're going to be
+7:02
+talking about is the right back cache
+7:04
+why is it called right back because
+7:06
+first when Megan Fox over here yet
+7:09
+another baddy decides that I'm a 10 out
+7:11
+of 10 the first thing that's going to
+7:12
+happen is we write to the cache and then
+7:14
+at some point down the
+7:17
+line or better yet let's say
+7:21
+asynchronously will eventually write
+7:23
+that back to the database and then the
+7:25
+database can go ahead and update that
+7:27
+value but there's no guarantees when
+7:29
+that gets written one thing that a
+7:31
+certain lot of write back cash setups
+7:33
+like to do is lower the amount of load
+7:35
+on the database by many batching the
+7:37
+rights that they've taken on that
+7:39
+haven't yet gone to the database so for
+7:41
+example let's say Megan also decided
+7:43
+that besides me being a 10 Machine Gun
+7:45
+Kelly her current boyfriend is a two
+7:47
+because I'm more attractive and Donald
+7:49
+Trump is a one that's obvious so it's
+7:52
+possible that we would effectively mini
+7:54
+batch these
+7:55
+rights and send them all to the database
+7:58
+at once it's a lot more efficient than
+8:00
+having to send many different things
+8:01
+over the network just makes life easy
+8:04
+now of course this comes with a couple
+8:05
+of issues if this cash has a certain
+8:08
+value for a certain amount of time and
+8:11
+this guy tries to read from the database
+8:13
+it's very possible that they won't see
+8:15
+the up-to-date result because the right
+8:16
+back cash hasn't written it back yet so
+8:19
+what could we do if we really needed to
+8:20
+have consistent data here well we could
+8:23
+have something like a distributed
+8:24
+locking service so whenever we wrote to
+8:27
+the cach you know what we would also
+8:29
+have to do is grab the distributed lock
+8:32
+and say Jordan is
+8:35
+grabbed and effectively as long as the
+8:38
+right back cache has the value Jordan
+8:40
+and hasn't yet written it back to the
+8:42
+database it's going to stay this way of
+8:44
+course that being said if this guy wants
+8:47
+to go ahead and read from Jordan he
+8:50
+would have to try and grab the
+8:51
+distributed lock the distributed lock
+8:54
+would then notify the right back cache
+8:56
+that someone is trying to read the value
+8:58
+Jordan can or rather the right back
+9:00
+cache could then write the value to the
+9:02
+database and say Jordan is 10 this is
+9:05
+all because we tried to grab that
+9:06
+distributed lock and then finally we
+9:08
+would get the up-to-date read value now
+9:11
+of course that does Ure that this guy is
+9:13
+going to see an upto-date value but it's
+9:15
+possible that Megan Fox could write the
+9:17
+value and no one else would ever see it
+9:19
+how well if the cache just fails before
+9:22
+it manages to write back to the database
+9:24
+of course in combination using something
+9:27
+like distributed locking and cash replic
+9:29
+a does solve our problem here but not
+9:31
+only does it add a ton of complexity to
+9:33
+our system it also adds a ton of latency
+9:36
+and in many ways kind of just defeats
+9:38
+the point of using a right back cache
+9:39
+the whole reason we want a right back
+9:41
+cache is so that our rights are super
+9:43
+fast we're writing to a low latency
+9:45
+place and so as a result of that I don't
+9:48
+know personally even though technically
+9:49
+you could make the case that I don't
+9:51
+know something like GitHub is
+9:52
+technically right back caching with a
+9:54
+distributed lock because effectively
+9:56
+there's one centralized server you know
+9:58
+to make a commit you have to to
+9:59
+effectively grab the lock and by writing
+10:02
+files locally you're effectively caching
+10:04
+them you know generally speaking when I
+10:06
+think of write back caching I just think
+10:07
+of writing to the cach and hopefully
+10:09
+things work out okay so generally
+10:11
+speaking I'm going to be talking about
+10:13
+the YOLO approach when I use this method
+10:15
+which is effectively just right to the
+10:17
+right back cach and hope things go all
+10:18
+right so the pros like I mentioned quick
+10:21
+wrs the cons well if that cash goes down
+10:24
+you're in trouble and uh if this guy
+10:26
+over here decides to read the value
+10:28
+before the cash is written back you're
+10:30
+also in trouble of course if your
+10:32
+application doesn't care about data
+10:33
+staleness issues then that's great that
+10:35
+would be a good example of a time that
+10:37
+you would want to use a writeback cache
+Conclusions
+10:39
+so what are our conclusions well like I
+10:42
+mentioned earlier all of these types of
+10:44
+writing have very different use cases
+10:46
+and you're basically going to optimize
+10:48
+different things by choosing one
+10:50
+approach or another so there really is
+10:52
+no clear winner here each of them have
+10:53
+very distinctive pros and cons but by
+10:55
+knowing the pros and cons you can make
+10:57
+the right decision for your application
+10:59
+so like I mentioned for write around
+11:01
+you're effectively just writing to the
+11:02
+database like you normally would and as
+11:04
+a result of that probably a little bit
+11:06
+less complex but at the same time you're
+11:08
+getting less benefit on reads due to
+11:10
+having to get an initial cash Miss at
+11:12
+the same time you've got right through
+11:14
+cash which is effectively where you're
+11:16
+just either using a two-phase commit to
+11:18
+make sure that everything is super
+11:20
+consistent or you're not and hoping
+11:21
+things go okay in theory this is a
+11:23
+little bit better because your cash and
+11:25
+your database are nice and synced up and
+11:27
+the data is already in your cach and
+11:29
+then finally we've got the right back
+11:30
+cach which is the real YOLO thing here
+11:33
+write as quickly as possible and then
+11:35
+eventually go ahead and put that data in
+11:37
+the database but if things go down in
+11:39
+the meantime you're probably in trouble
+11:42
+again if your application can tolerate
+11:43
+that and you just care about giving
+11:45
+users quick rights then that's a really
+11:47
+useful thing anyways guys I hope these
+11:49
+tradeoffs make sense uh hopefully
+11:51
+decently sensible video and I hope that
+11:54
+you can take this knowledge with you
+11:55
+into your systems design interview have
+11:57
+a great day and I will see you in the
+11:59
+next one
+
+##v53:
+
+0:00
+hello guys and welcome back to the
+0:02
+channel I hope you've all noticed my
+0:03
+very significant aesthetic and stylish
+0:06
+goatee which I've begun rocking uh
+0:08
+coincidentally I tried entering a
+0:09
+playground the other day and a cop
+0:11
+wouldn't let me in for some reason I
+0:12
+don't really get that but anyways let's
+0:14
+get into the subject matter for today
+0:16
+which is going to be cash eviction
+0:18
+policies so similar to your evil
+0:20
+ex-girlfriend sometimes when you've got
+0:22
+too much of something that you don't
+0:23
+want to around you're going to have to
+0:24
+get rid of it the same is true for cash
+0:27
+data so let's talk about how we can do
+0:28
+so in today's episode episode all right
+Cache Evictions
+0:31
+I got this long white fella out right
+0:33
+here and I may or may not be talking
+0:34
+about the apple pencil so today like I
+0:37
+mentioned we'll be talking about cash
+0:38
+eviction policies so the same applies
+0:42
+for caching on a single desktop computer
+0:44
+as well or just a normal CPU but
+0:46
+basically whenever we're talking about
+0:48
+caching we want to avoid cash misses
+0:50
+generally speaking in order to ensure
+0:52
+that we're using faster storage we're
+0:54
+probably using more expensive storage
+0:56
+for our caches and as a result we're
+0:58
+going to have less of it what that means
+1:00
+is that when we run out of data in our
+1:02
+cache and we want to put some new data
+1:03
+in there we're probably going to have to
+1:05
+evict some old data and so again this is
+1:08
+going to allow us to avoid misses
+1:09
+assuming that we do it in a smart way so
+1:12
+what would be one example of that well
+1:14
+for example let's say I am over here and
+1:16
+I'm trying to figure out how many views
+1:17
+I have and then we've got gorav senen a
+1:20
+former collaborator of mine asking how
+1:22
+many views he has and we're both hitting
+1:24
+this cach I might hit it first thus the
+1:27
+reason I have an entry in the cache but
+1:29
+then if gorov goes and asks for his data
+1:32
+he might actually clobber my entry
+1:34
+because perhaps we only have three
+1:36
+entries in the cache and then we would
+1:37
+have you know gorov with you know 100K
+1:40
+views and then now I go and ask again
+1:43
+and now my data is gone and Joe Rogan
+1:45
+and peie never even asked how many views
+1:47
+they had so who needed their data in the
+1:50
+cash so again we want to be smart about
+1:52
+when and why we get rid of our data so
+First in First Out
+1:54
+let's talk about some eviction policies
+1:56
+that we can use to determine you know
+1:58
+what we actually get rid of in a cache
+2:00
+when we run out of space and how we
+2:02
+might actually go ahead and implement it
+2:04
+the first one is first in first out or
+2:06
+fifo so fifo as the name implies is
+2:09
+implemented using a queue so for example
+2:11
+if I wanted to go ahead and add a piece
+2:14
+of data to the cache that I'm going to
+2:16
+use in the future I would go and add it
+2:18
+to the head of the list right here and
+2:20
+then let's say you know gorov comes
+2:22
+along and he wants to add his own piece
+2:25
+of data so
+2:27
+gorav for 100k so he has 100K views in
+2:31
+his video he would add it at the end of
+2:33
+the link list and then as a result we
+2:35
+would find the current head over here so
+2:39
+it's this guy here head and then we
+2:41
+would just go and x that out and say now
+2:43
+the head is here and so that's pretty
+2:46
+easy to implement right we all know how
+2:47
+to use Q's assuming we've done a little
+2:49
+bit of data structures and algorithms
+2:50
+prep however there's a big issue with
+2:52
+that which is that when I am over here
+2:56
+rather and I eventually get my data
+2:59
+expired
+3:00
+if I want to keep accessing it and I've
+3:02
+been accessing it that entire time we
+3:04
+don't actually account for the fact that
+3:06
+I'm still interested in my data if I've
+3:08
+have accessed this thing a 100 different
+3:10
+times and eventually I get expired as
+3:13
+more pieces of data get added to the
+3:15
+cache well guess what I'm screwed out of
+3:18
+luck regardless of how often I'm using
+3:19
+the cach so what would be a more
+LRU
+3:22
+intelligent method well one of them
+3:24
+might be lru or at least recently used
+3:27
+which actually goes ahead and takes into
+3:30
+account when the last time I accessed a
+3:32
+piece of data in the cache was and as a
+3:34
+result if I accessed it very recently
+3:36
+then we don't want to remove that but
+3:38
+rather we have a preference for removing
+3:40
+pieces of data that have not been
+3:41
+accessed in a long time so let's go
+3:43
+ahead and say something like this where
+3:45
+this is like
+3:48
+oldest and this is
+3:50
+newest and so again gorav is going to
+3:53
+come in and add a new piece of
+3:56
+data right gorov and so now we can add
+4:01
+it into our doubly linked list I'll
+4:04
+explain why we do that in a second and
+4:06
+then we would get rid of PewDiePie
+4:08
+because that is at the oldest end of
+4:10
+things so that's how we would do um a
+4:12
+new entry in the lru cache but the again
+4:16
+the unique thing about lru is that
+4:17
+entries that already exist have to be
+4:19
+moved around so for example let's say I
+4:21
+read my entry and now I want to move
+4:24
+that to the beginning of the list
+4:26
+basically I'd have to flip spots with
+4:28
+gorov to be put it in the newest section
+4:31
+over here and that right there is the
+4:33
+reason why we implement it this way
+4:36
+which is a hashmap plus a doubly link
+4:39
+list so you can see that the access
+4:41
+pattern would be okay I want to move
+4:43
+where Jordan is in the doubly link list
+4:45
+first I go to the map it tells me here's
+4:47
+the node for Jordan over here and then
+4:50
+now because it's a doubly link list I
+4:52
+can do the actual shifting around of the
+4:54
+nodes in O of one time because whatever
+4:57
+node it is that I'm taking I'm literally
+4:58
+just putting it at the head over here
+5:01
+hopefully that makes sense sorry if it
+5:03
+was a little bit poorly drawn out but
+5:05
+the point is you go to the hashmap you
+5:07
+find your node you move it to the head
+5:08
+of the link list that's o of one makes
+5:10
+life super easy that's why we're using a
+5:12
+doubly linked list right here to keep
+5:14
+time complexity nice and low and so lru
+5:17
+is relatively easy to implement which is
+5:18
+why it's commonly used in practice it
+5:20
+also just makes a lot of sense if I you
+5:23
+know access the value in the cache a
+5:24
+minute ago it doesn't matter if it's
+5:26
+been in there for a week I still want it
+5:28
+because I'm still active accessing it so
+5:30
+I shouldn't get rid of it another
+LFU
+5:32
+possible alternative is lfu or least
+5:35
+frequently used so I'm not going to go
+5:37
+too deeply into the implementation of
+5:39
+something like this because in it of
+5:41
+itself it is a lead code hard problem
+5:43
+but the general gist is you would
+5:44
+actually want basically like two sets of
+5:46
+doubly link lists also with hashmaps and
+5:49
+each of those doubly link lists would
+5:51
+have a frequency so the frequency is
+5:54
+going to represent how many times that
+5:56
+cache entry has been accessed before so
+5:57
+you can see uh for the example of Jordan
+6:00
+and how many views he has on YouTube he
+6:01
+has 10 views and that cash entry has
+6:04
+been accessed eight times The Joe Rogan
+6:06
+entry has been accessed four times and
+6:07
+the PewDiePie entry has been accessed
+6:09
+six times so if we had to evict one of
+6:12
+these entries which one would it be it
+6:14
+would be the Joe Rogan entry because it
+6:16
+was least frequently used it's only been
+6:19
+used four times as opposed to the other
+6:21
+two more popular entries so again dou
+6:24
+link list of frequencies where it would
+6:26
+be like um you
+6:28
+know here are all the nodes that have
+6:30
+been accessed four times here are all
+6:32
+the nodes that have been accessed three
+6:34
+times blah blah blah blah blah and then
+6:37
+these and themselves are linked up and
+6:39
+then you know you might have one linked
+6:41
+to
+6:42
+six again look up the implementation
+6:45
+yourself I don't really want to make
+6:46
+this video 20 minutes long I think it
+6:47
+would defeat the purpose I don't think
+6:49
+anyone's going to ask you how to
+6:50
+implement this in a systems design
+6:51
+interview but if you are preparing for
+6:53
+dsna maybe it could come up so you never
+Conclusion
+6:56
+know so what is the conclusion to this
+6:59
+relatively short video well basically
+7:01
+the answer is as per usual there is no
+7:04
+right answer for choosing a cash
+7:06
+eviction policy however there are
+7:08
+definitely wrong answers fifo probably
+7:10
+not as good as lru Lio which you would
+7:13
+Implement with a stack I really can't
+7:14
+think of a good reason to use random
+7:16
+eviction policies probably also pretty
+7:19
+bad though they do come with the
+7:20
+advantage that you don't actually have
+7:21
+to have any extra metadata about your
+7:23
+cache data so maybe if you're really
+7:25
+cramped for space doing things randomly
+7:27
+could potentially be useful but just
+7:29
+generally speaking you should know the
+7:31
+tradeoffs of these approaches a general
+7:33
+idea of how to implement them because at
+7:35
+least for lru it could definitely come
+7:37
+up in an interview and of course when
+7:39
+you ultimately want to be using them
+7:41
+which is going to depend on your use
+7:43
+case anyways guys I hope you enjoyed
+7:45
+this video let's keep those views up so
+7:47
+I don't have to sell footp picks and I
+7:48
+will see you in the next episode
+
+##v54:
+
+0:00
+hello everybody and welcome back to the
+0:01
+channel sorry if the lighting is a
+0:03
+little bit weird right now I am
+0:05
+recording at night reasoning being that
+0:07
+I procrastinated too long due to looking
+0:10
+at my fantasy football team and trying
+0:12
+to make trades and then I had to roster
+0:14
+bait right after that so anyways now
+0:16
+that I've completed let's go ahead and
+0:18
+get into some systems designed for the
+0:19
+day we will be talking about reddis and
+0:21
+memcached all right so before we jump
+0:24
+into this one let's just do a very quick
+0:26
+refresher on some certain types of
+0:28
+caching that we've seen throughout Compu
+0:30
+in the most obvious one is probably the
+0:32
+one that comes with your CPU and that
+0:34
+would be things like L1 L2 and L3 cache
+0:38
+you've also just got individual device
+0:40
+cache a good example of this would be an
+0:41
+app on your mobile phone for example
+0:43
+with Google Drive typically you'll
+0:45
+download a copy of the thing that you're
+0:47
+storing in the cloud so that if you
+0:48
+don't have access to Internet you can go
+0:50
+ahead and access it
+0:53
+locally another thing would be an
+0:55
+example of caching on your application
+0:57
+server so if we have a server right here
+1:00
+and we've got a database right there
+1:02
+maybe we'll actually go ahead and save
+1:04
+some of the results from our database in
+1:07
+the cache so that if the user ever goes
+1:09
+ahead and requests them again we can
+1:11
+just quickly return it from our server
+1:13
+however this comes with a problem like
+1:15
+we've spoken about in the past when your
+1:17
+cash is actually tied to a physical
+1:19
+device or something like that it is
+1:21
+literally limited by the capacity of the
+1:23
+device itself and so as a result
+1:25
+sometimes we want our own separate
+1:27
+caching layer and in distributed
+1:28
+computing the way we might do this is
+1:30
+with something like reddis or mcash so
+1:33
+what are the upsides and downsides to
+1:35
+recap well basically it is a little bit
+1:37
+more complex because now you might have
+1:38
+to add and manage separate components
+1:41
+but at the same time and this is the
+1:42
+most important part it scales
+1:44
+independently so if we need a ton of
+1:46
+cash because most of our requests are
+1:48
+basically the same and we really don't
+1:50
+need much computing power on our servers
+1:52
+we can have a ton of cach and only one
+1:55
+server and one database node at the same
+1:57
+time if we need a ton of databases but
+1:59
+very little cash well we can do that too
+2:02
+so let's go ahead and talk about data
+2:05
+storage as I zoom in and basically one
+2:09
+thing about caches is that you know
+2:12
+typically we want them to offer us some
+2:13
+sort of performance boost and there are
+2:15
+a couple ways that you can do this one
+2:17
+is when the data itself is being stored
+2:19
+somewhere physically closer to the user
+2:22
+a good example of that would be the
+2:23
+Google Drive example uh where you know
+2:26
+for example you would write to a
+2:28
+document and then eventually that gets
+2:30
+uploaded to a cloud but that's done
+2:31
+asynchronously and the right to your
+2:33
+local hard drive is basically a right
+2:36
+back cash and it's faster because it is
+2:38
+located closer in proximity to your
+2:40
+device but if that makes a little bit
+2:42
+less sense the point is some caches are
+2:44
+closer to you and some caches are
+2:45
+literally just Faster by
+2:48
+storage and that is going to be the case
+2:50
+for RIS and mcash the reasoning why is
+2:52
+that they both store data in memory and
+2:54
+so we've seen a couple of inmemory
+2:56
+storage systems so far on this channel
+2:58
+and the one that I've spoken about the
+3:00
+most in this series would be volt DB so
+3:03
+if you haven't watched The Volt DB video
+3:04
+it's not too important for this one but
+3:06
+the gist is that is effectively also an
+3:08
+in-memory storage but it's also a
+3:10
+relational database and so that comes
+3:12
+with a lot of guarantees that we don't
+3:13
+necessarily need here because for our
+3:15
+cache what we really care more so about
+3:17
+is just having a key value store and so
+3:20
+it is going to be non-relational that's
+3:21
+going to be the case for both redus and
+3:23
+mcash so let's start by talking about
+3:25
+mcash first because it's a little bit
+3:27
+more basic and then reddish kind of
+3:30
+Builds on top of it so mcash is a super
+3:33
+Bare Bones in memory store and we can go
+3:35
+ahead and scale this thing out by having
+3:37
+a bunch of nodes making it distributed
+3:39
+all that fun stuff so if we do make it
+3:41
+distributed obviously we want some sort
+3:43
+of partitioning right fortunately mcash
+3:45
+does support that fors out of the box
+3:47
+using a consistent hash ring so as we
+3:50
+have right here in my little diagram
+3:52
+basically everything in this range for
+3:54
+example on the like consistent hashing
+3:56
+ring if this was like Keys a through J
+4:00
+or something would be stored from uh on
+4:03
+node one and then the same thing over
+4:05
+here all going to be stored on node two
+4:07
+and then the same thing over here all
+4:08
+going to be stored on node 3 Now using
+4:10
+consistent hashing is super useful
+4:12
+because it means that the same requests
+4:13
+are going to be getting routed to the
+4:15
+same cache hence the same data will be
+4:18
+going to the same users so for example
+4:19
+if I want my Facebook profile cached
+4:22
+it's probably going to be good that I'm
+4:24
+getting sent to the right cache every
+4:25
+single time where my data actually lives
+4:28
+so that's useful then we've also got
+4:31
+multi-threading now in theory you would
+4:33
+think well that's not that big of a deal
+4:34
+pretty much every database has
+4:35
+multi-threading well guess what maybe
+4:37
+redus doesn't so we'll talk about that
+4:38
+in a second and then finally just as a
+4:40
+quick throwback to last video it also
+4:43
+does use a least recently used eviction
+4:45
+policy so how do we Implement that let's
+4:47
+remember doubly linked
+4:50
+list with a
+4:54
+hashmap the reason being that let's say
+4:57
+this is the head of the list this is the
+4:59
+the tail we evict from the tail if I
+5:03
+were to go ahead and read this node
+5:05
+right here then the fact that I have
+5:07
+this hashmap allows me to figure out
+5:09
+where it is and then move it back around
+5:10
+to the Head anyways that's a bit of a
+5:13
+tangent now let's go ahead and move on
+5:15
+to redis and talk about that a little
+5:17
+bit so the main benefit that reddis
+5:19
+offers over mcash is that it's super
+5:21
+feature Rich as opposed to just being
+5:24
+like a very simple in memory key value
+5:26
+store you can use hashmaps you can use
+5:28
+sorted sets you can even use Geo indexes
+5:31
+and all of those are implemented in
+5:32
+memory which is really great so as
+5:34
+opposed to mcash which just does
+5:37
+partitioning via consistent hashing and
+5:39
+having a variable number of partitions
+5:42
+in the case of redus we actually have a
+5:44
+fixed number of partitions and which
+5:45
+partition goes where is basically
+5:47
+communicated via a gossip protocol so
+5:50
+let's imagine every single one of these
+5:52
+guys has three partitions on it so there
+5:54
+are 12 fixed partitions in the system if
+5:56
+this guy were to go down then you'll see
+5:58
+that we're going to move move one of its
+6:00
+partitions to every single one of the
+6:02
+nodes and we can do that because
+6:04
+basically these guys are going to say oh
+6:05
+is this thing down I think so is this
+6:08
+thing down I think so and then once they
+6:09
+all agree then partitions start getting
+6:11
+moved around okay cool another useful
+6:14
+thing that we've got with redis is a
+6:16
+right ahead log so I didn't mention that
+6:18
+in mcash but of course what that right
+6:20
+ahead log is going to allow us to do is
+6:22
+make Atomic operations because we can
+6:24
+first commit them to the right ahead log
+6:26
+and then we can actually write them in
+6:27
+memory that way if our machine were to
+6:30
+go down in the middle of it we can look
+6:31
+at our right ahead log and say well were
+6:33
+we supposed to actually write this thing
+6:35
+if not well abort it if so commit it and
+6:39
+so that way we can have Atomic uh
+6:41
+basically operations the next thing that
+6:43
+is important to ensure acid transactions
+6:46
+which we can do in redus is ensuring
+6:48
+isolation so how does redus do that well
+6:51
+it actually just runs things single
+6:53
+threadly and so what we end up doing is
+6:55
+achieving actual serial execution kind
+6:58
+of similar to volti actually so again
+7:01
+this allows us to have actual
+7:02
+transactions in reddis which can be
+7:04
+really useful if you want those type of
+7:06
+data guarantees I'm not saying it's
+7:08
+impossible with mcast either it's just
+7:10
+that you're probably going to have to
+7:11
+implement that type of locking yourself
+7:13
+then finally reddis while it is feature
+7:16
+Rich also kind of forces you to use
+7:18
+single leader replication it's good
+7:20
+because it kind of configures that out
+7:21
+of the box for you but at the same time
+7:23
+now you're stuck to that Paradigm so as
+7:26
+a quick conclusion before I get ready to
+7:29
+go go to sleep distributed caches like I
+7:31
+mentioned are really great because you
+7:33
+can scale them independently you can
+7:34
+have as much or as little capacity as
+7:36
+you really need and redus and mcash are
+7:39
+two really good solutions for achieving
+7:41
+that goal that being said they do differ
+7:43
+slightly I think redus is a little bit
+7:45
+more of a managed solution if you're a
+7:47
+solo developer or something and you just
+7:49
+need something to hold you over I feel
+7:51
+like Rus is probably going to make your
+7:52
+life easier that being said if you need
+7:54
+some super complex caching setup you
+7:56
+have the developers and you know the
+7:58
+complexity is required well maybe you
+8:00
+might actually need multi-leader
+8:01
+leaderless replication maybe you do need
+8:04
+some sort of special type of locking and
+8:06
+as a result maybe M cash might be the
+8:07
+better option for you so while it does
+8:10
+offer a little bit more flexibility in
+8:12
+my opinion it seems to be a little bit
+8:13
+less convenient so I'd say that's
+8:15
+probably the main trade-off there
+8:17
+anyways guys I hope you enjoyed this
+8:18
+video we're starting to see the light at
+8:20
+the end of the tunnel and I'm looking
+8:21
+forward to doing the interviews
+
+##v55:
+
+0:00
+hey guys and welcome back to the channel
+0:02
+sorry I haven't posted in a little bit
+0:04
+I've been out of town and as a result
+0:05
+I've been slacking a little bit as you
+0:07
+can see though I'm filming at night
+0:08
+hence the serial killer lights on the
+0:10
+back of my apartment and as a result I
+0:13
+want to get this over with so let's go
+0:14
+ahead and get into things all right so
+Content Delivery Networks
+0:16
+today we're going to be talking about
+0:18
+content delivery networks or CDN so what
+0:22
+is the premise Behind These well
+0:23
+basically in a lot of modern web
+0:25
+applications or even mobile applications
+0:28
+we want to be serving St static content
+0:30
+now what I mean when I say static
+0:32
+content is any type of file where it's
+0:33
+basically written once and then you're
+0:35
+never modifying it again so that might
+0:37
+be something like music some video
+0:39
+footage a photo or even possibly HTML
+0:42
+files because that also needs to get
+0:44
+sped up so much like my nether regions
+0:47
+these files are extremely large and as a
+0:50
+result it is very important to us and
+0:52
+very useful to us to be able to speed up
+0:54
+how quickly they load it is very crucial
+0:57
+for the user experience so let's go
+Caching
+0:59
+ahead ahead and quickly give ourselves a
+1:01
+little reminder about what caching does
+1:04
+for all of us even though I've said this
+1:05
+the last few videos you never know who's
+1:07
+watching which so caching especially in
+1:10
+the distributed setting is going to
+1:12
+allow us to get great speed UPS in terms
+1:14
+of our application performance both in
+1:16
+reads and writes in the case of cbn's
+1:18
+mostly going to be reads but this is
+1:21
+possible through faster data storage a
+1:23
+lot of caches will store things in
+1:24
+memory not necessarily the case for CDN
+1:26
+just because they're big files but what
+1:28
+is definitely the case for CDN
+1:30
+is closer data storage we're going to be
+1:32
+Distributing our caches geographically
+1:35
+and as a result I can be physically
+1:36
+closer to the CDN that's going to be
+1:38
+serving me content caches of course
+1:41
+though do have downsides to them they're
+1:43
+not just perfect mainly in the sense
+1:45
+that of course the more components that
+1:46
+we add to our system the more complexity
+1:48
+we have we have to keep track of where
+1:50
+everything is located in terms of the
+1:51
+files there will be more downtime of all
+1:54
+of our CDN nodes and of course cash
+1:56
+misses are slow if I try to read from a
+1:58
+CDN and the content's Not There would
+2:00
+have just been faster to go straight to
+2:01
+the database wherever I was storing that
+2:03
+static content originally so the main
+2:06
+kind of you know distinguishing factor
+2:08
+of a CDN is this part right here it is a
+2:11
+geographically distributed cache that is
+2:13
+used specifically for static content so
+2:15
+it's basically a subset of a distributed
+2:18
+cache so as you can see below I've got
+2:20
+my terrible drawing of the USA and
+2:23
+Canada because I don't even know what
+2:25
+Canada is shaped like and frankly I was
+2:27
+too lazy to look it up but the point
+2:29
+here is that Geographic assarting is
+2:31
+going to allow us to do the following if
+2:33
+we have the USA over here this is New
+2:35
+York this is you know let's say San
+2:36
+Francisco Chicago and then we've got
+2:38
+Canada maybe Toronto and Vancouver the
+2:40
+point is is that different people in
+2:42
+different places are likely going to be
+2:44
+viewing different content let's imagine
+2:46
+that I went ahead and started a magazine
+2:49
+such as the Sports Illustrated Swimsuit
+2:51
+Edition the people in New York and San
+2:53
+Francisco might have a preference for
+2:54
+the american ladies in the magazine but
+2:56
+the people in Canada the dirty Canadians
+2:59
+might like the Canadian girls and as a
+3:01
+result we would want to cach different
+3:03
+images in their CDN nodes so hopefully
+3:06
+that makes sense this gives us a little
+3:08
+bit of extra flexibility allows us to
+3:09
+make the most usage of our space so
+Push vs Pull
+3:12
+another important distinction with cdns
+3:14
+is the concept of pushing versus pulling
+3:17
+so using our Sports Illustrated Swimsuit
+3:19
+Edition example once again we have our
+3:22
+magazine on the left here and this would
+3:23
+be an example of a push CDN where let's
+3:26
+say we know that every single month or
+3:27
+maybe every day even we're going to be
+3:29
+uploading some new content and that's
+3:31
+going to be the majority of what users
+3:33
+are looking at in that case we can
+3:35
+preemptively populate our CDM so it's
+3:37
+October 2023 when I'm filming this video
+3:40
+so what I could do if I were film or
+3:42
+creating you know the Sports Illustrated
+3:43
+magazine is I could take the images of
+3:45
+that months Edition and pre-populate
+3:47
+them into the CDN such that when I ask
+3:49
+for bikini picks they're already in
+3:53
+there and the CDN says this is good to
+3:55
+go I already have your back covered now
+3:58
+of course if I were to look for an older
+4:00
+picture I'd be out of luck but we do
+4:01
+know in this case that the majority of
+4:03
+the time I'm going to be looking at the
+4:05
+most recent photos now that works really
+4:08
+really well when we have the type of
+4:10
+content that we know is going to be
+4:12
+accessed in advance however sometimes it
+4:14
+is less obvious and so the example I'll
+4:16
+be using on the right is only fans only
+4:19
+fans has a lot of creators and it's
+4:21
+probably impossible for the only fans
+4:24
+you know platform or admins to know in
+4:26
+advance which content is going to be
+4:27
+most popular so in this case we can use
+4:30
+a pole-based approach and that's going
+4:31
+to look something like this we've got
+4:33
+someone over here and they're going to
+4:35
+say feet picks obviously I've been
+4:37
+selling a lot of those on only fans
+4:38
+recently they've been blowing up so this
+4:40
+is pretty realistic the CDN at this
+4:42
+point maybe I just posted them so it's
+4:44
+going to say no I don't actually have
+4:46
+these it's then going to have to proxy
+4:48
+itself to the server and say do you have
+4:50
+feed picks and keep in mind this is
+4:52
+actually not the worst thing a nice
+4:53
+thing about CDN is because they are
+4:55
+using you know basically data center
+4:57
+level Hardware the network switches they
+4:59
+have are faster and that connection
+5:01
+between the CDN and the actual
+5:02
+application server could potentially
+5:04
+even be faster even though there is
+5:06
+technically kind of like a man in the-
+5:07
+Middle Dynamic so once we go ahead and
+5:10
+you know connect to our server the
+5:13
+server is going to say okay well
+5:14
+obviously I have these I'm the source of
+5:16
+Truth CDN you can go populate yourself
+5:18
+so now the CDN has these pictures over
+5:20
+here it's going to return them to the
+5:22
+user and store them such that when
+5:24
+another user comes along and asks for
+5:26
+the same one the CDN already has those
+5:28
+pictures and comes back back so of
+5:30
+course the poll based system is very
+5:32
+good when you don't know in advance what
+5:34
+content is going to be most popular
+5:36
+other places where this is going to be
+5:37
+useful or places like Tik Tok YouTube
+5:39
+Twitter anything like that where you
+5:41
+just don't know in advance because
+5:42
+there's such a wealthy amount of content
+5:45
+so of course the one downside of a pole
+5:47
+based CDN is that we're going to have a
+5:49
+cash miss this is kind of inevitable but
+5:51
+again it is going to slow things
+5:53
+down Okay so let's quickly conclude our
+Conclusion
+5:56
+cdns here so I can go to bed but
+5:58
+basically like I mentioned men the
+5:59
+defining factor of a CDN is that
+6:01
+geographic distribution and the fact
+6:03
+that generally speaking we're using it
+6:05
+to serve static content so this has a
+6:07
+bunch of pros and a couple of cons as
+6:09
+well of course it is going like any
+6:12
+other cache to reduce the load on our
+6:14
+actual application servers if every
+6:16
+single one of us tried to reach out to a
+6:18
+server for the image or file that we
+6:20
+were looking for that would be extra
+6:22
+load that could be used for certain
+6:23
+other requests since so many of these
+6:25
+are going to be duplicated we're better
+6:26
+off just caching that content of course
+6:29
+in addition this is going to be faster
+6:31
+this is kind of where the geographic
+6:33
+part comes in at least as far as I'm
+6:35
+aware not all cdns are necessarily going
+6:37
+to be storing stuff in memory because
+6:39
+these files can potentially be big and
+6:40
+as a result you wouldn't be able to
+6:41
+store as many of them because you're
+6:43
+just going to have less memory so a good
+6:45
+chunk of these might actually still be
+6:46
+storing things on disk but if they're
+6:48
+much closer to the user you're still
+6:49
+going to get a nice performance
+6:51
+Improvement another thing is that we can
+6:53
+actually have different stuff in every
+6:55
+single cache split by location maybe if
+6:57
+you have many images you can split it by
+6:59
+resolution uh audio bit rate anything
+7:02
+along those lines you know we can
+7:03
+actually vary the content there which is
+7:05
+super nice do some pre-processing on it
+7:08
+of course we do have added complexity um
+7:10
+you know I now have to keep track of the
+7:11
+fact that I have all of these extra
+7:13
+nodes they can go down what am I going
+7:15
+to do as far as a coordination service
+7:17
+goes do I know which nodes are actually
+7:19
+mine which are up which are down and of
+7:21
+course cash misses especially in a
+7:23
+pole-based CDN are going to be expensive
+7:25
+in a push based CDN you'll have cash
+7:27
+misses when you try to access content
+7:29
+that you know the site admins didn't
+7:31
+think would be there so for example you
+7:33
+know if I want to access uh August 2023
+7:36
+photos when October is the most recent
+7:38
+edition of my Sports Illustrated
+7:39
+magazine I'm probably going to get a
+7:41
+cash Miss and that's going to be a bit
+7:43
+slower so CDN keep in mind or typically
+7:46
+something you want to be Outsourcing
+7:47
+because otherwise you'd have to set up
+7:48
+all these nodes and all these different
+7:50
+places feel free to look at the docs for
+7:52
+things like aami and Cloud flare and
+7:54
+then of course in terms of what we're on
+7:56
+to next I want you guys to start
+7:58
+thinking about well you know
+7:59
+of course CDN are a cache and as a
+8:01
+result you can't always store all of
+8:03
+your data your static content in those
+8:05
+caches so if they're not in the cash
+8:07
+where would we actually be storing them
+8:09
+because in truth a typical database like
+8:12
+we've discussed in the past is not
+8:13
+necessarily the best answer anyways guys
+8:16
+hope you enjoyed this video hope it was
+8:18
+informative and I will see you in the
+8:19
+next one
+
+##v56:
+
+0:00
+what's up guys this is Jordan welcome
+0:02
+back to the channel as you can see I
+0:04
+finally shaved my mustache so I'm no
+0:06
+longer getting a ton of dirty looks from
+0:07
+every pair of young parents that I walk
+0:09
+by anyways today we're going to be
+0:11
+talking about object stores so let's go
+0:13
+ahead and get right into it all right I
+The Problem
+0:15
+have whipped out the old apple pencil so
+0:17
+let's get started so basically in the
+0:19
+last video what we talked about was CDN
+0:21
+and cdns are effectively a nice
+0:23
+distributed Geographic cache for us to
+0:26
+go ahead and store our static content on
+0:28
+our application so that users can easily
+0:30
+see it static content meaning any type
+0:32
+of file that could be a video it could
+0:33
+be a photo music files logs anything
+0:35
+like that and so the gist is because CDN
+0:38
+are a cache we can't store everything in
+0:40
+there we need to actually look for a
+0:41
+place to put the rest of our static
+0:43
+content so what is actually going to be
+0:45
+the backup of the CDN or the source of
+0:47
+Truth rather well in the past we've
+0:49
+talked about Hadoop or hdfs Hadoop
+0:51
+distributed file system so let's go
+0:53
+ahead and do a quick recap on that and
+0:55
+we'll talk about whether that's the
+0:56
+right solution for this problem so going
+Hadoop Recap
+1:00
+and looking at the Hadoop recap
+1:02
+basically to remind everyone in case you
+1:04
+didn't watch that video if you didn't
+1:05
+you probably should Hadoop is a
+1:07
+distributed processing framework which
+1:08
+means that we can use a bunch of
+1:10
+commodity Hardware basically just random
+1:12
+Dell computers located in a bunch of
+1:14
+servers uh or rather in a bunch of data
+1:16
+centers to go ahead and both store files
+1:19
+and also run large batch processes on
+1:22
+these uh files because of the fact that
+1:24
+the compute aka the place where we're
+1:26
+actually going to be running those batch
+1:27
+jobs is local to where the files are
+1:29
+stored that's kind of the main value at
+1:31
+so you've got you know on every single
+1:33
+node obviously you've got some computing
+1:36
+power and you've also got some dis
+1:39
+space and the general Paradigm is that
+1:42
+we want to basically be sharding up our
+1:44
+jobs so that anywhere where there's a
+1:46
+file that we care about uh we're
+1:48
+handling it accordingly on that note
+1:50
+eventually we'll probably have to
+1:51
+shuffle some data over the network but
+1:53
+we want to get as much data locality as
+1:55
+humanly possible on Hadoop okay so
+Problems with Hadoop
+1:58
+Hadoop unfortunately does actually have
+2:00
+some pitfalls at least when it comes to
+2:02
+storing just generalized static content
+2:05
+so the first thing is that you know if
+2:07
+you're actually managing a Hadoop
+2:09
+cluster if you're the person in charge
+2:11
+of literally dealing with all of these
+2:12
+nodes uh that is just very inconvenient
+2:15
+because when you need more space you
+2:16
+have to actually add more nodes that
+2:18
+could be you know spinning up an ec2
+2:20
+instance if you're running a dup cluster
+2:22
+on a bunch of cloud VMS it could be
+2:24
+literally adding a new physical server
+2:26
+node uh but either way it's just a pain
+2:28
+in the butt another thing is that it is
+2:31
+expensive so here's the thing like I
+2:33
+mentioned before we've got some
+2:35
+compute and we've got a bunch of files
+2:39
+and so the issue is uh generally
+2:40
+speaking when you're running batch jobs
+2:42
+you don't really know exactly uh where
+2:45
+the files that you care about or stored
+2:46
+beforehand something like spark or maper
+2:49
+juice would kind of handle that for you
+2:51
+and so as a result let's say you know
+2:52
+you're running some massive ml batch job
+2:55
+on maybe 10% of your files the other 90%
+2:58
+of your computers are probably still
+3:00
+doing nothing in this batch job and yet
+3:02
+they're storing a bunch of different
+3:03
+files and they're still holding very
+3:05
+expensive graphics cards that are just
+3:07
+not getting used so the point is is that
+3:10
+Hardware or rather specifically uh
+3:13
+compute and
+3:15
+disk are scaling
+3:18
+linearly I can't spell today I don't
+3:21
+know why and the issue with that is that
+3:24
+it's expensive because a lot of the time
+3:25
+we don't necessarily want to run big
+3:27
+batch jobs we just want to throw a bunch
+3:28
+of stuff somewhere and if we need to we
+3:30
+can always read it back later but it's
+3:32
+not super important that we have some
+3:33
+either specialty Hardware or just good
+3:35
+Hardware in general sometimes we
+3:37
+literally just want more hard
+What are object stores
+3:39
+drives so this is kind of where object
+3:41
+stores come in this is a major service
+3:44
+offered by large Cloud providers AKA
+3:46
+just big tech companies so Amazon Google
+3:48
+Microsoft are probably the biggest three
+3:50
+object stores that you'd have heard of
+3:52
+if you've heard of S3 Azure cloud
+3:54
+storage Google Cloud Storage so what are
+3:56
+the main advantages of these well uh
+3:58
+they're just easy to use use number one
+4:00
+is you don't actually have to have any
+4:02
+estimate of the number of files that you
+4:04
+need to store or the capacity that you
+4:06
+need it pretty much autosales for you
+4:08
+which is important the other thing is
+4:10
+that you know you can just configure how
+4:11
+many replicas you want it'll deal with
+4:13
+that for you I would love to do a deep
+4:15
+dive into the architecture of things
+4:17
+like object stores but the truth is
+4:18
+because these are all proprietary um you
+4:20
+can't really look into exactly how they
+4:22
+work I imagine there's some sort of like
+4:25
+Network shared storage and then you know
+4:26
+you just have a ton of nodes in there
+4:28
+too with really crappy CPUs but either
+4:30
+way they're able to make this thing
+4:32
+super cheap and that is kind of the main
+4:34
+point so I looked at some article from
+4:36
+data breaks I'll throw this in the
+4:37
+description of the video but it looks
+4:39
+like to store the same amount of data on
+4:41
+some Hadoop cluster that you're running
+4:42
+on AWS versus just dedicated S3 uh it's
+4:46
+about a tenth of the price which is
+4:47
+really wild if you think about it and so
+4:49
+you basically end up getting this black
+4:51
+box right here which is called an object
+4:53
+store and you can throw anything in
+4:55
+there logs images blah blah blah blah
+4:57
+blah and so actually what this is kind
+4:59
+of leg to is a bunch of companies will
+What is a data lake
+5:01
+do this and what they'll call it is a
+5:03
+data lake so if you've heard of this
+5:04
+term before basically think of it in
+5:07
+contrast to a data warehouse we've
+5:09
+spoken about a data warehouse before on
+5:11
+this channel where a data warehouse has
+5:13
+a schema it's explicitly basically just
+5:15
+like a massive SQL table for a lot of
+5:18
+analytical processing it probably uses
+5:19
+column oriented storage and it's got a
+5:21
+bunch of mini tables together all with a
+5:23
+schema that we can join and So that
+5:25
+obviously is going to require some
+5:27
+amount of pre-processing or pre-
+5:28
+formatting of the data whereas the kind
+5:31
+of the main appeal of a data lake is
+5:33
+that in a massive company you've got
+5:35
+tons of files that are being generated
+5:36
+tons of different logs tons of different
+5:38
+data and you're probably not going to
+5:41
+want to have to you know get that in
+5:42
+some agreed upon schema beforehand it
+5:44
+would be better to just put it in one
+5:46
+centralized repository and then deal
+5:48
+with it later through a variety of batch
+5:49
+jobs and so that is all schema and
+5:52
+that's effectively what an object store
+5:53
+can do for you and this is colloquially
+5:55
+been dubbed as a data lake so you see it
+5:58
+can include logs or metrics or images or
+6:00
+really anything else you can just put it
+6:02
+in there and this is great especially
+6:03
+when you have many teams within a
+6:04
+company because then some other team can
+6:06
+dig it out after the fact and do
+6:08
+whatever processing you need on it so
+6:10
+the big thing here is that that's going
+6:12
+to require some sort of batch jobs right
+6:14
+and the question is how a batch jobs
+Batch jobs on object stores
+6:16
+actually work on object stores because
+6:18
+if you recall I pretty much blatantly
+6:20
+said that the main appeal of object
+6:21
+stores are that they have a ton of
+6:23
+storage and not that much compute so
+6:26
+unfortunately the main downside of
+6:28
+object stores are that they aren aren't
+6:29
+great for running batch jobs so
+6:31
+basically if you have all of your data
+6:33
+in this Lake in S3 you're eventually
+6:34
+going to have to go and Export it to
+6:36
+some sort of distributed computing
+6:37
+cluster probably had doop and go ahead
+6:40
+and do that and that's going to be slow
+6:41
+because it's a lot of files you are
+6:43
+effectively having to put them over the
+6:45
+network and of course that is a
+6:47
+bottleneck but it seems that in reality
+6:49
+a lot of companies have kind of just
+6:50
+weighed out this trade-off and realized
+6:52
+that it's not a huge deal for them one
+6:54
+of the kind of the key defining factors
+6:55
+of the batch job is that you kind of
+6:58
+don't really care when it runs as long
+6:59
+as it runs by the time it has to
+7:02
+obviously there are some exceptions to
+7:03
+this uh and we can discuss those in a
+7:05
+little bit but as long as your batch job
+7:07
+gets done say within the hour within the
+7:09
+day or something like that it's
+7:10
+generally fine and if it allows you to
+7:12
+run a smaller Hado cluster then what you
+7:15
+would have been able to do otherwise it
+7:17
+can be a lot less expensive which for
+7:19
+these companies with tons of data really
+7:21
+makes a difference to their bottom line
+7:23
+hence the reason that this kind of
+7:24
+Paradigm is becoming a lot more popular
+Conclusion
+7:27
+so in conclusion using an object store
+7:29
+to basically just dump everything AKA as
+7:32
+a data lake is actually pretty viable
+7:34
+you can always do batch jobs on the data
+7:36
+later you are going to have to move it
+7:37
+over the network which is unfortunate
+7:39
+but sometimes that's just life so even
+7:42
+though it is a little bit less
+7:43
+convenient it comes at a much lower cost
+7:46
+on the other hand if you do actually
+7:47
+have batch jobs that you need to run
+7:49
+with very low latency if you really want
+7:51
+to take advantage of the data locality
+7:53
+that something like Hadoop would give
+7:54
+you well then you may just have to use a
+7:56
+Hadoop cluster it's a bit more expensive
+7:58
+but that's kind of what happens when you
+7:59
+get better performance anyways guys I
+8:01
+hope this video makes sense as a high
+8:03
+level overview I will see you in the
+8:04
+next one
+
+##v57:
+
+0:00
+hello everyone and welcome back to the
+0:02
+channel since I keep talking about foot
+0:04
+picks I've also started considering
+0:06
+switching into ASMR now but seriously
+0:09
+today we're going to be talking about
+0:10
+load balancing so for those of you who
+0:12
+aren't familiar typically I recommend
+0:14
+balancing your load across many
+0:16
+different places some people decide to
+0:18
+be monogamous with their load but I
+0:20
+recommend spreading it out it makes life
+0:22
+a whole lot simpler anyways let's start
+0:24
+going ahead and talking about some
+0:25
+systems design okay so in order to start
+Horizontal vs Vertical Scaling
+0:28
+talking about actual ual load balancing
+0:31
+what we must first do is talk about
+0:33
+horizontal versus vertical scaling I
+0:36
+can't remember if I've mentioned this so
+0:37
+far in this refactored series but uh in
+0:40
+case I haven't let's go over it quickly
+0:42
+so vertical scaling is pretty simple the
+0:45
+point is if we've got one node that is
+0:48
+particularly slow rather than make
+0:50
+things more complex by putting it over a
+0:52
+bunch of different systems let's just
+0:53
+get a more powerful node so I've got one
+0:57
+database congrats now I just put it on a
+0:59
+better CPU
+1:00
+maybe some more RAM anything like that
+1:02
+but of course that only works up into a
+1:04
+point and so massive tech companies
+1:06
+these days have instead preferred to use
+1:08
+commodity Hardware alongside horizontal
+1:11
+scaling and that's over here so we take
+1:13
+just one node and then we scale them out
+1:16
+with very similar different types of
+1:18
+other nodes in order to basically scale
+1:21
+them out and sometimes we might end up
+1:23
+having to partition if for example we're
+1:25
+hor horizontally scandling out a
+1:27
+database if we're just doing this for a
+1:29
+bunch of application servers which are
+1:31
+all doing the same thing that we don't
+1:33
+necessarily have to partition but keep
+1:34
+in mind that sometimes it is
+Load Balancing
+1:37
+necessary okay so now let's talk about
+1:39
+load balancers a little bit because in
+1:42
+reality this is not just a philosophy of
+1:44
+how to talk to girls but in reality it
+1:47
+is something that we use when
+1:48
+horizontally scaling so basically of
+1:51
+course when we've got a bunch of
+1:52
+different more or less identical nodes
+1:54
+that we can send our requests to we want
+1:56
+to make sure that none of them are
+1:57
+getting overloaded and that none of them
+1:59
+are getting getting starved from doing
+2:00
+any work and this is where our load
+2:02
+balancer comes in so it can actually sit
+2:05
+between pretty much any two layers of
+2:07
+our application as you can see right
+2:09
+here we've got a client we've got some
+2:11
+let's say app servers and we've got a
+2:13
+load balancer between them uh between
+2:15
+the app servers and our caching layer
+2:18
+we're going to need a load balancer
+2:19
+there because which cach are we actually
+2:21
+going to and then finally between our
+2:23
+caching layer and our actual databases
+2:25
+themselves we're also going to need one
+2:28
+more load balancer because again that
+2:30
+request can go to any of those databases
+2:32
+we want to do so intelligently and uh
+2:35
+the load balancer is ultimately going to
+2:36
+help us do that so let's talk about how
+Routing Policies
+2:39
+well the load balancer is going to
+2:41
+basically use a few different types of
+2:43
+routing policies in order to send our
+2:45
+requests to one of the different nodes
+2:48
+and so basically um you know because we
+2:50
+have multiple choices we need to know
+2:52
+where we can actually send them and so
+2:54
+there are a few different algorithms
+2:56
+that we can use here and I would say
+2:57
+depending on the situation that some are
+2:59
+better than others so for example we've
+3:01
+got round robin where basically if this
+3:02
+is our load balancer right here you know
+3:04
+we could send one to this database two
+3:06
+to this next one three to here and then
+3:08
+we would wrap around you know this is
+3:09
+request number four of course let's say
+3:12
+uh this node right here is 2x is
+3:13
+powerful then uh before you know we do
+3:16
+anything else we would send this guy
+3:18
+requests one and two and then we would
+3:19
+send this guy requests three and then
+3:21
+four and then this guy five and six so
+3:23
+that's kind of the concept of weighted
+3:25
+round robin there's also the idea of
+3:27
+lowest response time which is basically
+3:29
+just like you know keep track on the
+3:31
+load balancer of the response time of
+3:33
+every single node keep a running average
+3:36
+uh which does require actually keeping
+3:37
+some State on the load balancer and then
+3:40
+as we kind of get those aggregate
+3:42
+metrics whichever one has had the lowest
+3:44
+response time over the last and request
+3:46
+we can then go ahead and Route our
+3:48
+message over there ideally the goal then
+3:50
+would be that all of our nodes have an
+3:52
+equal response time coming back and then
+3:55
+the last concept that we'll talk about
+3:56
+and this is probably the one we'll be
+3:57
+using most in reality is hashing the
+4:00
+reasoning being that we can do smart
+4:02
+things with it and we'll talk about that
+4:03
+in a second so there are two types of
+4:05
+hashing that you can do when it comes to
+4:06
+load balancing based on the actual
+4:09
+message itself or based on just like
+4:11
+what is exposed at the networking layer
+4:14
+so that second option is called layer 4
+4:17
+uh you know it's basically load
+4:18
+balancing off of things that don't
+4:20
+actually require us to do like a full
+4:21
+read and decode of the message things
+4:23
+like the IP address the protocol and uh
+4:26
+that's just going to be faster because
+4:27
+again we don't really need to read the
+4:28
+message itself we're just looking at
+4:30
+headers and then similarly we've got
+4:32
+layer seven which in this case we're
+4:34
+actually reading the message content uh
+4:36
+that payload and that is going to be a
+4:38
+little bit slower but allows us to be
+4:40
+more flexible and sometimes we want to
+4:41
+be intelligently routing our messages
+4:44
+we'll talk about why in a second so the
+Consistent hashing
+4:47
+next thing that we're going to talk
+4:48
+about is consistent hashing and so we've
+4:50
+spoken about consistent hashing plenty
+4:53
+in the past because basically what it
+4:55
+allows us to do is it allows us to
+4:57
+partition a bunch of you know keys and
+5:01
+make sure that when different nodes get
+5:03
+added to our cluster and they're taking
+5:05
+kind of part of that partition range
+5:07
+that the majority of the keys don't
+5:08
+actually switch their location so in the
+5:11
+context of load balancing let's go ahead
+5:12
+and think about what that's very useful
+5:14
+for in this case it's actually really
+5:16
+great when we have a local cache on each
+5:19
+potential place that we're load
+5:21
+balancing to so let me draw that out
+5:22
+quickly we've got our load balancer and
+5:25
+then we've got three possible servers
+5:27
+that we could be talking to s 1
+5:31
+S2
+5:32
+S3 right and so now let's imagine that
+5:36
+I'm coming in this is Jordan and I'm
+5:39
+making a request and the load balancer
+5:41
+sends me to S1 which is an application
+5:44
+server keep in mind and that's going to
+5:46
+route to the database which is then
+5:49
+going to return an answer now being that
+5:52
+S1 is a server it's now going to cash
+5:55
+the result of that Jordan call and so
+5:57
+it's very important then that if if I
+5:59
+were to go and reach out to the load
+6:01
+balancer a second time that I would go
+6:04
+and have my request routed back to
+6:07
+S1 because that way I'm more likely to
+6:10
+hit that cache data on the server and so
+6:12
+in this sense it is very very useful
+6:15
+when we are basically using a load
+6:17
+balancer to perform some type of hashing
+6:19
+and when we are performing some type of
+6:21
+hashing it is much better to use
+6:23
+consistent hashing then basically taking
+6:25
+the hash of my username and then doing
+6:28
+mod n where n is the number of
+6:31
+servers and the reason for this if you
+6:33
+recall is that as we add servers or as
+6:37
+we remove servers then n becomes either
+6:39
+n + one or n minus one and that actually
+6:43
+shifts the location of every single load
+6:46
+balancing result because uh now we just
+6:48
+have modulo a different number and so
+6:51
+instead what we do is consistent hashing
+6:53
+where if you recall we've got basically
+6:55
+a ring and this ring represents the
+6:57
+whole hash output range
+7:01
+and we randomly distribute all of our
+7:02
+servers somewhere along the ring so this
+7:04
+is server one this is server two this is
+7:07
+server three and basically the the the
+7:09
+requests or the hash range that go to
+7:11
+server one is represented by the entire
+7:14
+distance after server one and before
+7:17
+server two and so the reason this is
+7:19
+useful is let's say we wanted to add
+7:21
+server 4 over here now the only keys
+7:25
+that are actually being moved are going
+7:27
+to be the ones over here
+7:30
+which used to belong to server 3 but are
+7:32
+now belonging to server 4 so they go
+7:34
+from 3 to four but as you can see if we
+7:37
+were using the hash mod n formula and we
+7:41
+added a fourth server pretty much every
+7:43
+single other key would have to be
+7:44
+rehashed and that's why consistent
+7:45
+hashing is a lot better so it is
+7:47
+definitely an algorithm that we want to
+7:48
+be using when load
+Fault tolerance
+7:50
+balancing okay the last kind of topic
+7:52
+for this video that I would like to talk
+7:54
+about today is going to be fault
+7:56
+tolerance so so far we've discussed load
+7:58
+balancers as if there's there's only a
+7:59
+single one at every single point between
+8:01
+two layers of our application and in
+8:03
+reality that's not going to be the case
+8:05
+otherwise we would have a single point
+8:07
+of failure so there are generally two
+8:09
+types of common approaches to dealing
+8:10
+with fault tolerance while load
+8:12
+balancing I will outline them both the
+8:14
+first is called active active load
+8:16
+balancing and the nice thing about this
+8:18
+is that because it is effectively us
+8:21
+having two active load
+8:23
+balancers we can achieve greater
+8:25
+throughput our load balancer won't be a
+8:27
+bottleneck for our application at least
+8:29
+it's less likely to do so at the same
+8:32
+time keep in mind that I've already
+8:33
+mentioned throughout the episode that
+8:36
+sometimes it is actually useful to keep
+8:38
+some State on your load balancer so for
+8:40
+example if you always want to like take
+8:42
+the request and do a routing policy
+8:45
+where it is like lowest average response
+8:47
+time the issue of having two of these
+8:49
+guys is that you know now the local
+8:52
+state is divided between two places we
+8:54
+probably don't have as great of a sense
+8:56
+of the actual response time again that's
+8:58
+not really a huge deal active active
+9:00
+does make a lot of sense but this does
+9:02
+lead us to the second possible
+9:04
+configuration which is an active passive
+9:06
+load balancer where you've got one guy
+9:08
+that's active the other guy that's
+9:09
+passive and when this guy goes down
+9:12
+they're both in communication with
+9:14
+zookeeper zookeeper is taking heartbeats
+9:16
+and then the passive load balancer will
+9:18
+eventually be able to read from
+9:19
+zookeeper that it thinks the active one
+9:21
+is down and then it in turn can take
+9:24
+over and start routing requests to all
+9:26
+of these guys the client can be doing
+9:28
+the
+Conclusion
+9:30
+same okay so let's quickly conclude this
+9:33
+video because I am getting tired and
+9:34
+want to go to bed basically load
+9:37
+balancers essentially in any horizontal
+9:39
+scaling type of situation are completely
+9:41
+essential um you know this can happen
+9:44
+with your app servers your caches your
+9:46
+databases and at the end of the day uh
+9:48
+kind of the one main process to think
+9:50
+about here is actually how you want to
+9:52
+be routing your request of course using
+9:54
+something like round robin while basic
+9:56
+often still does get the job done
+9:58
+however if it's situation where caching
+10:00
+is involved and you want to be sure that
+10:02
+the same requests are getting routed to
+10:04
+the same servers every single time to
+10:06
+maximize your cash hits then something
+10:08
+like consistent hashing on a layer four
+10:11
+or a layer seven level of data is
+10:13
+probably the way to go for you anyways
+10:15
+guys hope you enjoyed this video and
+10:17
+I'll see you in the next one
+
+##v58:
+
+0:00
+hello everybody and welcome back to the
+0:02
+channel I'm sorry this video is coming
+0:04
+out a little bit later than I would have
+0:05
+liked uh to tell you the truth I
+0:07
+actually had a company dinner last night
+0:09
+which I got pretty drunk at and uh I was
+0:11
+fully wearing a onesie out cuz it was
+0:13
+Halloween and I was thinking like oh
+0:14
+this would be such a good time to film a
+0:16
+video I'm hammered and wearing a onesie
+0:18
+uh but unfortunately I got back and then
+0:20
+I I was pretty cold and and had to poop
+0:22
+and go to bed uh but nonetheless uh
+0:24
+today we will be talking about TCP
+0:26
+versus UDP and unfortunately I am stone
+0:29
+cold sober for it anyways hopefully by
+0:31
+the end of this video you'll know what
+0:33
+flow control and congestion control is
+0:35
+and know I'm not referring to the
+0:37
+that I took last night so anyways let's
+0:39
+go ahead and get into it all right so my
+What are TCP and UDP
+0:41
+computer basically just blue screened as
+0:43
+I just started to try to record so that
+0:46
+sucks but uh here we go again so today
+0:48
+we are covering TCP vers UDP like I
+0:50
+mentioned and these are both acronyms
+0:52
+TCP being transmission control protocol
+0:55
+UDP being user datagram protocol and the
+0:58
+point is that there are both ways of
+1:00
+effectively sending messages over the
+1:02
+Internet or not necessarily ways but
+1:04
+they're protocols in order to you know
+1:06
+allow to have a standard for how we're
+1:08
+actually going to send packets over the
+1:10
+network and so those are going to work
+1:12
+on an IP network which just means that
+1:14
+computers have some sort of standardized
+1:16
+address and we can send those packets to
+1:18
+them using that address and of course if
+1:21
+these weren't a little bit different
+1:22
+from one another we wouldn't be talking
+1:23
+about them so let's talk about how they
+1:25
+are different well let's go ahead and
+What is UDP
+1:28
+start out by talking about UDP so think
+1:30
+of UDP as super Bare Bones basically
+1:33
+you've got node one over here you've got
+1:35
+node two and basically all we do is say
+1:39
+you know I've got this address X let's
+1:41
+send packets there and UDP just goes
+1:43
+ahead and does that and as a result of
+1:45
+it being so Bare Bones UDP is super
+1:47
+simple it's super fast and the one kind
+1:51
+of slight guarantee that it does offer
+1:53
+about the data is you know if you've
+1:54
+heard of check sums basically it is
+1:56
+extra metadata per packet uh that allows
+1:59
+you to tell if the packet data has been
+2:01
+corrupted or not so it includes those as
+2:03
+well but other than that you really
+2:04
+don't get too much out of UDP uh it's
+2:07
+pretty simple and as a result it is fast
+2:09
+uh the one thing it is compatible with
+2:11
+is multicast which is you know for
+2:13
+example if I have three different nodes
+2:15
+over here blah blah blah blah blah one
+2:18
+node can very easily send a single
+2:20
+packet and it could be routed to all of
+2:22
+these places so you'll see multicast use
+2:24
+occasionally as well in certain
+2:26
+applications of course UDP as it is so
+2:30
+simple doesn't really give us any
+2:32
+guarantees about our data and
+2:33
+additionally you can pretty much just
+2:35
+send as many packets over the network as
+2:37
+you want so let's now talk about TCP
+2:40
+which tries to address these issues so
+What is TCP
+2:42
+TCP kind of most importantly about it is
+2:45
+that it is a reliable two-way broadcast
+2:49
+and so what that means is that basically
+2:51
+we've got two nodes over here node one
+2:52
+node two like
+2:55
+before the first thing that they're
+2:56
+going to do before they can even start
+2:58
+communicating with one another is is
+3:00
+rather than just allowing messages to be
+3:01
+sent without the receiving node ever
+3:03
+like accepting that it's open to them in
+3:05
+TCP you must first perform a three-way
+3:08
+handshake and the three-way handshake is
+3:10
+pretty simple basically you've got node
+3:12
+one which I'll call the sender and node
+3:14
+two which I'll call the receiver even
+3:16
+though it is by directional they can
+3:18
+both communicate with each other one of
+3:19
+them has to initiate the handshake and
+3:21
+the handshake is initiated by sending
+3:23
+this type of message called a sin with
+3:25
+something over here with an X in this
+3:27
+case which I'll call the sequence number
+3:29
+for example X could be like 100 so what
+3:32
+node 2 is now going to do the second
+3:33
+step in the process is it's going to
+3:35
+respond with an act saying hey here's
+3:37
+the sequence number of my
+3:39
+acknowledgement in this case it's x +
+3:41
+one saying the receiver expects that the
+3:43
+next message it's going to receive will
+3:45
+have a sequence number of x + one and
+3:48
+then also what it's going to say is here
+3:50
+is another sin on my end with the
+3:53
+sequence number of
+3:56
+Y and then of course uh the sender is
+3:59
+going to acknowledge that with its own
+4:00
+sequence number saying y + one meaning
+4:02
+that when the receiver now sends packets
+4:04
+back to the sender the next message that
+4:06
+it sends should have a sequence number
+4:08
+of y + 1 so basically after that again
+4:12
+they can communicate with each other and
+4:13
+the sequence numbers are very important
+4:15
+here which we will start to talk about
+Reliable Delivery
+4:17
+because they guarantee that we can have
+4:19
+reliable delivery so TCP does reliable
+4:22
+delivery uh via two different methods
+4:24
+One is using sequence numbers and the
+4:26
+other is timeouts when we never receive
+4:28
+any acknowledgements so the
+4:30
+acknowledgements play a important an
+4:31
+important part here so imagine we have
+4:34
+our sender over here and our receiver
+4:37
+and the first thing that the sender does
+4:39
+is send a message with sequence number a
+4:42
+the receiver is then going to
+4:43
+acknowledge that because it receives
+4:44
+that message with A+ 1 saying the next
+4:47
+message that I get it should have
+4:48
+sequence number A+ 1 so let's go that
+4:51
+the sender listens to that and now it
+4:52
+sends a message with a+1 and it sees
+4:54
+from the receiver that it gets back an
+4:56
+acknowledgement with a+1 this is an
+4:59
+issue
+5:00
+because if the receiver had really
+5:02
+gotten this message it would have sent
+5:03
+an acknowledgement of
+5:05
+a+2 should be A+ 2 but if that's not the
+5:09
+case then the sender knows that the
+5:11
+receiver never got a+1 and because we
+5:13
+want to have reliable delivery here we
+5:15
+want to make sure that all the messages
+5:16
+we're sending to the receiver are
+5:18
+actually received and processed and so
+5:20
+what the sender would then do in this
+5:21
+case is it would send another message
+5:23
+again with a+1 wait until it hears back
+5:27
+A+ 2 and then it's good to go to start
+5:29
+sending more messages so that's how we
+5:31
+can do this with sequence numbers
+5:32
+another thing that TCP does for us is
+5:35
+use timeouts because we're not always
+5:37
+going to receive an acknowledgement
+5:38
+sometimes the network is just literally
+5:39
+broken so that example would look
+5:42
+something like this over here first
+5:44
+thing that we would do on the right is
+5:45
+send message a or message with sequence
+5:47
+number a and then of course we wait for
+5:49
+an acknowledgement but it just never
+5:51
+comes in and So eventually we're going
+5:53
+to time out you know maybe it's a couple
+5:55
+seconds maybe it's a few hundred
+5:56
+milliseconds who knows um but eventually
+5:59
+what we're going to do do is then send a
+6:01
+again and once we receive our
+6:02
+acknowledgement we're good and we no
+6:03
+longer have to keep retrying to send
+6:05
+that packet over and over and over again
+6:07
+now of course this could obviously
+6:08
+become very spammy you know we don't
+6:10
+want to just send a ton of data over the
+6:11
+network if our timeout is uh you know
+6:14
+continuing to get hit over and over and
+6:15
+over again and so one thing that TCP
+6:17
+does is use exponential back off so you
+6:19
+know we might start by waiting 5 seconds
+6:21
+but then afterwards we'll try to wait 10
+6:22
+seconds then 20 because obviously if
+6:24
+we're just sending a bunch of packets
+6:26
+over the network if our receiver is down
+6:27
+or something we don't just want to SP
+6:29
+the network that would be
+Flow Congestion
+6:31
+bad speaking of spamming the network
+6:33
+we're now going to be talking about flow
+6:34
+and congest congestion control because
+6:37
+this is one of the other big things that
+6:39
+TCP actually does for us so even though
+6:42
+they're very similar um on a surface
+6:44
+level they are slightly different flow
+6:46
+and congestion control and so flow is on
+6:49
+the left here I don't know why I can't
+6:51
+pronounce congestion today but that's
+6:53
+how it goes so let's imagine that we've
+6:55
+got our sender and what it's doing is
+6:57
+basically sending two inflight mess
+6:59
+mesages that haven't yet been received
+7:01
+by the receiver node so the way that
+7:03
+things work is that every single
+7:05
+receiver every you know computer
+7:07
+generally connected to a network in
+7:08
+general has some Network buffer right
+7:10
+over here and let's say that it has a
+7:12
+size of 10 well it gets to the point
+7:15
+that uh you know if we send more
+7:17
+messages than there's space available in
+7:19
+the network buffer we're going to start
+7:21
+having some problems we might either a
+7:23
+start blocking the network uh packages
+7:26
+are just going to get dropped or we
+7:28
+might even overload the receipt reer and
+7:29
+that could all be bad so the gist is we
+7:32
+want to keep track of basically how many
+7:34
+messages are in flight and then not send
+7:36
+any more than that so for example
+7:38
+because these guys are in Flight we
+7:40
+would now say oh uh we've got size of
+7:42
+eight left because that's 10 minus two
+7:45
+we can send eight more messages before
+7:47
+this network buffer is out so basically
+7:50
+now once the receiver acknowledges these
+7:54
+messages it can basically say oh you
+7:56
+know I've got 10 left in my network
+7:58
+buffer and then this guy can readjust
+8:00
+back to
+8:02
+10 and so that's how we would stop uh
+8:05
+you know the network buffer getting
+8:07
+overloaded that's called flow control
+8:09
+okay the other thing is congestion
+8:11
+control so this is where instead of you
+8:13
+know overloading some Network buffer
+8:15
+like we have over here what we would
+8:17
+actually be doing this time is
+8:18
+accidentally overloading the network so
+8:20
+let's imagine that we start by having
+8:22
+some window right and the window is
+8:24
+basically again how many inflight
+8:25
+messages we can have let's say the
+8:27
+window is currently size 2
+8:30
+and so as you can see right now we've
+8:32
+got one inflight message out of two and
+8:34
+maybe let's go ahead and send another so
+8:38
+now we've gotten two out of two and then
+8:42
+you know we end up getting
+8:43
+acknowledgements for both of
+8:45
+them and everything looks good and so
+8:48
+what uh TCP will actually do for us is
+8:51
+it'll say hm you know what it actually
+8:52
+seemed fine that we had two inflight
+8:54
+messages at once we didn't really see
+8:56
+any issues in terms of traffic or
+8:57
+latency of response or anything like
+8:59
+like that maybe we can actually increase
+9:01
+our window a little bit now all of a
+9:03
+sudden we can send three inflight
+9:04
+messages at
+9:05
+once and so for what it's worth you know
+9:08
+I I talk about this kind of vaguely here
+9:10
+because there are many different
+9:11
+algorithms to determine you know is a
+9:13
+packet actually delayed or not because
+9:15
+you can't really ever objectively be
+9:16
+sure whether it's due to the network
+9:18
+itself or something else but at the end
+9:20
+of the day the point is we slowly creep
+9:22
+up and increase this window from two to
+9:25
+three to four and that's known as
+9:27
+additive increase and let's say we get
+9:30
+to four and then all of a sudden our
+9:32
+sender realizes hey wait a second you
+9:34
+know what four messages is way too big
+9:37
+for the network to handle uh we're
+9:39
+really going to start killing our
+9:40
+response times if we keep having this
+9:42
+many inflight messages what it'll do is
+9:44
+as oppose to just going back to three
+9:46
+it'll drop the size off really quickly
+9:49
+and divide by two back to two oops over
+9:52
+erased there but the point is when we
+9:55
+add to the size of our window we do it
+9:57
+you know just by one at a time time and
+9:59
+when we decrease the size of our window
+10:01
+we do it multiplicatively or
+10:03
+exponentially which is called aimd
+10:05
+additive increase multiplicative
+10:08
+decrease so hopefully that makes sense
+10:10
+the point is we want to be very careful
+10:11
+when we're making that window bigger and
+10:13
+then the second we see any signs of
+10:15
+things going wrong we really go back
+Conclusion
+10:17
+quickly okay so hopefully that makes
+10:19
+some sense basically the gist is here
+10:21
+that UDP is super Bare Bones TCP on the
+10:24
+other hand offers us a lot of nice
+10:26
+features typically we want to be using
+10:28
+those nice features because we want all
+10:30
+of our packets to get to their
+10:31
+destination we don't want to overload
+10:33
+the network or Our receiver node but at
+10:36
+the same time there are some Niche
+10:37
+applications where UDP just makes more
+10:39
+sense besides something like multicast
+10:42
+we have a lot of realtime applications
+10:45
+where getting the data there as fast as
+10:47
+possible is super important and if we
+10:49
+were to drop an intermediate packet that
+10:51
+wouldn't be a huge deal so for example
+10:53
+let's say you know I'm making a video
+10:54
+call with my friend and I happen to drop
+10:57
+a frame well I don't really need that
+10:59
+frame back 4 seconds later it's not
+11:01
+going to make sense anymore it's fine if
+11:03
+it's just dropped it's overall going to
+11:04
+keep things faster same goes for things
+11:06
+like stock prices I really only care
+11:08
+about the most recent one not the one
+11:10
+from one second ago and also video games
+11:12
+kind of same idea as video calls like if
+11:15
+I already lost the frame getting it back
+11:16
+4 seconds later isn't going to do me
+11:18
+anything good so again TCP generally
+11:21
+speaking reliable but slower and so you
+11:23
+know use it for your typical web app but
+11:25
+there are some particular times where
+11:27
+UDP is going to make a little bit more
+11:29
+sense anyways guys I hope this was a
+11:32
+useful video I will probably be posting
+11:34
+it this weekend cuz I'm actually going
+11:35
+to be out of town so I'm not sure I'll
+11:36
+be able to post too but uh yeah have a
+11:39
+good one and I will see you all soon
+
+##v59:
+
+0:00
+[Applause]
+0:00
+well guys it's snowing October 31st here
+0:04
+I am in a onesie looking thick as hell
+0:07
+coming back from a company
+0:11
+dinner what have I done what have I
+0:15
+done hey everyone and welcome back to
+0:17
+the channel I hope you enjoyed the video
+0:19
+of me drunk and in my onesie obviously
+0:22
+that's why I wasn't able to record the
+0:23
+other night uh although it would have
+0:25
+been a lot of fun with me in that mental
+0:27
+state anyways I hope uh my pain is enter
+0:30
+in to you all you're all going to
+0:31
+benefit from it anyways because as a
+0:33
+result of my seasonal depression I'll
+0:34
+probably make more YouTube videos with
+0:37
+that being said we've got two more in
+0:39
+the systems design Series so let's
+0:41
+finish off the first of those two okay
+Realtime Updates
+0:43
+let's get started so today we're going
+0:45
+to be talking about realtime updates and
+0:48
+the gist of a real-time update is that
+0:50
+basically so far you know we're all
+0:52
+familiar with HTTP requests right which
+0:54
+is that we have some client and it can
+0:57
+communicate with a server by sending it
+0:58
+some type of data but when it comes to
+1:01
+it unless the client specifically asks
+1:03
+for some data how can we make sure that
+1:05
+the client is able to just receive data
+1:07
+while basically always being on standby
+1:09
+to do so this is relevant in things like
+1:11
+messaging apps stock trading platforms
+1:13
+notification Services basically we don't
+1:16
+want to have to make the client ask all
+1:17
+the time it would be a lot better if the
+1:20
+server could just go ahead and push data
+1:22
+right to it well why don't we want the
+1:24
+client asking all the time well let's
+1:26
+discuss that quickly because the first
+1:28
+option that we could technically do to
+1:29
+achieve this type of thing is going to
+1:31
+be polling where every few seconds
+1:33
+basically the client which could be my
+1:35
+mobile device is going to go ahead and
+1:36
+request an update from a server so you
+1:39
+know every 4 seconds un repeat forever
+1:42
+you
+1:44
+know we are going to request from the
+1:47
+server and what's going to happen is
+1:48
+that this thing is going to get
+1:50
+overloaded and that's bad because now
+1:52
+we're wasting a ton of resources on both
+1:54
+our client and our server sending all of
+1:56
+these requests when the majority of them
+1:58
+are probably just going to come back
+1:59
+with no new information and so again
+2:01
+that's not great to give an analogy for
+2:03
+this type of thing think about it like
+2:05
+this you went on a date with a girl
+2:07
+she's ghosting you every 2 minutes you
+2:09
+keep checking your phone to see if uh
+2:11
+she's finally responded obviously she
+2:13
+hasn't we've all lived this out and uh
+2:15
+now you've wasted all your time and
+2:16
+energy trying and your phone battery is
+2:18
+dying too so let's move on to some
+Long Polling
+2:21
+smarter things that we can actually do
+2:23
+in order to achieve this goal so the
+2:25
+first thing that we're going to be
+2:26
+talking about is long polling so long
+2:28
+polling is a a little bit different than
+2:30
+polling it might be named after my
+2:33
+phallic region but assuming it's not the
+2:35
+general gist is that it's very similar
+2:37
+to a poll request except if there's no
+2:39
+data present the server will actually
+2:41
+basically keep track of the fact that
+2:43
+there is a long pole request that is
+2:45
+active and we'll hold on to it until
+2:47
+data is actually available so a couple
+2:50
+of key things about long polling for
+2:52
+starters this is unid directional right
+2:54
+the client is basically reaching out to
+2:56
+the server and then the server passes it
+2:57
+data back you can't like also pass data
+3:01
+back to the server via a long poll on
+3:03
+some sort of consistent interval
+3:05
+basically it's just one long poll
+3:07
+returns some amount of data and then
+3:09
+it's closed out so upon completion we
+3:11
+need to create another and we'll discuss
+3:13
+the pros and cons of that in a second
+3:14
+but basically it would look like this
+3:16
+long poll
+3:19
+request you know maybe we'll wait 5
+3:22
+seconds until some data comes in and
+3:25
+then we'll finally
+3:27
+respond and then when we do what we
+3:30
+would have to do is say okay we're done
+3:31
+with this guy now time to start another
+3:34
+long
+3:35
+poll and now the cycle begins a new so
+3:38
+this can be like I mentioned potentially
+3:41
+good and a bad thing that you basically
+3:43
+have to restart these connections all
+3:44
+the time for starters uh it's kind of
+3:47
+expensive right because every single
+3:49
+time that we initiate a long poll we
+3:50
+have to send over a bunch of headers
+3:52
+they get involved in HTTP requests uh
+3:55
+additionally just you know creating uh
+3:57
+connections on the server is expensive
+3:59
+we need to allocate a port things like
+4:01
+that um and then additionally uh there
+4:04
+are a couple of good things with this uh
+4:06
+the first is that long polling is just
+4:08
+generally well supported it's an older
+4:10
+technology it's supported by all
+4:11
+browsers you don't really have to worry
+4:12
+about that but also generally speaking
+4:15
+let's say as opposed to something like a
+4:17
+persistent connection let's say you know
+4:19
+data is only coming in every 20 minutes
+4:22
+or so it would be good that you know we
+4:24
+can only submit very few long polls
+4:27
+relative to holding a persistent
+4:28
+connection and wasting a bunch of
+4:29
+resources but we'll talk about that more
+Websockets
+4:31
+in a second so that is going to bring us
+4:33
+to option two which is going to be
+4:36
+websockets so websockets keep in mind
+4:37
+are different than web hooks if you've
+4:39
+heard of that web hooks are just like a
+4:41
+a call back on HTTP requests but
+4:44
+basically the idea is that unlike long
+4:46
+polling first of all websockets are
+4:48
+bidirectional right so that means that
+4:50
+both the client can communicate to the
+4:52
+server and the server can actually
+4:53
+communicate back to the client via a
+4:55
+websocket and additionally unlike long
+4:58
+polling they are also persistent so as
+5:00
+you can see right here we've got these
+5:03
+two-sided arrows on the bottom of our
+5:05
+screen and they are basically going to
+5:07
+stay alive the entire time that those
+5:09
+two are connected you don't basically
+5:11
+have to tear them down and bring them
+5:12
+back up all of the time and so that's
+5:15
+really good because it means that you
+5:16
+know basically you send over some
+5:18
+headers or some metadata on your
+5:20
+original websocket connection but after
+5:22
+that all data being sent over that
+5:24
+websocket doesn't require any extra
+5:26
+metadata and that of course is going to
+5:28
+make it a little bit faster to send
+5:29
+those packets over the network that
+5:32
+being said like I mentioned before uh it
+5:34
+is the case that you know let's say
+5:36
+we've got all three of these connections
+5:38
+right here and this guy is only sending
+5:41
+data every 5 minutes well it means
+5:44
+basically now that we are persisting
+5:45
+this connection between all three of
+5:47
+these devices and the server that entire
+5:49
+time and that can just waste a bunch of
+5:51
+resources there's no reason to
+5:52
+necessarily persist these connections if
+5:55
+we're very rarely sending information
+5:57
+additionally it is worth noting that if
+5:59
+the connection goes down right you know
+6:01
+if this guy gets broken for some reason
+6:03
+we have some sort of network partition
+6:05
+then websockets is not going to
+6:06
+reestablish that for us we're going to
+6:08
+have to add some extra client side logic
+6:10
+to put it back together and the only
+6:12
+reason I mention that now is because in
+Server Sent Events
+6:14
+option three this is actually fixed for
+6:17
+us in server sent events which is going
+6:19
+to be our third potential Choice one
+6:21
+thing to note is that like websockets
+6:23
+the connection is persistent but it also
+6:25
+reconnects automatically for you that's
+6:27
+technology built into service and events
+6:29
+which which is kind of nice uh unlike
+6:32
+websockets and similar to Long polling
+6:35
+uh this is a unidirectional connection
+6:37
+so it's only going to be from server to
+6:40
+client that's where the data is being
+6:42
+passed if you wanted to go and pass data
+6:44
+from the client to the server you would
+6:45
+have to do that just via a normal HTTP
+6:48
+request or something like that and so of
+6:51
+course with all of these Technologies
+6:53
+there are some pros and cons Associated
+6:55
+which we will now talk about so
+6:57
+basically the big Pro of a server sent
+6:59
+event is that similar to websockets due
+7:02
+to the nature of a persistent connection
+7:04
+there is less overhead in sending data
+7:06
+and additionally just actually making
+7:08
+more connections which is very nice of
+7:11
+course it has the same cons of
+7:12
+websockets in the sense that well now we
+7:14
+can waste resources if this connection
+7:16
+is largely inactive but the big final
+7:20
+point that I want to focus upon with
+7:21
+server andent events is this piece of
+7:23
+actually reestablishing connections for
+7:25
+you now you may think oh that's super
+7:26
+convenient you don't have to write this
+7:28
+yourself you could potentially screw it
+7:29
+up but is it always a good thing so now
+7:33
+let's think about a hypothetical
+Thundering Herd Problem
+7:35
+situation which I will call the
+7:36
+Thundering Herd problem and no I am not
+7:38
+referring to my farts so the first thing
+7:41
+is Imagine we've got like these three
+7:43
+clients over here and at Time Zero
+7:46
+client one is going to connect right
+7:49
+that's going to establish the server
+7:50
+sent event and I should actually just
+7:52
+have the arrow going the other direction
+7:54
+because that's the way service ENT
+7:55
+events are going so time
+7:57
+zero and then then we're going to make
+8:00
+another one at time five now client two
+8:03
+is connecting and then client three is
+8:05
+going to connect at time 10 so let's
+8:08
+imagine now that these guys have all
+8:10
+connected and they're all getting data
+8:11
+from the server but all of a sudden you
+8:13
+know who knows I come along and dump
+8:15
+some water on here and then bang this
+8:17
+guy goes down at time
+8:19
+12 and then it's going to come back up
+8:22
+at time
+8:24
+15 so now time 15 we're good again so
+8:28
+keep in mind that all of these
+8:30
+connections were broken in that meantime
+8:32
+and they're now all going to try and
+8:34
+reconnect and they're going to do so at
+8:36
+time
+8:39
+15 now if there are only three devices
+8:43
+in reality this probably isn't a very
+8:44
+big deal however uh in an actual big
+8:47
+scalable web application you might have
+8:49
+hundreds of these clients and so all of
+8:52
+them connecting to this server at the
+8:54
+same time well that can add a bunch of
+8:56
+extra load and now this thing is going
+8:58
+to go back down again and it's not going
+8:59
+to be able to come back up and that's
+9:01
+known as the Thundering Herd so because
+9:03
+of the nature of all of these
+9:05
+connections trying to reestablish
+9:06
+themselves we can overload that server
+9:08
+it can go back down and that would be a
+9:10
+big problem so how could we fix
+9:12
+something like this well actually if
+9:13
+you've watched this entire series which
+9:15
+would be awesome then you've seen the
+9:17
+episode I made on raft uh and one of the
+9:19
+things basically that raft does in order
+9:21
+to avoid something like a Thundering
+9:22
+Herd problem when it comes to leader
+9:24
+elections is basically the timeout of
+9:26
+trying to reconnect or trying to start a
+9:28
+new leader elction ction actually has a
+9:30
+random Jitter right so you know let's
+9:33
+say we pick a random number between 0
+9:35
+and 5 Seconds when we think that the
+9:37
+server is back up and then we try and
+9:39
+reconnect so rather than you know
+9:41
+restarting everything at time 15 maybe
+9:43
+this guy restarts at time 18 this guy
+9:45
+restarts at time 16 and this guy
+9:48
+restarts at time 19 and then that way
+9:52
+you know the connections are actually
+9:53
+spread out a little bit we're more
+9:55
+likely to not overload the server which
+9:57
+would be a good thing I'm not not sure
+9:59
+this is actually something that
+10:00
+practically you'll have to experience
+10:02
+too much but it is something worth
+10:03
+considering when you think to yourself
+10:04
+oh it's so good that we just
+10:06
+automatically reconnect to a
+10:07
+server so let's quickly talk about a
+Conclusion
+10:10
+conclusion here I'm not actually going
+10:12
+to go into all three of the Technologies
+10:14
+and say hey one thing is just like
+10:16
+clearly better than the other but there
+10:18
+are certain traits of each type of
+10:20
+technology and each of those traits has
+10:22
+its own pros and cons so the two that
+10:24
+I'm going to be focusing on for this
+10:25
+conclusion are persistent connections
+10:27
+and automatic reconnection
+10:29
+so keep in mind that if you do have a
+10:31
+persistent connection as is the case
+10:33
+with
+10:35
+websockets and also service and events
+10:39
+basically what that means is it should
+10:40
+in theory be pretty fast you're not
+10:41
+sending a ton of headers over the
+10:43
+network and additionally you're not
+10:44
+establishing a ton of connections that
+10:46
+being said if it is the case that you're
+10:49
+not sending that much data from your
+10:50
+server to your client or more so you're
+10:52
+not sending data that frequently then
+10:54
+you could just be wasting resources and
+10:56
+well frankly if we can avoid that it
+10:58
+would be a thing the other thing I want
+11:00
+to be talking about is automatic
+11:02
+reconnects which while convenient if
+11:04
+we're not careful about them can cause a
+11:07
+Thundering Herd as we just described in
+11:09
+the last image well guys I hope this one
+11:12
+helps I hope you have a great day and
+11:13
+I'm looking forward to finishing up the
+11:15
+series and doing some real problems
+
+##v60:
+
+0:00
+hey guys and welcome back to the channel
+0:03
+uh I think we finally made it to our
+0:05
+last systems Design Concepts video which
+0:08
+is freaking awesome because I've really
+0:09
+been looking forward to getting to the
+0:11
+next round of videos which is going to
+0:13
+be all the interview questions it's kind
+0:14
+of the main reason that I wanted to redo
+0:15
+everything cuz I just rambled a bunch of
+0:17
+those and never really Drew anything out
+0:19
+cuz I was lazy so uh yeah I'm going to
+0:21
+get to those but unfortunately today I
+0:23
+am super hung over and uh there's a
+0:25
+decent shot I just throw up while
+0:26
+recording this uh so as a result I'm
+0:28
+going to try and get through it as
+0:29
+quickly as possible so let's go ahead
+0:31
+and get to the iPad all righty guys so
+Monolith
+0:34
+today we're going to be talking about
+0:35
+monoliths vers microservices and I'm
+0:38
+going to begin by talking about the
+0:40
+monolith and I have this handy little
+0:41
+note here CU I know many of you might
+0:44
+just think about my junk when I say the
+0:45
+word monolith but no that's not in fact
+0:47
+what I'm talking about what I am talking
+0:49
+about is effectively the idea of having
+0:51
+one kind of you know massive binary that
+0:55
+incorporates all of the functionality of
+0:56
+your application and basically as a
+0:59
+result of having just pretty much one
+1:00
+piece of code that's going to run
+1:02
+everything it basically means that
+1:04
+you're going to deploy it together
+1:05
+you're going to scale it together etc
+1:07
+etc etc so if we were you know to use
+1:09
+Instagram as an example you know we
+1:11
+might have literally just one binary and
+1:14
+within that we would have the ability to
+1:15
+upload files to our service we'd have
+1:17
+the ability to follow other users uh you
+1:19
+know basically serve people ads connect
+1:21
+to third parties deal with metrics and
+1:23
+so of course there are going to be some
+1:25
+pros and cons when designing an
+1:27
+application this way uh the main Pros is
+1:29
+probably just going to be Simplicity if
+1:31
+you just have one repository uh you can
+1:33
+keep all of your dependencies in check
+1:34
+and this is probably less relevant for
+1:36
+something like a systems design
+1:37
+interview but it is an objective upside
+1:39
+of something like a monor repo or a
+1:40
+monolith in general um and then
+1:42
+additionally of course you know if you
+1:44
+just have a smaller application you
+1:45
+don't need a build for that type of
+1:47
+scale why would you split everything out
+1:49
+into different Services you're going to
+1:50
+have a lot less to keep track of if you
+1:51
+just have you know one thing that you're
+1:53
+managing and one thing that actually
+1:55
+needs to be kept working so of course
+1:57
+there are going to be Cons with this
+1:59
+approach as well well which is the
+2:00
+reason that people have begun using
+2:02
+microservices at least in applications
+2:04
+that require tons of scaling so one is
+2:06
+that uh in the case that everything is
+2:08
+in the same repository one bug can
+2:10
+really just take everything down you
+2:12
+know you screw up a dependency chain and
+2:14
+all of a sudden everything is screwed up
+2:16
+and you've got a s 2 on your hands the
+2:18
+other is that you basically can't scale
+2:20
+things out independently so what if for
+2:22
+whatever reason people were uploading
+2:23
+photos a million times more than they
+2:25
+were following one another in the case
+2:27
+of Instagram that may actually be true
+2:29
+you would probably want a lot more
+2:30
+servers devoted to exclusively uploading
+2:33
+things than you would following things
+2:35
+but in the current monolith State
+2:36
+basically every single binary that you
+2:38
+deploy has the ability to do both and
+2:41
+you know you just don't really need that
+Microservices
+2:43
+so let's now go ahead and talk about
+2:46
+microservices because this is going to
+2:48
+allow us to be more efficient with our
+2:50
+resources when we have an application at
+2:52
+huge scale so uh in this case you know
+2:55
+perhaps I'm talking about your private
+2:57
+parts micro but let's go ahead and and
+2:59
+talk about them so in the case of
+3:01
+Instagram I've kind of broken it down
+3:02
+into those five different Services you
+3:05
+know whatever you want to call them
+3:06
+theoretically and basically the gist is
+3:08
+you know if certain things are going to
+3:09
+require more load than others you could
+3:11
+basically go and devote more nodes in
+3:13
+your distributed cluster to actually
+3:14
+running that service specifically the
+3:16
+issue with the monolith is yeah in
+3:18
+theory you can have just a ton of
+3:19
+deployments of that monolith but at the
+3:21
+end of the day all of those services are
+3:23
+going to be stealing resources from what
+3:25
+you actually want to be devoting that
+3:27
+particular deployment to and as a result
+3:29
+decoupling these things within
+3:31
+microservices might make life a little
+3:32
+bit easier so the first thing is that it
+3:35
+doesn't have to be the case that they're
+3:37
+separate repositories but if they are
+3:39
+developed in separate repositories
+3:41
+microservices will allow you to avoid
+3:43
+basically like Global bugs and
+3:44
+additionally teams can kind of develop
+3:46
+independently from one another without
+3:47
+any considerations into you know like
+3:49
+hey we have to use this dependency or we
+3:51
+have to use this technology you're
+3:53
+basically decoupled and you can just
+3:54
+agree on one common interface uh with
+3:57
+which you know to have your
+3:58
+microservices connect basically just
+4:00
+creating apis that's what they're for um
+4:03
+and of course like I mentioned each
+4:04
+service can actually scale independently
+4:06
+which can be more cost efficient and
+4:08
+ultimately allow you to basically get
+4:10
+more usage out of your servers which is
+4:12
+pretty important when you have tons of
+4:14
+users on the cons side though every
+4:16
+single piece can fail because now we
+4:19
+have to keep track of a bunch more stuff
+4:21
+you know for example our ad service can
+4:23
+just have a bug it can go down entirely
+4:25
+and now all of a sudden we have to
+4:26
+monitor you know five different Services
+4:28
+instead of one and be like okay is this
+4:30
+okay is this okay is this okay and then
+4:32
+of course when we will have to deploy
+4:34
+all of these different services to
+4:35
+different places and all of those uh
+4:37
+microservices need different
+4:38
+dependencies and different resources
+4:40
+that can get complicated so to close out
+4:43
+this video I'm going to talk about two
+4:44
+different types of technologies that are
+4:46
+going to greatly help us out with
+4:48
+microservices and actually dealing with
+4:49
+the complications that they introduce
+Docker
+4:51
+the first is going to be Docker so if
+4:53
+you haven't seen it before the logo
+4:54
+looks like a little bit of a whale but
+4:56
+basically the gist of Docker is this
+4:59
+every single one of our microservices
+5:00
+assuming they have different
+5:01
+Technologies is going to have unique
+5:04
+requirements you know maybe one of them
+5:05
+is in Python maybe one of them is in
+5:07
+Java maybe even within python they just
+5:09
+have different dependencies that they
+5:10
+want and the gist is if I were to just
+5:12
+deploy that to like an actual server
+5:14
+computer then I would have to jump to
+5:16
+that server download all the
+5:17
+dependencies and that's really
+5:19
+complicated and I would have to do it
+5:20
+for every single one of them instead
+5:22
+what Docker does is it basically allows
+5:24
+us to standardize how we are going to
+5:26
+install those dependencies and get our
+5:28
+development environment going
+5:30
+and the way that it does this is through
+5:31
+this usage of a container so think of a
+5:33
+container as this interface right and
+5:35
+the reason I've drawn this out as a
+5:36
+square is because let's imagine every
+5:38
+single computer knows how to run the
+5:40
+square nice and easily but then within
+5:42
+the square you know you can have
+5:43
+anything going on you might have all
+5:44
+different types of dependencies in here
+5:46
+you might have different operating
+5:48
+systems even like different versions of
+5:49
+Linux that you're actually running your
+5:51
+program on and so Docker basically
+5:53
+abstracts away from the actual host that
+5:55
+the container is running on uh the
+5:57
+dependencies and just allows it to run
+5:59
+the the container and so you don't have
+6:00
+to go and install the dependencies
+6:02
+manually on each host which saves a ton
+6:04
+of time additionally another really nice
+6:07
+thing about containers is that as
+6:09
+opposed to something like a virtual
+6:10
+machine you don't necessarily have to
+6:12
+like specify how many resources you need
+6:14
+in advance you know how much memory how
+6:15
+much CPU usage anything like that they
+6:17
+can actually just scale up and down as
+6:19
+more resources are needed and so of
+6:21
+course in a world where we want to cut
+6:23
+as many costs as possible when running
+6:25
+our applications containers are hugely
+6:27
+useful this is going to be critical
+6:30
+when you've got many of them on the same
+6:31
+host which is very common when you are
+6:33
+using something like microservices that
+6:36
+being said great now we have all these
+6:38
+Docker containers but what happens if uh
+6:40
+we need to choose you know for a new
+6:42
+Docker container which host to actually
+6:44
+put it on additionally what happens if a
+6:46
+given Docker container crashes or stops
+6:48
+running or a host goes down how can we
+6:50
+make sure that all of our programs are
+6:52
+running as expected this is where
+6:53
+something called kubernetes comes in so
+6:56
+I think a lot of people when they hear
+6:57
+about Docker and kubernetes think that
+6:58
+they're actually the same thing or you
+7:00
+know there's something that you use one
+7:01
+or you use the other but in reality you
+7:03
+actually tend to use them in conjunction
+7:05
+with one another so kubernetes is pretty
+7:07
+simple we have all these containers and
+7:09
+like I mentioned we don't know where to
+7:11
+actually put them you know all of this
+7:13
+is commodity Hardware so we don't really
+7:15
+care which host it's going on and
+7:17
+additionally we want something to
+7:18
+actually manage failures for us because
+7:19
+otherwise we have to monitor everything
+7:21
+ourselves and that can be really tough
+7:23
+and I had the Eraser out there like an
+7:24
+idiot so basically what kubernetes
+7:27
+allows us to do is specify this concept
+7:30
+of a desired State and kubernetes via
+7:33
+the control plane over here and etcd
+7:37
+which is basically a version of raft
+7:39
+right this is a distributed consensus uh
+7:41
+coordination
+7:42
+service I don't think it actually uses
+7:45
+raft under the hood it probably uses its
+7:46
+own algorithm but uh the point is it's
+7:48
+like zookeeper is keeping track of
+7:51
+basically what systems are up what
+7:52
+systems are down and as a result it can
+7:55
+then send that information over to the
+7:56
+kuet on every single host host one one
+7:59
+could be a VM or it could be a physical
+8:01
+host host 2 and then basically KU uh
+8:04
+kuet will go spin up all of these pods
+8:06
+and each of these pods is effectively
+8:08
+just running a Docker container if a pod
+8:10
+goes down the kuet can notice it and
+8:12
+restart it and similarly if a host goes
+8:14
+down the control plane can notice it and
+8:16
+put that stuff over on a different host
+8:18
+and so by doing this kubernetes makes
+8:20
+things a lot easier to run and manage so
+8:23
+guys let's go ahead and quickly conclude
+8:25
+because we've gone through all of these
+Conclusion
+8:26
+great systems Design Concepts and I
+8:28
+would just love to be able to wrap it up
+8:30
+so I can go throw up first off basically
+8:33
+the gist is if you're a massive company
+8:35
+if you're a Google if you're a Facebook
+8:37
+or Microsoft or anything like that
+8:39
+microservices are basically inevitable
+8:41
+you can't really develop every single
+8:43
+thing in the same large binary it's
+8:44
+going to take a forever to compile
+8:46
+forever to deploy and it's going to be
+8:48
+impossible to scale independently with
+8:49
+different pieces that being said because
+8:52
+microservices introduce all of this
+8:54
+additional complexity when it comes to
+8:55
+actually keeping track of and managing
+8:57
+your services Docker and kubernetes or
+8:59
+at least tools similar to those become
+9:00
+very very important Docker like I
+9:02
+mentioned is known as a containerization
+9:05
+tool and kubernetes is going to be more
+9:08
+of like an
+9:09
+orchestration framework at least as far
+9:12
+as I'm aware correct me if I'm wrong and
+9:15
+so to finish off this series I would
+9:17
+love to give two quotes and then we will
+9:18
+go ahead and talk about how they're
+9:20
+relevant here the first is a serious one
+9:22
+and a very good one which is the
+9:23
+premature optimization is the root of
+9:26
+all evil as I spell optimization wrong
+9:28
+bad
+9:30
+that's why Donald n he's a genius and uh
+9:32
+is right about that if you don't really
+9:33
+need microservices you don't have to
+9:36
+actually go and build them out sometimes
+9:37
+a monolith is going to make your life
+9:39
+easier if you're just building for a
+9:40
+personal project and you anticipate
+9:41
+you're going to have a 100 users most
+9:43
+you probably don't need a bunch of
+9:44
+disjoint Services just write it all on
+9:46
+the same app and of course for my
+9:48
+ex-girlfriend yours is perfect the big
+9:50
+ones hurt anyways sometimes you don't
+9:51
+always want to design for scale if you
+9:53
+don't need it and uh this was a
+9:55
+convoluted way of me trying to make a
+9:56
+joke about it but generally guys what I
+9:59
+want to say most is thank you all for
+10:01
+watching this series I hope it's been
+10:02
+helpful I continue to get really really
+10:05
+great feedback from all of you and more
+10:07
+importantly you guys continue to tell me
+10:09
+that it's really benefiting you tons of
+10:11
+you have gotten job offers and I plan on
+10:13
+making an appreciation post for all of
+10:14
+you at some point that I can keep track
+10:16
+of anyways guys have a great rest of
+10:18
+your weekend and I'll see you in the
+10:20
+next one
 
