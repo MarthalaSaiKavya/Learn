@@ -51469,4 +51469,7861 @@ thank you everyone
 
 ##v84:
 
+0:00
+all right everyone thanks for listening
+0:01
+we're group 20 and our project is on
+0:03
+machine learning for characterizing
+0:04
+climate-related disasters
+0:07
+so natural disasters impact both life
+0:09
+and property globally direct losses are
+0:11
+valued at about 165 billion dollars per
+0:13
+year indirect losses can increase that
+0:15
+by around 50 percent or so
+0:17
+and with climate change and human
+0:18
+development we're expecting this figure
+0:19
+to get higher and higher
+0:21
+as time goes on making disasters quite a
+0:23
+bit more costly
+0:24
+so big data and machine learning have
+0:25
+been used for forecasting preparing and
+0:27
+responding to natural disasters and
+0:28
+they've been particularly good at
+0:29
+looking at these sort of climate
+0:30
+forecasts but there's
+0:32
+quite a bit more work to be done in
+0:34
+predicting impacts
+0:36
+they're quite complex and so our goal
+0:37
+then would be to train multiple machine
+0:39
+learning models
+0:40
+to predict the impact of climate-related
+0:41
+disasters on society
+0:45
+so we have two data sets that we're
+0:46
+going to use the first is mdat it's a
+0:48
+global database of
+0:49
+natural and technological disasters
+0:51
+there's about 21 000 entries
+0:53
+40 plus characteristics of features and
+0:56
+it spans in the year 1900 to the present
+0:58
+there's a lot of information here but
+1:00
+one thing that we thought of initially
+1:01
+is that
+1:02
+there's a lot of non-stationarity in
+1:03
+this as i said disasters are getting
+1:06
+more expensive with time and one way we
+1:07
+can correct for that is to also include
+1:09
+world population as an extra feature and
+1:11
+that comes from the world bank
+1:12
+on the computing side we're just going
+1:14
+to use uh our basic python packages like
+1:16
+numpy and pandas and then we'll also use
+1:18
+some machine learning specific ones like
+1:20
+scikit-learn
+1:21
+and ml extend we're going to run this
+1:22
+all on our personal laptops because the
+1:24
+data set is
+1:25
+fairly usable so as a more graphical
+1:28
+approach i could show the modeling
+1:30
+process we'll take some example features
+1:31
+like geographic location
+1:33
+disaster type disaster magnitude the
+1:35
+number of people affected and we'll plug
+1:36
+it into a prediction model like decision
+1:38
+trees or k-nearest neighbor
+1:39
+and from there we'll make an impact
+1:40
+prediction which would be financial
+1:42
+losses or death toll
+1:45
+we're going to evaluate this two ways
+1:46
+one is with mean squared error
+1:48
+and the second is coefficient of
+1:50
+determination which is the proportion of
+1:51
+variance in the dependent variable
+1:53
+that's predictable from the independent
+1:54
+variables and that ranges from negative
+1:56
+infinity which means
+1:57
+super bad to 1 which is perfect and so
+2:00
+you want a positive value that means
+2:01
+you're getting
+2:02
+more information out of it than just
+2:03
+sort of random data
+2:05
+you'll notice that the the formulas are
+2:07
+kind of similar
+2:08
+and that's because really the
+2:09
+fundamental thing we're looking at is
+2:10
+some sort of deviation from the true
+2:11
+value and our predictions
+2:14
+so we kind of do quite a bit of data
+2:15
+pre-processing before we started on the
+2:17
+machine learning side because there's
+2:19
+quite a bit of mess in the mdat data set
+2:21
+so the first thing we did was eliminate
+2:23
+features with less than a thousand
+2:24
+entries we're starting with about 14
+2:26
+000 entries so anything that has you
+2:28
+know 13 000 of them that are null
+2:30
+we get rid of the next thing we do is
+2:31
+numerical size boolean entries so
+2:33
+knowing yes becomes zero and one and
+2:36
+then next we choose a target predictand
+2:37
+which would be total damages death toll
+2:39
+or number injured
+2:40
+next we eliminate any rows remaining
+2:42
+with null data and then after that we
+2:44
+binarize
+2:45
+nominal or non-ordinal categorical
+2:47
+variables with one hot encoder what i
+2:48
+mean by that is for some things you know
+2:50
+for example
+2:51
+a wind speed of 50 miles per hour is
+2:54
+less than a wind speed of 100 miles per
+2:56
+hour
+2:56
+but for something like disaster subgroup
+2:58
+flood stress and hurricanes
+2:59
+we can convert these into numbers maybe
+3:01
+one two or three but
+3:03
+that would imply for some of these
+3:05
+algorithms that
+3:06
+floods are less than droughts if a flood
+3:08
+is a one and a drought is two so we
+3:09
+binarize that by making
+3:11
+extra features and so each entry can
+3:14
+be you know one or zero for flood one or
+3:16
+zero for drought one or zero for
+3:17
+hurricanes etc
+3:18
+finally once we've done all of that we
+3:20
+separate our data into testing and
+3:21
+training sets using a test size of 30
+3:24
+percent
+3:25
+so the first algorithm we want to look
+3:26
+at is decision tree regressors
+3:28
+for total damages we use a regression
+3:30
+rather than a classifier
+3:32
+because our total damages are continuous
+3:34
+variable
+3:35
+and so we're going to use scikit-learn
+3:36
+here there's a decision tree regressor
+3:38
+the first thing we want to do is just a
+3:39
+basic tree what we found that's highly
+3:41
+overfit the training data is 1.0 for r
+3:43
+squared which means it perfectly fits
+3:44
+the data
+3:45
+but the test value was negative 0.03
+3:48
+which means it's highly overfit so we
+3:49
+need some dimensionality reduction on
+3:50
+those many features we have
+3:52
+and also some parameter optimization so
+3:54
+we went through tried some
+3:55
+principle component analysis and some
+3:57
+parameter optimization with parameter
+3:58
+grid
+3:59
+played around with the number of
+4:00
+components the max depth of the tree and
+4:02
+the criterion for the tree meaning mean
+4:03
+absolute error or mean squared error
+4:05
+do some cross validation found that the
+4:07
+best r squared was still quite low at
+4:08
+0.03
+4:10
+did it again tried variance threshold
+4:12
+with dropping any
+4:14
+feature with a variance less than 0.1
+4:16
+and then a sequential feature selector
+4:18
+selector with a parameter grid looking
+4:19
+at different numbers of features
+4:21
+again cross-validated our best r squared
+4:23
+was still 0.03 so pretty bad
+4:25
+finally we tried a really simple tree
+4:28
+using only the variance threshold
+4:30
+uh it fit the train val trading value
+4:32
+pretty well but it actually uh
+4:33
+fit the test value not too bad too it's
+4:35
+0.43 that's not a great score
+4:38
+but when we look at it sort of
+4:39
+graphically we can see on the left that
+4:40
+the
+4:41
+residuals tend to line up near zero so
+4:43
+we're getting somewhat close to the true
+4:44
+value
+4:45
+on the right you can see sort of yy plot
+4:47
+of actual and predicted damages
+4:49
+and while you can see there's quite a
+4:50
+bit of variance there still tends to be
+4:52
+this sort of
+4:53
+lining up along the diagonal meaning
+4:55
+that we have actually
+4:56
+picked out some of the data even though
+4:57
+it's a bit difficult to actually predict
+5:01
+so the next algorithm we like to try was
+5:02
+the k nearest neighbors algorithm
+5:04
+for classifying the adjusted damage
+5:06
+however before we could really start
+5:08
+processing and using this model to our
+5:09
+advantage we elected to do some basic
+5:11
+visualization to understand some of the
+5:12
+features
+5:13
+and the characteristics of these
+5:14
+features so for example on the bottom
+5:16
+left we see disaster type
+5:18
+and then the counts of disaster type are
+5:19
+mainly held with disaster type 2 and 3.
+5:22
+next we looked at the frequency of the
+5:24
+countries that experienced disaster and
+5:26
+this was a
+5:26
+way different picture than the disaster
+5:28
+types in fact it is more spread out
+5:31
+and less dense in areas than the type of
+5:34
+disaster
+5:35
+however before we could really start
+5:37
+using the k nearest neighbor's algorithm
+5:39
+we had to create bins for our continuous
+5:41
+variable adjusted damages
+5:43
+so that is now a categorical variable
+5:45
+used for classification
+5:47
+we found it best suited to use a range
+5:49
+of i5s so that it was well suited to
+5:51
+address any boundary issues and so that
+5:53
+there are not any extraordinary
+5:55
+observations that decrease our
+5:58
+prediction capability and accuracy as
+6:01
+you can see from the histogram
+6:02
+this seems to be a very top-heavy
+6:04
+classification in which
+6:06
+most of the observations have a high
+6:08
+price associated to the damage that was
+6:09
+caused
+6:11
+on the bottom left you can see just how
+6:13
+we created the bins
+6:14
+so 1 000 to 1 million 1 million to 5
+6:17
+million so on and so forth all the way
+6:19
+to
+6:19
+over 100 billion in damage all right
+6:22
+everyone thanks for listening we're
+6:23
+group 20 and our project is on machine
+6:25
+learning for characterizing climate
+6:26
+related disasters
+6:28
+so natural disasters impact both life
+6:30
+and property globally direct losses
+6:32
+are valued at 165 billion dollars per
+6:35
+year indirect losses can increase that
+6:36
+by around 50
+6:38
+or so and with climate change and human
+6:40
+development we're expecting this figure
+6:41
+to get
+6:41
+higher and higher as time goes on making
+6:43
+disasters quite a bit more costly
+6:45
+so big data so now that we have our bins
+6:47
+created we can now use the k
+6:49
+nearest neighbors algorithm for the pins
+6:51
+using the scikit-learn package
+6:53
+from python and importing the k
+6:55
+neighbors classifier algorithm
+6:57
+we are able to generate these models
+7:00
+on our data set so for this part we
+7:03
+decided to split it into two sections
+7:05
+first included all of the features for
+7:08
+this data set after preprocessing
+7:10
+and after including only the most
+7:11
+important features that we thought
+7:14
+we are left with only 15 features so
+7:17
+that is what model one consists of had a
+7:18
+total of 15 features
+7:20
+running this from one neighbor all the
+7:22
+way to 100 we saw that
+7:24
+with a k of 97 so 97 neighbors the
+7:27
+accuracy was at its peak
+7:28
+of 24.67 and the mse was at its lowest
+7:32
+of 5.8 202. although these numbers are
+7:35
+not great
+7:36
+you should have seen the other trials
+7:37
+they were atrocious
+7:39
+however this indication that 97
+7:41
+neighbors was the most appropriate
+7:43
+when including all the features we were
+7:44
+able to create segregated models
+7:46
+with an increasing order of only using
+7:48
+two features so for example
+7:50
+feature one and feature two were a
+7:51
+separate model then feature two and
+7:52
+feature three were a separate model all
+7:53
+the way up to we got to feature 14 and
+7:55
+15.
+7:56
+now this process sounds really redundant
+7:59
+and boring
+7:59
+but it did in fact improve our model
+8:01
+prediction and also lowered the msc
+8:04
+this could be because we improved the
+8:06
+model with a lower dimensionality
+8:09
+so bring in the drum rolls ladies and
+8:11
+gentlemen here is our most accurate k
+8:13
+nearest neighbor's model
+8:14
+as you can see we have feature j on the
+8:16
+x and feature m
+8:18
+on the y axis these correspond to if
+8:20
+you're looking at the green box is that
+8:21
+feature j is the region
+8:23
+so the region in which the natural
+8:24
+disaster occurred and then feature m is
+8:26
+the continent in which the natural
+8:27
+disaster occurred
+8:28
+um logically speaking this sounds like
+8:30
+it would be the most sound
+8:32
+um features to include in a model
+8:34
+especially with prediction accuracies so
+8:36
+if we were to just you know roughly
+8:37
+guess hey you know you live in
+8:39
+south america and you tend to live in
+8:41
+more of a
+8:42
+wet region then possibly there are
+8:44
+hurricanes going around
+8:45
+um as mentioned before on the previous
+8:47
+slide we do have a k neighbors of 97
+8:49
+as we saw that that was the most primed
+8:51
+neighbor
+8:52
+from including all the features and then
+8:54
+we can see that the accuracy improved
+8:56
+from 24
+8:57
+to 26.15 and then the msc reduced from
+9:01
+5.8 to 5.529
+9:03
+so this was an overall improvement
+9:07
+so then another model i'd like to bring
+9:08
+to your attention is
+9:10
+this model that had country and region
+9:12
+as its two feature variables
+9:14
+um country is the j feature so there's
+9:17
+one on the x and then region is the one
+9:18
+is the m feature so there's one on the y
+9:20
+axis although it did not fare as well as
+9:22
+the previous model in prediction
+9:24
+accuracy it did far better
+9:25
+in a lowering mse it went from a 5.5
+9:31
+to a 5.4 so slight improvement
+9:34
+but however i just want to include this
+9:36
+because it is interesting that if we
+9:37
+look at the features comparing this one
+9:38
+in the previous one
+9:40
+they're both geographically based
+9:43
+so this could prove that for predicting
+9:47
+climate disaster damage cost that really
+9:49
+the most important things are
+9:51
+where you're geographically located then
+9:52
+this you know once again
+9:54
+sounds redundant but it also is a nice
+9:56
+check with reality because
+9:58
+how do we normally assess natural
+10:00
+disaster
+10:02
+likeliness and that is usually where
+10:04
+you're geographically located like for
+10:05
+example iowa they're more prone to
+10:06
+tornadoes and things of that nature
+10:08
+so this is just a nice check with
+10:10
+reality
+10:12
+the final model we tried for this
+10:13
+project so far is an artificial neural
+10:15
+network model
+10:17
+neural networks are in general very
+10:18
+useful for um
+10:20
+modeling and predicting on very complex
+10:22
+data sets with many many features
+10:24
+they are considered to be black box
+10:26
+models which means that it is difficult
+10:28
+to interpret
+10:29
+what the weights mean they were
+10:31
+developed um based on
+10:33
+actual biological brain signal signaling
+10:35
+mechanisms
+10:36
+and the general concept is um training a
+10:39
+set of weights
+10:40
+to predict output based on input by
+10:41
+optimizing a cost function
+10:43
+the motivation for including this model
+10:46
+in our project
+10:46
+was to compare the sleep learning model
+10:48
+to the more traditional
+10:50
+machine learning models such as the
+10:51
+decision tree and the canvas neighbor
+10:52
+algorithm
+10:54
+and compa and really see how they
+10:55
+compare on training for a relatively
+10:57
+small data set
+10:59
+the data processing step for the neural
+11:01
+network was very very similar to the
+11:02
+previous model two additional features
+11:04
+were added
+11:04
+one additional variable was duration and
+11:06
+years which is calculated based on the
+11:08
+given
+11:08
+starting and ending dates of the
+11:09
+disaster in addition the total affected
+11:12
+and the world population variables were
+11:13
+normalized
+11:14
+in order to ensure that they were on a
+11:15
+consistent scale to the other variables
+11:16
+and that they weren't overly
+11:18
+favored by the model the output variable
+11:20
+was the same as for the care in your
+11:21
+neighbor though just the damages
+11:22
+variable was bent categorically into
+11:24
+12 categories the image on the right
+11:27
+gives an overview of our artificial
+11:28
+neural network model
+11:30
+there were 59 input features um and then
+11:32
+the first hidden layer there were 64
+11:34
+units in the second hidden layer there
+11:35
+were 32 units and the output layer
+11:37
+consisted of 12
+11:38
+categories we use the pi
+11:41
+torch package and specifically it's
+11:42
+object oriented api to
+11:44
+code this model uh the sigmoid
+11:46
+activation function has been used so far
+11:48
+and the stochastic gradient descent
+11:50
+optimizer was used
+11:51
+50 epochs which means 50 iterations of
+11:54
+training were conducted with this model
+12:04
+so speaking of additional tuning here
+12:06
+are some specific improvements that we
+12:08
+plan to make
+12:09
+um for the artificial network model
+12:11
+first of all we would like to try
+12:12
+different hidden layer configurations
+12:14
+instead of this two we'd like to try one
+12:15
+and three hidden layers as well along
+12:17
+with
+12:17
+different numbers of nodes per layer
+12:20
+we will also try different activation
+12:22
+functions and optimizers
+12:24
+optimizers we would like to try atom and
+12:26
+for activation functions we especially
+12:27
+like to implement
+12:28
+the softmax activation for the outputs
+12:30
+due to their
+12:32
+mutually exclusive categorical nature we
+12:34
+may also attempt regularization
+12:36
+techniques such as dropout
+12:37
+if we deem that overfitting is a problem
+12:39
+which so far it is not a problem
+12:42
+and we also may consider training
+12:45
+simpler artificial network models
+12:46
+using the important features that were
+12:48
+determined from decision trees and
+12:49
+k-nearest neighbors as detailed
+12:50
+previously
+12:52
+so in conclusion the decision tree model
+12:54
+tends to overfit or
+12:55
+has very low performance conducting
+12:57
+dimension and only resulting techniques
+12:59
+improved results but not very much the
+13:01
+k-nearest neighbor's algorithms
+13:02
+conducted on
+13:03
+multiple sets of features performed
+13:05
+adequately especially for lower number
+13:07
+of features however
+13:08
+improvements can still lead to stronger
+13:10
+results the artificial neural network
+13:12
+performed relatively poorly compared to
+13:13
+the other two models
+13:14
+but there are a plethora of additional
+13:16
+improvements that can be made in both
+13:17
+feature engineering
+13:18
+and model hyperparameter tuning thus we
+13:20
+deem that this artificial
+13:22
+model has the potential for future much
+13:24
+more accurate predictions
+13:26
+which we hope to include in our final
+13:27
+report overall
+13:30
+the relatively poor performance of these
+13:32
+models indicates that predicting
+13:34
+disaster impacts
+13:35
+is a highly complex and multifaceted
+13:37
+problem there are many different types
+13:39
+of disasters
+13:40
+that each have their unique
+13:40
+circumstances and that lead to
+13:44
+different levels of severity thus a more
+13:45
+targeted approach may be focusing on a
+13:47
+certain disaster
+13:48
+or accepted region of the world may be
+13:50
+preferable for impact prediction
+13:52
+and that is it for our presentation
+13:54
+thank you for listening
+15:11
+you
+
+##v85:
+
+0:01
+today we are going to talk about twitter
+0:03
+post political
+0:05
+ideology classification i'm chewing
+0:09
+and my partners are han and c
+0:13
+so i will be talking about introduction
+0:15
+and provide some motivation behind
+0:18
+our project the motivation for
+0:21
+researching this
+0:22
+topic comes from the president election
+0:26
+according to several articles released
+0:30
+recently internet companies can
+0:35
+potentially have the power to influence
+0:38
+the politic the political ideology
+0:42
+of the public
+0:45
+so we are curious about the chance of
+0:48
+supporting
+0:50
+democrats or republicans on popular
+0:52
+social media
+0:54
+and twitter is one of the most
+0:57
+influential
+0:58
+social platforms also
+1:01
+a political organization will use
+1:04
+twitter
+1:05
+to broadcast to their audience
+1:09
+therefore we decided to change some
+1:11
+recent learning
+1:13
+models to classify the
+1:16
+particular ideologies by using labeled
+1:19
+twitter post
+Related Work
+1:23
+and these are some related work of our
+1:25
+project
+1:26
+and the first paper they also find the
+1:29
+classifier accuracy might
+1:31
+change by the issue agenda
+1:35
+or the ideological composition
+1:40
+and in another project the artist also
+1:44
+tried to classify the
+1:45
+political ideologies but with
+1:49
+particular speeches in this paper they
+1:54
+discuss
+1:54
+the performance of different models and
+1:57
+we will bother some
+1:58
+experiments from this research to modify
+2:02
+our project
+2:03
+let me introduce our data set the data
+2:05
+set we use is from kaggle
+2:08
+twitter users were evenly selected from
+2:10
+republicans
+2:11
+and democrats about 200 tweets were
+2:14
+collected from each user
+2:16
+overall our data set contains 84502 two
+2:21
+tweets with party labels
+2:24
+next let's get into our data
+2:26
+pre-processing steps
+Data Pre-processing Step 1
+2:28
+here's an example to it from our raw
+2:31
+data set
+2:32
+we can see some characters that have
+2:34
+nothing to do with our classification
+2:37
+such as twitter handles punctuations
+2:40
+and digits so step one is to remove
+2:43
+those unnecessary parts
+2:45
+then let's tokenize the strings into
+2:48
+words
+2:49
+this time i created the word cloud for
+2:51
+each party based on randomized samples
+2:54
+it's clear to see that the words with
+2:56
+high frequencies are those
+2:58
+informative stop words such as 2 and
+3:01
+off so we remove those stop words
+3:05
+one thing to notice there is another
+3:07
+stop work that
+3:08
+is not in our usual stop board library
+3:11
+here
+3:12
+which is rt it appears very often as the
+3:15
+beginning string
+3:16
+of our collected tweets
+3:19
+after that we get into the stemming step
+Stemming
+3:22
+which can
+3:23
+make the data more dense and reduce the
+3:25
+dimension
+3:26
+here is an example output based on the
+3:29
+previous steps
+3:30
+now we can say that our data is cleaned
+3:34
+however we want to get the tf idf
+3:37
+features
+3:38
+in order to reduce the operating cost we
+3:41
+want to
+3:42
+apply the tfidf vectorizer in your
+3:45
+pipeline
+3:46
+the parameter requires corpus so
+3:49
+we bring back our tokenized words and we
+3:52
+will redo the tokenization inside that
+3:54
+function
+3:55
+that's all for the preparation steps
+Model Selection
+4:00
+all right so let's talk about how we
+4:02
+train our models how we tune the
+4:04
+parameters and how we
+4:06
+evaluate our curiosity from our models
+4:08
+so in this section we're gonna talk
+4:10
+about model selection first
+4:12
+we used cross-validation to estimate the
+4:15
+generalization
+4:16
+accuracy of our models and then we use
+4:18
+great search and rather net search for
+4:20
+heavier parameter tuning
+4:22
+so the first question is what are the
+List of Models
+4:25
+models we want to
+4:27
+test so based off my research
+4:30
+these models are typically used for
+4:34
+text classifications which means
+4:37
+they all have great potential to yield
+4:40
+better
+4:40
+outcome you know we're using scenario
+4:43
+so we decided to try all of them
+Multinomial Naive Bayes
+4:47
+so let's talk about naive bayes first
+4:49
+naive bayes is a pretty simple model
+4:51
+it has two phases learning phase and
+4:54
+predicting phase
+4:55
+during the learning phase naive bayes
+4:58
+will be given
+4:59
+two types of text and the algorithm will
+5:02
+study all of them
+5:03
+every single word it will show i will
+5:06
+study that
+5:07
+how likely is one word to be appeared in
+5:10
+a certain type of text
+5:12
+in the second phase based the learn
+5:15
+based learned information it will
+5:18
+predict it will study every single
+5:20
+word in the given text and using this
+5:23
+and use this formula
+5:25
+to give a prediction of how likely is
+5:27
+that given text
+5:28
+belongs to one of the classes since
+5:31
+naive
+5:32
+is a pretty simple algorithm we only
+5:34
+have one helper parameter to train in
+5:36
+this case
+5:37
+which is alpha so we run a research
+5:41
+on alpha here is our result
+5:45
+so we notice that when
+5:48
+the alpha is equal to one we have the
+5:50
+best outcome
+5:53
+and the second algorithm i want to talk
+5:54
+about is actually boost
+5:56
+actually boost is basically a gradient
+6:00
+boost algorithm
+6:01
+that can run in parallel it has a lot of
+6:04
+hyper parameters
+6:05
+and also is pretty time consuming to
+6:07
+train especially when
+6:08
+we use cross validation so we decide to
+6:12
+go with a randomized search
+6:14
+so here you can see the outcome of our
+6:16
+randomized search
+6:18
+which gives us a 71.12 percent of
+6:20
+accuracy
+6:22
+during the randomness search we notice
+6:25
+that
+6:26
+the deeper the next depth the better the
+6:28
+algorithm perform
+Model Evaluation
+6:31
+so here after we tuned our model we
+6:35
+run our model on the test data here is
+6:37
+the result
+6:39
+so naive bayes and support vector
+6:41
+machines
+6:42
+gives a pretty good result with both of
+6:45
+them has
+6:46
+a 0.76 accuracy
+6:49
+and then xg boost has a lower one which
+6:51
+is still 0.7
+6:53
+so we notice that cross validation
+6:55
+actually gives a really accurate
+6:57
+generalization
+6:58
+estimation in this case and the second
+7:01
+thing
+7:01
+is naive bs and support vector machines
+7:04
+actually tied in our pc
+7:07
+so the next question we want to ask is
+7:10
+which one which model we want to choose
+Model Comparison (SVM vs Naive Bayes)
+7:13
+therefore we run a model of comparison
+7:16
+using macnamer test
+7:18
+the p-value is pretty powerful which is
+7:21
+still 0.009
+7:23
+so we deny the possibility that two
+7:26
+models are equal
+7:28
+so which one to choose since there are
+7:31
+no
+7:31
+other metrics we're using here i decided
+7:34
+to go with the training time
+7:36
+now if base is way time saving then
+7:39
+support vector machines to train
+7:41
+so this might have some value for the
+7:44
+usage
+7:44
+in industrial industry
+7:49
+so here we come to the conclusion
+Conclusion
+7:51
+section first of all both support vector
+7:54
+machine and nifbs gave us a pretty
+7:56
+decent outcome
+7:57
+which is 76 percent of our accuracy for
+7:59
+both
+8:00
+naive bayes at this point requires less
+8:03
+training time than support vector
+8:05
+machine so we think this
+8:06
+can be one of the reason to break the
+8:08
+tie between these two models
+8:10
+and second thing is even our accuracy is
+8:12
+now very high
+8:13
+in general only 76 percent already beat
+8:16
+our expectation
+8:18
+the highest score on kaigo right now is
+8:20
+only 73 percent
+8:21
+als they also use the knife base as
+8:25
+their model
+8:26
+therefore we think um the result of this
+8:30
+uh project of ours is acceptable
+8:34
+the second thing is i want to mention
+8:36
+two things that we can improve in the
+8:37
+future
+8:38
+first is taking advantage of deep
+8:40
+learning deep learning nowadays
+8:43
+including recurring neural network
+8:45
+transformers are largely utilized in
+8:48
+natural language processing the tasks
+8:50
+like ours
+8:51
+they are providing some
+8:54
+impressive outcomes so basically it's
+8:58
+almost certain
+8:59
+we can improve our accuracy by deploying
+9:02
+some
+9:02
+deep learning models the second thing is
+9:05
+we don't have any monopoly
+9:06
+class at this point the professor
+9:08
+mentioned this issue in our proposal
+9:11
+however after we did a little bit
+9:13
+research since our
+9:14
+class size our data sets is pretty huge
+9:17
+and we couldn't find not political
+9:20
+tweets
+9:21
+at this number
+9:24
+and we also do want to spend a lot of
+9:27
+time on labeling data
+9:30
+tens thousands of data is almost
+9:32
+impossible to
+9:33
+label for three of us therefore
+9:36
+we let it go for now but in the future
+9:39
+we may add this
+9:40
+feature if we decide to continue with
+9:43
+this project
+9:44
+so thank you everyone for watching um i
+9:47
+hope you guys have a good final week
+9:49
+stay safe
+9:50
+stay health thank you
+
+##v86:
+
+0:00
+Unknown: Yeah, hi, everyone, I help you to get time this
+0:03
+semester and got something useful out of this class. I know
+0:06
+that this semester was very intense for most of us. So I
+0:09
+didn't want to add, say, more to your stress levels by covering
+0:13
+more and more content in this class. But yeah, unfortunately,
+0:16
+this is also why we didn't get to cover certain topics that I
+0:19
+promised to you on the syllabus. But yeah, also, as I promised to
+0:22
+you, I wanted to record a few bonus lectures over the winter
+0:26
+break. And yes, starting here. Today, I'm going to talk about
+0:29
+dimensionality reduction. And in particular, there are two
+0:32
+flavors of dimensionality reduction, which I think are
+0:36
+very useful to know about. One is feature selection, and one is
+0:40
+feature extraction. So in this series of videos, I'm going to
+0:44
+cover now, how feature selection works, why we should care, and
+0:48
+how we apply it in practice. And then in the next series of
+0:51
+videos, I'm going to cover feature extraction as an
+0:54
+alternative to feature selection. So yeah, then let me
+0:58
+grab my tablet and zoom in and talk more about feature
+1:02
+selection, how it works, why it works, and why it's useful.
+Dimensionality Reduction
+1:07
+Yeah, like I mentioned, we will be talking now about
+1:10
+dimensionality reduction, and in particular feature selection.
+1:14
+Like I mentioned before, there are two types of dimensionality
+1:17
+reduction. One is feature selection, and one is feature
+1:20
+extraction, and feature extraction will be the topic of
+1:25
+the next lecture. But before we dive into these types of
+1:28
+details, feature selection and feature extraction, let's
+1:32
+briefly talk about what dimensionality reduction means
+1:36
+and why do we care. So dimensionality reduction is
+1:39
+essentially about reducing the size of the feature set. So for
+1:43
+example, if you think about the familiar Iris dataset, we have
+1:47
+four features in the Iris dataset. It's the sepal, length,
+1:51
+sepal. width, the petal length, and petal width. And in feature
+1:59
+selection, we usually select a subset of these features. For
+2:03
+example, it could be that we select on sepal width and the
+2:07
+petal length as our features of interest for our machine
+2:10
+learning algorithm, or in feature extraction, the
+2:14
+extraction part, what that usually means is we are
+2:19
+extracting new features, which could be for example by applying
+2:24
+a linear transformation to existing features. There's a
+2:27
+technique called principal component analysis, abbreviated
+2:31
+PCA, which is essentially combining multiple features by
+2:37
+linear transformation. And then it also allows us to construct a
+2:41
+new feature space and also a smaller feature subspace. But
+2:46
+this topic of the next lecture, here, we are really interested
+2:49
+in selecting original features in that data set. And
+2:53
+dimensionality reduction in general is the process of
+2:57
+creating smaller dimensional feature spaces. So why do we
+3:01
+care about these smaller dimensional feature spaces? So
+Why Dimensionality Reduction
+3:05
+here is just like a little brainstorming of different
+3:09
+things I could come up with why dimensionality reduction is
+3:13
+interesting and useful. So one is the curse of dimensionality.
+3:19
+We briefly talked about the curse of dimensionality back way
+3:23
+back in the K nearest neighbor lecture. So the curse of
+3:27
+dimensionality. Yeah, roughly speaking, refers to the fact
+3:31
+that machine learning classifiers sometimes become
+3:35
+worse and worse, the more features we have. And in
+3:38
+particular, this is because in this context, they suffer from a
+3:42
+larger degree of overfitting, the more features we have. So in
+3:47
+that case, reducing the size of the feature set can actually
+3:50
+improve the performance of certain types of algorithms,
+3:53
+particularly for example, K nearest neighbors are decision
+3:57
+tree algorithms, which are very prone to overfitting.
+4:01
+So there's also the aspect of computational efficiency. For
+4:04
+example, we learned that kn n k nearest neighbors is very
+4:09
+expensive if we have a large data set a lot of training
+4:12
+examples. But it can also be slow if we have a lot of
+4:15
+features, because in each case, we have to compute a distance
+4:19
+metric, for example, the Euclidean distance metric, which
+4:22
+depends on the number of features in the data set. So
+4:25
+sometimes might be worthwhile to reduce the feature set to also
+4:29
+improve the computational performance. Of course, our goal
+4:33
+is always to reduce the feature set such that we don't lose too
+4:37
+much of the predictive performance. So another aspect
+4:40
+related to predictive performance is easier data
+4:44
+collection. So sometimes we can get away with a simpler feature
+4:48
+subset that gives us almost the same performance in the context
+4:51
+of machine learning compared to a larger feature subset. Why is
+4:55
+that desirable? I mean, it can be just cheaper to collect on
+4:58
+certain feature subsets. So I was just recently, in the
+5:03
+context of the class projects and thinking about one project,
+5:06
+a student group proposed where they were trying to predict
+5:09
+heart disease. And in this context, it might be
+5:12
+particularly interesting to think about what are Yeah, what
+5:16
+are important features to predict heart disease. But also,
+5:18
+what are features that are easy to collect. Because, I mean,
+5:23
+maybe something like a CRT is very accurate for determining
+5:27
+whether someone has heart disease. By the way, I don't
+5:30
+know if that's true. I'm not a doctor or a medical doctor. But
+5:33
+let's just assume this was true, it would be very expensive to
+5:37
+have patients coming into let's say, a hospital and do a CRT to
+5:42
+determine heart disease. If it's not, let's say, absolutely
+5:45
+necessary. So what would be maybe sometimes more useful if,
+5:51
+if there is something that a patient's could even, let's say,
+5:54
+Czech at home, like as a early diagnostic, for example, if you
+5:58
+have a smartwatch could be the ports or some of them have also
+6:03
+an ECG functionalities, you can also maybe put in your BMI and
+6:08
+these types of things, or certain symptoms you have that
+6:11
+can be easily collected. And this could be of a patient maybe
+6:15
+more accessible. So if this is sufficient, let's say to train a
+6:19
+machine learning algorithm with high accuracy, simple features
+6:23
+could be useful for patients to determine whether they should
+6:26
+see a doctor or not. And, yes, thinking about these types of
+6:30
+things is, I think, also very important in the context of
+6:33
+feature selection. Another aspect that is more related,
+6:36
+again, to the computational resources is storage space. So I
+6:41
+read on that recently, a few years ago, actually, I listened
+6:43
+to a podcast. Unfortunately, I don't remember the exact name.
+6:46
+But in this podcast, there was an astronomer talking about
+6:50
+collecting data observations with data they collected with
+6:55
+high resolution telescopes. And nowadays, telescopes are so
+7:00
+powerful or so high resolution at say that they collect
+7:05
+terabytes or maybe petabytes of data every, every few minutes or
+7:10
+hours. So it's kind of like impossible to store all this
+7:13
+data. So one challenge there is to really on the fly to figure
+7:17
+out, you know, what is the important data or what other
+7:20
+features that we should save, because we can save everything.
+7:24
+So in that case, people apply feature extraction and feature
+7:27
+selection algorithms on the fly to make storing these large
+7:31
+amounts of data actually feasible. And then there's also
+7:34
+the interpretability aspect, which kind of goes back to the
+7:38
+easier data collection aspect here a little bit, where
+7:41
+sometimes, analyzing features can also help with understanding
+7:46
+certain types of problems. So like the triple interpretability
+7:50
+aspect, I know for a fact, in Europe, for example, there is
+7:54
+this right to explanations. If you have an automated system and
+7:59
+you make predictions about customers, the customers have
+8:03
+the right to know why a certain let's say a prediction or
+8:07
+decision was made. For example, if you apply, let's say, for
+8:11
+credit card and it gets denied the customer has a right to know
+8:15
+why. And in this context, if you apply the machine learning
+8:18
+algorithm, understanding the machine learning algorithm can
+8:22
+be very important. And in this context, subset of features or
+8:29
+feature selection can also then help with interpreting even very
+8:34
+complicated machine learning algorithms, as I will show you
+8:37
+later in this lecture.
+8:39
+So but to give you just a brief overview again, so
+Overview
+8:42
+dimensionality reduction can be substructure into two sub
+8:46
+problems. One is feature selection, that's the focus of
+8:50
+today. And then there is feature extraction, the combination of
+8:53
+features or extracting feature subsets from raw data. That
+8:59
+could be for example, even in the case of the Iris data set,
+9:03
+if you think about images, someone took measurements of
+9:08
+flowers could be based on flower images to extract the features
+9:11
+like sepal length, petal length, sepal width and petal width. And
+9:16
+this is a topic we will be talking about in more detail in
+9:19
+the next lecture. So to end this little video here with a
+9:24
+motivating example. So here's a problem where we actually
+Problem
+9:28
+applied feature selection to learn a little bit more about a
+9:31
+problem that we had. So this is from a collaboration with
+9:34
+biochemists a few years ago or people who are studying on the
+9:39
+sea lamprey fish, which I already mentioned to you in
+9:42
+previous lectures. So in this case, there was this problem,
+9:46
+these sea lampreys, they actually harmful to other fish
+9:49
+species. And there was an overpopulation of the sea
+9:52
+lamprey in the Great Lakes and we wanted to essentially develop
+9:56
+something that reduces the population. So in this context,
+9:59
+we will are interested in finding a federal mon receptor
+10:03
+inhibitor. To prevent the Sealand prey from mating. I
+10:06
+don't want to go into too much detail about the ceilin prey
+10:08
+biology here. But in this context, we actually used
+10:12
+feature selection to understand what we are looking for in the
+10:18
+molecules in the inhibitors. So here in this figure, I'm showing
+10:22
+you excerpt of the original pheromone compound that we were
+10:28
+on, or one of the federal one compounds that we were
+10:31
+targeting. And here are highlighted some of the key,
+10:34
+let's say, chemical groups. And on the left hand side, I'm
+10:38
+showing you a plot here, where I was plotting the accuracy of a
+10:42
+machine learning classifier against different feature
+10:45
+subsets. So each number here refers to a different feature
+10:51
+subset, and that's the size of that feature subset. So here, I
+10:54
+used a technique called sequential feature selection.
+10:59
+And I will actually show you exactly how this works later in
+11:05
+this lecture. So in this sequential feature selection
+11:09
+approach, we selected a different feature subsets, and
+11:12
+we evaluated what the performance of the machine
+11:15
+learning model is, if we use that feature subset. So on the
+11:18
+left hand side, here, we use a subset of only one feature, this
+11:21
+feature was called sofa oxygens, it was simply a count of how
+11:25
+many oxygen atoms are around this sulfur atom here. Or if
+11:32
+there are at least a few oxygen atoms, that could be a number
+11:36
+between, I'd say, zero, and I think in this case, four, could
+11:40
+be maybe even more, but I'm not certain. So it was an integer,
+11:44
+just counting the number of sulfur oxygens. And then we also
+11:47
+had another feature set here, it was so four oxygens and sulfur.
+11:53
+So here, this consisted of the feature that I showed you before
+11:57
+the number of oxygens plus this sulfur atom in the center. And
+12:02
+in a similar manner, we collected different different
+12:05
+feature subsets containing different chemical groups. So
+12:08
+and also not here, I cut off on the molecule, there were
+12:11
+actually many, many more chemical groups. But for
+12:15
+simplicity, I'm only showing you a subset here. And what is
+12:18
+interesting is if we look at the so for oxygens, so for oxygens
+12:23
+plus sulfur, and then this feature subset consisting of
+12:27
+three groups, if you go further up here, the performance if we
+12:32
+include more features does not really improve, it's actually
+12:35
+quite the contrary, that the performance declines. And having
+12:39
+in this case, too many features could be for example, causing
+12:43
+this curse of dimensionality. So more features is not always
+12:46
+better. And also, what was interesting is that simple
+12:51
+feature subset, like sofa oxygen's and the sofa group here
+12:55
+is actually um, yeah, explaining are giving us a very
+13:00
+accurate classifier adding more features like this 90 methyl
+13:05
+group here, it's not adding that much to the performance. Yeah,
+13:08
+sure, it's approving maybe the percentage points by I don't
+13:12
+know, three 3%, or something like that, the accuracy, but
+13:15
+it's not really game changing here. So we might argue,
+13:18
+actually, that these here are the most important features of
+13:22
+our molecule. So that might be something we want to be looking
+13:26
+for when we are screening millions and millions of
+13:28
+molecules. And actually, what we did is just as a little side
+13:34
+experiment, we tested molecules that only consisted of these
+13:38
+sulfur oxygen and sulfur atoms. Except of course, they had like
+13:42
+a little carbon detail, but no other noteworthy chemical
+13:47
+groups. So when we when we did that, so when we tested
+Example
+13:50
+molecules that only had like the sulfur tail, so here and shown
+13:54
+in green, so in green is this molecule that has some carbon
+13:59
+atoms and then this sulfur tail, we found that this molecule
+14:04
+actually has already a 69% signal inhibition of our
+14:09
+pheromone that we were interested in. So in blue and
+14:12
+cyan here, this is the reference pheromone and we wanted to
+14:15
+inhibit it. And here I was overlaying the sofa tail
+14:21
+compound with this molecule can see the molecules are very
+14:25
+different except for this region and this region was enough to
+14:28
+have a 69% signal inhibition here is a little bit of a
+14:33
+smaller surface detail, but even that one was sufficient for a
+14:37
+blocking the signal 62% which is actually pretty big. So we found
+14:42
+later or molecule that was able to block the inhibition in the
+14:46
+high 90% area. It will add a few more features. I think it has
+14:51
+also some similarities here in this region. But it was very
+14:55
+interesting that using simple machine learning like here was
+14:58
+sufficient or helped us as least to understand part of our data
+15:02
+set what features are important for making a molecule active.
+15:08
+Okay, so this was a small hands on example. And before we end
+15:14
+this little video and move on to the next video, I wanted to give
+15:16
+you also a brief overview of the different topics I have in mind
+15:20
+for this lecture. So looks like a lot here. But yeah, I'm trying
+15:24
+to keep the videos relatively short, so it looks maybe more
+15:27
+than it really is. So here on the first topic, in the next
+15:31
+video will be just to give you the overview of the different
+15:34
+types of feature selection algorithms. So there are
+15:37
+different types like filter methods, embedded methods, and
+15:41
+wrapper methods, which we will be discussing in more detail
+15:44
+then in subsequent lectures can see actually the Wrapper method
+15:48
+section is pretty long, because I'm also then including some
+15:51
+code examples here and here to show you exactly how I did this
+15:56
+feature selection approach that I showed you in the previous
+15:58
+video. Okay, so then let me enter this video and I will
+16:01
+hopefully see you back in the next video when we talk about
+16:06
+the different categories of feature selection.
+
+##v87:
+
+0:00
+Unknown: Yeah, so in the previous video, we learned that
+0:02
+feature selection is a subcategory of dimensionality
+0:08
+reduction.
+0:10
+And we learned that in feature selection, we select subsets of
+0:15
+features. Why are we interested in selecting these subsets in
+0:19
+the first place again, so we gave a few motivations last
+0:22
+video. And, for example, one big motivation would be improving
+0:27
+the performance
+0:30
+of the model, which can come in two flavors, one would be the
+0:33
+predictive
+0:36
+performance, and one would be the computational performance.
+0:39
+So that is how fast a model runs. And then we talked also a
+0:44
+little bit about other motivations, like the storage
+0:46
+space. And I gave you an awesome example that having a smaller
+0:49
+feature set can sometimes help you understand your model
+0:53
+better, and also getting insights into the data set.
+0:58
+Now, there are many different kinds of feature selection
+1:00
+algorithms, and we can roughly organize them into three broader
+1:04
+sub categories. So in this video, I will briefly talk about
+1:08
+these different categories and highlight how they are different
+1:11
+from each other. And then in the upcoming videos, we will dive
+1:15
+into these different categories in more detail.
+1:19
+So these three categories are the filter methods, embedded
+1:24
+methods, and wrapper methods.
+1:28
+Yeah, and starting a brief comparison between these
+1:31
+different methods. Before we dive into more details, in the
+1:34
+upcoming videos, let's pick the filter methods. So these filter
+1:39
+methods are essentially methods that are focused on the
+1:42
+intrinsic
+1:45
+properties
+1:48
+of the features. So by that I mean that these methods really
+1:53
+just focus on the features themselves. And they don't
+1:56
+really involve a model or classifier at this point. So one
+2:01
+popular example would be using or computing the variants of a
+2:05
+feature. So why is that useful? Why can our variants tell us a
+2:10
+little bit about how important or useful features so consider a
+2:14
+case where this is our future axis here, and let's say these
+2:18
+x's are different training data points. So if these data points
+2:23
+are very much spread out across this axis, it's actually telling
+2:27
+us that this feature is quite useful for distinguishing
+2:31
+between different training examples. Notice here that we
+2:34
+don't talk about class labels yet. So I'm just looking at the
+2:38
+feature values. So we can't really tell at this point, how
+2:42
+good the feature is for, let's say, making predictions. But we
+2:46
+already know that this feature is actually at least more useful
+2:50
+than a feature where all the values overlap. So for example,
+2:53
+if you consider a case where I have training examples, like
+2:57
+these circles, where they all overlap, at some point, it's
+3:01
+kind of intuitive to see that a feature like that would not be
+3:04
+very useful if I am interested in constructing decision
+3:07
+boundaries, right? Because, yeah, think about a decision
+3:11
+tree, which comes up with boundaries perpendicular to the
+3:15
+feature axes. So in this case, we could come up with these
+3:18
+different boundaries here, for the Xs, I mean, it doesn't tell
+3:22
+us about the class labels. But we are already here able to
+3:25
+distinguish between trade and training data points. Whereas
+3:28
+for the blue ones, it's kind of a little bit hard to come up
+3:33
+with boundaries here to to separate these data points. So a
+3:37
+variance threshold can be actually pretty useful. So how
+3:41
+that works would be essentially that the larger the variance,
+3:44
+the better, and we can essentially just remove features
+3:47
+which have a low variance. So this would be like one example
+3:51
+of a filter method. And these are sometimes also called
+3:55
+univariate.
+3:58
+statistics that we compute here, so univariate, just focused on a
+4:03
+single,
+4:04
+single variable. Now also bivariate
+4:09
+statistics that we can compute. So an example would be for
+4:13
+example, the pairwise correlation between a pair of
+4:17
+features. So why is that a useful? Yeah, way to find out
+4:22
+which feature is useful. So if you have two features that are
+4:26
+highly correlated, it doesn't tell us if these features are,
+4:29
+let's say useful or not. But if one feature is very highly
+4:33
+correlated to the other feature, we know that at least one of the
+4:36
+features is redundant, and we can probably remove that from
+4:40
+the data set without us losing too much information. Another
+4:46
+bivariate statistic would be the correlation of the feature with
+4:50
+a target itself. So yeah, especially in regression
+4:54
+analysis. If we have a feature that is highly correlated with a
+4:57
+target variable, then you're fitting a regression
+5:00
+model on these two variables that gives us a good give us a
+5:03
+very good bang for the buck, right if we have a high
+5:05
+correlation between future and target. So that's also actually
+5:09
+pretty useful. So yeah, in a nutshell, filter methods are
+5:13
+methods that are really focused on the features themselves. And
+5:17
+in contrast,
+5:21
+we have these embedded methods, which actually involve a model.
+5:26
+So, like the name embedded implies, these feature selection
+5:32
+methods are embedded in the algorithm in the learning
+5:35
+algorithm. And they are usually part of optimizing the objective
+5:39
+function. We will also cover this in way more detail in the
+5:43
+upcoming videos. But just to give you one example, so if you
+5:46
+consider a decision tree, so if you think back of the earlier
+5:50
+lectures, when we had to decision trees, we split the
+5:54
+nodes. And in each point, each time when we split a node into
+5:58
+these child nodes, we compare all the different features here,
+6:04
+and different splitting thresholds for each feature,
+6:08
+because our goal here is to maximize the information game.
+6:13
+So we are finding the feature that maximizes the information
+6:18
+gain when we use it for splitting. So in that case, a
+6:23
+decision tree here is actually yeah, doing something that is
+6:28
+similar to selecting features internally while growing the
+6:31
+tree. And usually it selects the feature that results in the most
+6:35
+information gain. So that's our objective function. And it may
+6:39
+find that only certain features in the data set are useful for
+6:43
+that. And as a consequence, it can happen that once we finished
+6:47
+growing our decision tree, that certain features are not even
+6:50
+used at all. So later, we will also see that we can actually
+6:54
+use that and see which features are really not that useful in
+6:58
+the data set. So typically, I mean, intuitively, the features
+7:02
+that are used first in the decision tree that are used
+7:04
+higher up are usually the more important ones, because they
+7:08
+give us the most information game.
+7:11
+So lastly, there are these wrapper methods and the wrapper
+7:15
+methods. They are, I would say, closest to our main goals if our
+7:21
+main goal is optimizing the predictive performance of a
+7:24
+model. So here we are, we fit a model on different feature
+7:29
+subsets usually. And then based on the performance of the model,
+7:33
+we select or eliminate features. So to give you one, let's say
+7:37
+intuitive example, consider a feature set ABC. And consider
+7:44
+that we fit a classifier to this feature set. And let's say we
+7:48
+get
+7:49
+99% accuracy or something like that. So pretty high accuracy.
+7:54
+But it's just like an example, it could be any number here.
+7:57
+Now, we are constructing feature subsets, let's say a b, or a C
+8:03
+and B, C. So we have three different feature subsets. And
+8:07
+let's just also fit a model to each of them. So for example,
+8:11
+for a B, we may get, let's say 80% accuracy, for a C, we may
+8:17
+get 85% accuracy. And for PC, we may get, let's say 90% accuracy.
+8:24
+So just by looking at these numbers, and comparing these
+8:27
+numbers back to the original performance, we can get an idea
+8:30
+of how important each feature is, right? Because let's say
+8:36
+we go from ABC to a B, that is a drop of 19%. So removing feature
+8:43
+C results and drop off 19 accuracy points, which is quite
+8:49
+a lot. So tells us actually feature C is a relatively
+8:52
+important feature. And when we look at the other ones, yeah,
+8:56
+there's also dropped from a ABC to a C, so tells us that B is
+9:02
+also relatively important. It's here, 14 accuracy points. And
+9:06
+for the last one for feature
+9:09
+a here. So that would be
+9:13
+nine accuracy points. So by looking at these different
+9:17
+numbers, nine accuracy points, 14 accuracy points, and 19
+9:22
+accuracy points, we can conclude that here feature C might be the
+9:27
+most important one, because when we remove it, it results in the
+9:30
+largest accuracy drop, and vice versa, we can conclude that a is
+9:35
+the least important one because when we remove it, we only have
+9:39
+a 9% drop in accuracy. So by using a model and the model
+9:43
+accuracy, we can also learn a little bit about the importance
+9:47
+of each feature and we will also see more examples of that. So
+9:50
+how we can use these wrapper methods. But the last thing I
+9:54
+also wanted to note, I was showing you an example where in
+9:58
+every case
+10:00
+Performance dropped. But it's not always the case. If we have
+10:03
+a large feature set, we will also see later that removing
+10:07
+features can actually improve the performance. But the same
+10:10
+concept applies that we do these types of comparisons to find out
+10:15
+based on the accuracy directly, what is an important feature?
+10:19
+And yeah, one thing you may have already thought about is, when
+10:23
+we do that, if we fit a method every time to these different
+10:26
+feature subsets, especially if we have a large number of
+10:30
+feature subsets, this approach can become very expensive,
+10:33
+right? Especially compared to something simple like a variance
+10:37
+threshold, we have to carry out a lot of computations here. And
+10:41
+it can be quite expensive. So there's also a downside to these
+10:45
+wrapper methods. While they might be or they sound like
+10:48
+they're super useful, because they use the accuracy directly.
+10:51
+That's always also the downside of computational efficiency
+10:55
+trade off. Usually simpler methods that say they are not as
+10:59
+accurate, but they are sometimes often faster. While other
+11:03
+methods that let's say can give us better results are usually
+11:06
+more expensive. So in machine learning, there's always this
+11:09
+little trade off and in practice, we try to find like
+11:13
+sweet spots.
+11:15
+Okay, so in the next video, we will talk a little bit about
+11:19
+these filter methods in more detail. And then in the upcoming
+11:22
+videos, we will also dive more into these embedded and proper
+11:26
+methods. But at least based on this video, you have already a
+11:29
+brief overview of these different categories of feature
+11:32
+selection algorithms and how they compare with each other.
+
+##v88:
+
+0:01
+Unknown: Yeah, so in the previous video, we discussed the
+0:03
+three different categories of feature selection, namely the
+0:07
+filter methods, the embedded methods, and the wrapper
+0:11
+methods. Now, let's dive in a bit deeper into one of the
+0:14
+categories, the filter methods. And then of course, in the
+0:18
+upcoming videos, we will also talk about the embedded methods
+0:21
+and the wrapper methods. But yeah, I know the star of the
+0:24
+show here helps this video would be the filter methods. So what
+0:28
+are these filter methods again? So yeah, like we discussed last
+0:32
+time. So filter methods are essentially focused on the
+0:36
+intrinsic properties of the feature, or features. And this
+0:44
+means essentially, that we are using a properties or
+0:47
+measurements of the features themselves. And we don't really
+0:50
+use a model here for feature selection. So one example we
+0:54
+gave last time was the variance threshold. And I wanted to zoom
+0:58
+in a little bit more into this variance threshold, and discuss
+1:02
+how it works. So when we use a variance threshold for feature
+1:10
+selection, how that works is essentially that we compute the
+1:13
+variance of each feature. And we assume that features with a
+1:18
+higher variance may contain more useful information for training
+1:22
+a classifier or a regression model. So why is that true? Why
+1:26
+would a feature with a higher variance contained more
+1:30
+information, so I try to sketch it here at the bottom, where
+1:33
+let's assume we have a feature called X one. And here on the
+1:37
+left hand side on these are, these little diamonds shall
+1:42
+represent different training examples. And here, we can see
+1:45
+here, on the left hand side, this would be a feature with a
+1:49
+high variance. And yet across the feature access, the features
+1:56
+are pretty much well spread out here. So here, in this case, we
+2:00
+have a feature with a high variance and on the right hand
+2:03
+side, we have a feature with a low variance variants. So in
+2:09
+this case, the feature is less spread out. And you can maybe
+2:13
+already see why a higher variance might be better,
+2:16
+because it allows us to reconstruct the decision
+2:20
+boundaries based on that feature. So yeah, let me
+2:25
+illustrate this in those with more details. On the left hand
+2:28
+side, I have, again, my feature with a high variance. And not at
+2:33
+this point, we don't really look at the target variable or the
+2:37
+class labels. But let's just assume for the sake of the
+2:40
+example, that we have a binary classification case, where we
+2:44
+have the two classes on one is class square, and one is class.
+2:52
+Star. So we have these two classes here, class one, and
+2:56
+let's say class zero, and class one. And then there are
+3:03
+potential scenarios. So of course, the best case scenario
+3:07
+would be this one, where all the data points from one class are
+3:12
+on one side, for example, the square here on the left hand
+3:15
+side, and all the data points of the other class are on the other
+3:19
+side. So in this case, it will be very easy to construct or
+3:22
+find the decision boundary that separates the data perfectly.
+3:27
+And but of course, this is not always the case. And it could be
+3:31
+also here in this worst case scenario, where we have
+3:35
+alternating class tables across this feature axis. But again,
+3:39
+still, if you think about a decision tree, we would still be
+3:42
+able to construct decision boundaries, as long as the
+3:46
+features are well spread out. So the worst case really is a
+3:50
+features overlap. Because the features overlap, they don't
+3:53
+really give us any useful information about the class
+3:57
+table in the context of making predictions. Yeah, since it has
+4:03
+been quite a while since we talked about decision trees in
+4:06
+the very early lectures. Here, I have a coding example to show
+4:10
+you really, that decision tree would be able to classify these
+4:15
+data points perfectly. But also note that perfect classification
+4:19
+here on the training set, does not imply that this model would
+4:23
+generalize well to new date data. So that is kind of like a
+4:26
+separate problem. But yeah, just for the sake of this example,
+4:31
+assume we have the feature values 123 And four, so 123 and
+4:36
+four, just some arbitrary future values. And then we have the
+4:40
+labels 0101, where this is my feature array, and this is my
+4:47
+label array. So then I'm fitting my decision tree here. I'm not
+4:51
+limiting the depth at all, and we just fit the decision tree.
+4:55
+And then we can see based on the score function that we get a 100
+5:00
+percent
+5:02
+accuracy on the training set. Again, like I just mentioned,
+5:06
+100% training accuracy does not imply perfect generalization to
+5:10
+new data. But it's just like illustrating that a feature with
+5:15
+a large variance can be useful for distinguishing between
+5:18
+different classes. So here at the bottom, using the code that
+5:22
+we've seen earlier in earlier lectures, we can see that on the
+5:25
+right hand side, the decision tree is able perfectly able to
+5:31
+distinguish the classes we have on classes from zero. So these
+5:37
+are my squares. And then we have here, class one, class one,
+5:49
+which are my stars, that is probably the worst star I've
+5:55
+ever drawn, but doesn't matter. You know what I mean? Okay, so
+5:59
+just an illustration that feature with a large variance
+6:03
+can be very useful for a classifier, because it's helpful
+6:06
+for constructing these decision boundaries. Yeah, now that we
+6:13
+learned that the large variance is actually good, we haven't
+6:16
+really discussed how we can use the variance as a measure for
+6:19
+feature selection yet. So to get a little bit closer to answering
+6:23
+this question, let's briefly take a detour and look at how we
+6:27
+calculate the variance or how we define the variance. So here's
+6:32
+the definition of the variance of a discrete random variable.
+6:35
+So random variable that can take on fixed values like 1.1, or
+6:41
+2.0, and so forth. And how we would define the variance of
+6:46
+such a discrete random variable that takes on fixed values is
+6:49
+given here. So what we have here is x i, so the x i's are the
+6:56
+values that we can take on let's, let's write this maybe as
+7:00
+potential value x one and x two here. And we subtract the mean
+7:07
+here, and then we take it to the power of two. If we do that,
+7:11
+notice that these values can only be positive. And as a
+7:15
+consequence, the variance can never be negative, right?
+7:18
+Because we are summing here over positive values. So there are
+7:23
+here are the different values, one to n. random variable can
+7:28
+take on. And there's also this pie here, which you can think of
+7:33
+as a weighting term. So like, how likely is it to observe a
+7:37
+certain value, if each value is equally likely, this would be
+7:41
+essentially one over n as the P because it would sum up to one.
+7:48
+Okay, so this is like more like the formal definition of
+7:52
+variants of a discrete random variable. In practice, we are
+7:56
+usually given a data set with certain observation. And
+8:00
+usually, we also don't know how likely it is to observe a given
+8:04
+information piece of information in a data set. So which is why
+8:08
+we usually assume uniform weights, uniform weights, or P
+8:18
+equals one over N, like I mentioned before, so here at the
+8:21
+bottom, this would be then how we would actually concretely
+8:25
+calculate the variance for a given data set. And yeah, also
+8:29
+note that this would be computing the variance for the
+8:34
+population. But typically, we are given a sample. So there's
+8:39
+also a little correction term. So usually, in the denominator,
+8:43
+we have the n minus one thing, it's called vessels. correction
+8:49
+term, which I'm not going to derive in this video, that could
+8:51
+be a good topic for a different video. But in machine learning,
+8:55
+just to be honest, no one really cares about that we have very
+8:59
+large data sets in practice anyway. So this becomes kind of
+9:02
+like not very important. So in this case, it's like an optional
+9:06
+thing to compute the sample variants, but in machine
+9:08
+learning, usually, most people I know, on compute the variance
+9:13
+like this, even for the sample. This is also maybe partly due to
+9:17
+the fact that when we use NumPy and type NP bar, this is also
+9:23
+computing population variance. So if you want to compute the
+9:27
+sample variance, you have to change it to Delta degrees of
+9:31
+freedom equals one here, but again, this is a minor
+9:35
+distraction here. I don't want to go into too much detail here.
+9:39
+I think I explained this earlier in this course when we talked
+9:42
+about standardization. Okay, moving on. So for reference
+9:48
+here, again, how we calculate the variance. And I wanted to
+9:51
+highlight one special case. So where variance based feature
+9:56
+selection is actually pretty useful in practice. So this is
+9:59
+This is the case where we have a categorical
+10:04
+feature, or feature with categorical values. And we
+10:09
+perform usually a one hot encoding to construct the binary
+10:19
+variables, or Boolean features. So each of these binary binary
+10:25
+variables for each data point, we can observe the value zero or
+10:30
+one. So we can think of this as a Bernoulli variable. And if we
+10:35
+have a Bernoulli variable, we can compute the variance as
+10:38
+follows. So, p times one minus p, where p here is the
+10:44
+probability that it is one, right. So, in this case, if you
+10:48
+think of a coin flip, where you have unbiased coin where you
+10:52
+have a fair coin, then P would be equal to 2.5. And, yet, in
+10:59
+this case, if we have knowledge about that, how likely it is,
+11:03
+let's say that something is one or zero, we can compute the
+11:07
+variance generally like this. And just to have a little
+11:10
+demonstration of that, so if I use my regular variance
+11:13
+computation here on a variable that is equally likely to be
+11:18
+zero, or one, so here, I just generated an array with 50 zeros
+11:23
+and 50 ones, I get a point two, five. And if I would just plug
+11:28
+that in into my Bernoulli variable variance calculation, I
+11:33
+would get the exact same value. So why is that useful? We can
+11:38
+actually use that to kind of like come up with an intuitive
+11:41
+threshold for selecting features based on a variance threshold.
+11:49
+And I'm going to demonstrate how that works in a moment. Here,
+11:52
+just as a small side note. So there are several different
+11:57
+filter based methods in psychic learn, that allow us to perform
+12:02
+filter based feature selection. And in particular, we are going
+12:05
+to look at the variants threshold function here or
+12:09
+class, which allows us to remove all features with a low
+12:15
+variance. Okay, let's now put these two types of information
+12:20
+together. So we have the variance threshold class and
+12:24
+sacred learn. And we just learned that the variance of a
+12:27
+Bernoulli variable is p one minus p. So how does it help us
+12:33
+to select features based on the variance threshold? So imagine
+12:38
+we have a data set where we performed a one hot encoding, so
+12:42
+we have n data points. And we have different features X 1x,
+12:48
+two and so forth. Let's just for simplicity, look at one of these
+12:51
+features. So after the what one hot encoding, these would be
+12:56
+features where we have values, zeros and one, right? And there
+13:01
+are some of them where we have more than 80% have more than 80%
+13:10
+have, let's say once more than 80%. And there are other ones
+13:17
+where more than 80%. If zeros in that column. And I mean, this is
+13:24
+a hypothesis, but we might argue if most of the values there are
+13:29
+similar, it's likely not a super useful feature, because the
+13:33
+values are the same for each data point. So using just this
+13:37
+feature alone, I can't distinguish between those data
+13:40
+points, where all of the data points have the same value,
+13:43
+right? So in that kind of thinking, we can then say, yeah,
+13:47
+maybe let's just remove that feature. So using a variance
+13:51
+threshold, we can basically accomplish that. And how does
+13:55
+the Bernoulli variable variants come into play here. So this
+14:00
+allows us to specify how many of the labels should be similar or
+14:07
+not. So for example, if we say we want to eliminate features
+14:13
+where more than 80% are similar, for P, I can then plug in muse,
+14:19
+maybe the red color here, I can plug in point eight, and then
+14:23
+have one minus point eight. And I should get as a result, there
+14:28
+a point one six. So 0.16 could be than my variance
+14:33
+threshold to remove feature columns, where more than 80% of
+14:41
+the labels are the same. So this would by the way work. If I plug
+14:46
+in point one eight, if I focus on the ones, but similarly you
+14:51
+will notice if you plug in 0.21 minus 0.2, you will also get
+14:58
+1.6. So this is kind of symmetric here, whether we have
+15:02
+one, or zero, so whatever we plug in, if let's say less than
+15:07
+20% of the values are a one, or if more than 80% of the values
+15:12
+are one, we would drop this feature. So how does it work?
+15:16
+Let's say in Scikit, learn. So here I'm showing you an example.
+15:19
+So here we are importing first a one hot encoder. And I'm just
+15:23
+Yeah, encoding categorical variable that has different
+15:27
+values, blue, green, blue, blue, blue, green, red, blue, green,
+15:32
+and so forth. And I have some class labels assigned to it. I'm
+15:35
+not using the class tables at all. By the way, it's just for
+15:38
+illustration purposes. And me. So what I'm doing here is first
+15:43
+I'm encoding this categorical feature x into a one hot
+15:47
+encoding. And I'm also dropping one of the columns, because,
+15:50
+yeah, it would be redundant to have all the columns there,
+15:54
+because one column can be deduced from the remaining
+15:57
+columns, as we have discussed in an earlier lecture, one lecture
+16:01
+on one hot encoding. So here, I'm using my transform method.
+16:05
+And then, because by default, to make things efficient, psychic
+16:10
+learn has so called sparse arrays, as we discussed earlier,
+16:15
+so it's just like a more efficient representation. But we
+16:18
+can't really print sparse arrays, because yeah, it would
+16:22
+not be very easy to, let's say, deduce what values are
+16:26
+contained, which is why I'm using the two array method here
+16:30
+to display the output here as it's Yeah, numbers. And I'm also
+16:38
+by the way, including the code in the description of this
+16:41
+video. So if you want to toy around with that, um, there
+16:44
+should be a link to the code example. I have everything here
+16:47
+in Jupyter Notebook. Okay, so this was just the setup for the
+16:50
+one hot encoding. And next, let's get to the core here using
+16:55
+the variance threshold class. So here, we set the variance
+16:58
+threshold. And here we set a threshold of point one six,
+17:02
+which we compute, like we did before, point eight times one
+17:06
+minus point eight, such that, if we have a variable where more
+17:11
+than 80% of the labels are the same, they are removed. So here,
+17:17
+I'm applying this to my one hot encoded array, and you can see
+17:20
+them, only one column remains because this column here gets
+17:25
+removed. So this would be the column, if we would actually
+17:28
+trace this back to the features here, there's only one instance
+17:33
+of red, which corresponds to this one here. And this doesn't
+17:38
+really help us to distinguish between different training data
+17:42
+points. So in this case, it's a feature column that we remove
+17:48
+after the one hot encoding. Okay, so this was a very long
+17:52
+explanation on how we use the variant threshold. And we were
+17:57
+using these one hot encoded variables as an example. But of
+18:01
+course, it's not just restricted to 100 coded variables, you can
+18:06
+use the variants threshold for any type of variable.
+18:11
+Alright, coming to a conclusion. So what have we learned about
+18:14
+the variants threshold? So first of all, the variants threshold
+18:17
+is about computing the variants of each feature. So and we
+18:20
+assume that features with a higher variance may contain more
+18:25
+useful information. And we can use that information then to
+18:28
+select subsets of features based on thresholds we as the user
+18:33
+specified. So we can, for example, say, Keep a feature if
+18:39
+it's greater than a threshold. Or we could also just compute
+18:44
+the different variances for each feature, and then we just select
+18:48
+the key features with the largest variances. And what's
+18:53
+one advantage of using this technique? I mean, one really
+18:56
+big advantage is that it's a very, very fast technique. I
+19:00
+mean, computing the variants on a single feature is usually
+19:03
+super fast compared to anything else that you will encounter in
+19:07
+terms of feature selection. But yeah, the bad thing about this
+19:11
+is it does not take the relationship among features into
+19:14
+account. So we are really just looking at one feature at a
+19:18
+time, it doesn't really tell us much about it, say how this
+19:22
+feature is correlated to our target variable. And it also
+19:25
+doesn't really tell us about whether this feature is
+19:28
+redundant or not based on similarities to other features,
+19:32
+and it doesn't tell us about how well let's say it helps the
+19:37
+model to achieve a high accuracy on let's say, the test set.
+19:43
+Okay, so we will then in the next video see some alternative
+19:46
+techniques for feature selection, namely, the embedded
+19:49
+methods and the wrapper methods.
+
+##v89:
+
+0:00
+Unknown: Okay, so in the previous video, we talked about
+0:03
+filter methods for feature selection, where the filter
+0:06
+methods are based on the properties of the features. Now,
+0:12
+there are two different ways of doing feature selection are two
+0:14
+different categories, the embedded methods and the wrapper
+0:17
+methods, which both involve a model like a classifier. So for
+0:22
+the for now, we are going to talk about these embedded
+0:25
+methods, which have the feature selection implicitly
+0:32
+happening as part
+0:36
+of the model training or let's say optimization,
+0:44
+or maybe fitting part of the model fitting.
+0:48
+And how that works, we will see in this video in the context of
+0:52
+a one regularized logistic regression. And in the next
+0:56
+video, we will talk about decision trees and random
+0:58
+forests and how the implicit feature selection happens there.
+1:04
+So, again, just for context, we are still talking about
+1:07
+dimensionality reduction, and in particular feature selection and
+1:11
+these embedded methods for feature selection. And the focus
+1:14
+of this video is one regularization, which is also
+1:17
+sometimes known as lasso, if you have heard about this from other
+1:21
+classes before.
+1:24
+I know we haven't really talked about logistic regression in
+1:28
+this class, explicitly, I only shared with you a chapter, and
+1:33
+also some recordings from my deep learning class. Also, we
+1:38
+don't really have to talk about logistic regression in detail
+1:41
+for this video, I don't want to get let's say too sidetracked
+1:44
+because otherwise, this video will be easily an hour long. So
+1:48
+only the basics here. So
+1:51
+here in this example, I'm showing you a binary logistic
+1:54
+regression model, where we have two classes from the Iris
+1:57
+dataset with two features the petal length, and the petal
+2:01
+width. And one thing to see here is that a logistic regression
+2:06
+produces a linear decision boundary to separate these two
+2:10
+classes. So the decision boundary is actually based on
+2:15
+applying a threshold to the weighted sum of the inputs,
+2:19
+which are also going through a nonlinear transformation
+2:23
+function. Okay, this sounds maybe a little bit complicated.
+2:25
+So I have actually figure here summarizing all of it. So this
+2:30
+would be a logistic regression model. And I'm starting on the
+2:34
+left hand side, here, we have the weights. So actually, we can
+2:38
+have up to m weights, where m is the dimensionality of our data
+2:42
+set. In the previous slide, I showed you this binary case
+2:46
+where we have two classes, but also only two features. So the
+2:50
+two features, we can call them x one and x two, the petal length
+2:55
+and petal width here, and then we can for simplicity, let's say
+2:57
+ignore the other features.
+3:01
+And for each feature, there is a weight parameter. So here w one
+3:06
+and W two, and the weight corresponds to the input.
+3:11
+And then we also have this B here, which is so called bias
+3:15
+unit. So it's called bias unit.
+3:19
+And you can think of it like more like an intercept term. So
+3:24
+using these types of information, we compute a
+3:27
+weighted sum. So you can think of it as let's say,
+3:34
+W.
+3:36
+J,
+3:37
+times extreme, where the sum is over j, the input features, the
+3:41
+number of features, and then yeah, the bias term gets added
+3:45
+to it. So this would be our weighted sum, which goes through
+3:50
+a nonlinear transformation function here, it's a sigmoidal
+3:52
+function, it's sometimes also called the logistic sigmoid, we
+3:55
+don't have to dive into too many details here. But one thing I
+3:59
+can tell you is that this is outputting, a value between zero
+4:03
+and one. And this can be interpreted as a class
+4:05
+membership probability that denotes the probability that a
+4:10
+certain data point belongs to class one, given given the
+4:15
+observed features, and then we can apply a threshold function
+4:19
+and if the value so here, the value between zero and one is,
+4:23
+let's say greater than point five, if it's greater than point
+4:26
+five,
+4:28
+we may output class one.
+4:33
+And if it's a smaller equal 2.5, we can output class zero. And
+4:37
+this is how it makes the
+4:40
+class table prediction the binary prediction that we've
+4:42
+seen in the previous slide. Okay, so that's just like
+4:46
+logistic regression in a in a nutshell. And one aspect about
+4:51
+it is that how logistic regression learns the weights is
+4:56
+by looking at the prediction and comparing
+5:00
+To the true label, and based on that it,
+5:05
+for example, computes the derivative of the loss function
+5:08
+with respect to the weights, and then update the weights. So that
+5:14
+sounds may be super complicated, but maybe if it helps think
+5:17
+about linear regression, in linear regression, we have a
+5:21
+simple loss function where we have the mean squared error. So
+5:25
+we have in linear regression, the mean squared error is the
+5:30
+difference between the true value and the value, we want to
+5:35
+have the value that the model predict, let's call it
+5:38
+Whitehead. For each data point i, and when we compete a compute
+5:43
+the,
+5:45
+the square of that so that the values can be negative. So we
+5:49
+are essentially measuring how far are we off, there's just
+5:53
+like a measure of error. And then, if this is our last
+5:56
+function, we compute the derivative of the loss with
+5:58
+respect to the weights. To find out how much do we have to
+6:02
+change the weights to update or to minimize the loss function,
+6:07
+that's the main idea. But again, we don't want to have like a
+6:11
+super detailed lesson here on gradient descent or optimization
+6:15
+and these types of things. The bottom line is that we have a
+6:18
+loss function that we want to minimize in logistic regression.
+6:21
+And how that works. Let's say that's just some black box, it's
+6:24
+just minimizing this loss function where the loss
+6:26
+function, the loss is just a measure of an arrow here.
+6:33
+In logistic regression, the loss function looks relatively
+6:36
+complicated, it's actually not super complicated, I can share
+6:40
+with you on the other lectures I have on logistic regression,
+6:44
+it's actually just maximum likelihood. But
+6:48
+it looks if we have no explanation here, it looks
+6:51
+probably super complicated to you. But again, like I said,
+6:54
+don't worry about it at this point, you can just think of it
+6:57
+of it like as a mean squared error or something like that.
+6:59
+It's just like a way of measuring the arrow here. The
+7:03
+interesting part is that comes now to the feature selection is
+7:08
+this L one norm here. So the L one norm is a measure of how big
+7:13
+the weights are. So
+7:16
+this is like the shorthand for it. And here is like, it's more
+7:19
+like verbose where we have a sum over the M different weights in
+7:22
+our model, where m is the number of features in the data set. And
+7:27
+we're looking at the absolute size, the magnitude of the
+7:29
+weights, we're summing up the magnitude here, this is just the
+7:32
+vector notation. And lambda is you can think of it as a scaling
+7:38
+factor.
+7:40
+And it's essentially a hyper parameter that we have to choose
+7:43
+when we use this in practice.
+7:46
+So the, the central part is really just that this is a
+7:50
+weighted sum of the sizes of the weights. So we have two things,
+7:54
+we have now a loss function, that is the regular loss
+7:57
+function in logistic regression. And we have the so called L one
+8:01
+norm, or L one penalty term, which is in linear regression,
+8:05
+also sometimes called I mean, the original model is actually
+8:08
+called lesson which stands for least absolute shrinkage and
+8:13
+selection operator.
+8:15
+Why am I telling you about this. And so, when we want to use
+8:19
+this, or when we want to think about this embedded feature
+8:21
+selection approach, we actually add this penalty to the loss
+8:25
+function, we can think of it as a penalty against complexity,
+8:29
+because we can think of it about it like this, if we have large
+8:35
+weights, larger weights, because we compute the weighted sum,
+8:39
+give a high control make the features matter a lot when we
+8:45
+talk about the weighted sum and compute the threshold. So a
+8:48
+large weight give, feature a lot, a lot of importance. So
+8:55
+a model with very large weights is very sensitive to small
+8:59
+changes in the input. So we can think of it as a complex model
+9:02
+and that when in that sense, so we can think of this whole
+9:05
+penalty term
+9:07
+as a penalty against complexity when we add it to the loss
+9:11
+function. So this is what I'm showing you here at the bottom.
+9:17
+So, at the bottom, we are adding this penalty term to the loss
+9:21
+function. And
+9:23
+just for reference, again, the loss function here is something
+9:26
+we want to
+9:28
+minimize.
+9:31
+Actually, one want to minimize the whole loss function that is
+9:33
+part of the objective. But now,
+9:37
+this one adds a positive
+9:42
+value a large value a value that is greater than zero, right, as
+9:47
+long as the weights are greater than zero,
+9:50
+but if we want to minimize the loss,
+9:53
+this minimization procedure will try to keep these weights small,
+9:58
+right? Because only if you have
+10:00
+small weights, you minimize or you get a smaller loss.
+10:04
+So the loss tries to find weights that are good for making
+10:06
+predictions. And at the same time, we want to find small
+10:10
+weights the smallest possible, given that we still make a good
+10:14
+prediction, it's maybe hard to think about it like this. So
+10:17
+there is actually a nice geometric intuition. And for
+10:21
+more details, I recommend the lecture notes here by Ryan
+10:25
+Tibshirani. And Larry Wasserman, which have like more than
+10:28
+mathematical details described, here, we have more looking at
+10:32
+the visual concept. So here, this is summarizing this dual
+10:37
+objective that we have now, this kind of like constrained
+10:40
+optimization. So what we have here, think about, again, at the
+10:45
+first bar, this first slide, I showed you the decision
+10:48
+boundary, the can maybe go back here, this slide where we have
+10:52
+two features. So if we have two features, we have two weights,
+10:55
+we have weight, w one for this feature, and w two for that
+10:59
+feature, and then we will find one to find
+11:03
+this weighted sum and boundary, or we want to find essentially,
+11:07
+the weights such that we make a good prediction. And if we make
+11:10
+a good prediction, this minimizes the loss.
+11:14
+And here, these contour lines, let's say shall represent the
+11:21
+magnitude of that loss. And
+11:25
+the more so the auto ones are large, corresponding to large
+11:29
+loss. And the ones more in the center, correspond to a smaller
+11:35
+loss, it's really like just a contour plot. And let's just say
+11:39
+this one
+11:40
+is the global loss minimum without the regularization term.
+11:46
+So it's just this last here in the center, it's the regular
+11:50
+logistic regression loss. And it's minimized if we find
+11:53
+weights w one and W two that are this big here, like when we look
+11:58
+at what the corresponding values on these x's would be.
+12:03
+Okay, so this is just about minimizing the loss, we want to
+12:08
+find weight values,
+12:11
+such then we have them we minimize this loss function.
+12:16
+Now going back one more time. So
+12:18
+now here, we have this penalty term. And we know this is
+12:22
+minimized if the weights are zero, right? Because only if the
+12:26
+weights are zero, the sum can be zero. So this sum here.
+12:31
+So what that means if we think about the penalty term, that's
+12:35
+the global
+12:38
+the global minimum
+12:41
+of that penalty term. But we have no two things, right, we
+12:44
+have the loss function, plus the penalty term. So
+12:48
+what we want is somewhere, let's say between those two, between
+12:52
+minimizing the global loss minimum, and minimizing the
+12:56
+global penalty minimum. And it just so happens that in a one
+13:00
+regularized logistic regression with this L one penalty,
+13:05
+if we have a large enough, let's say, lambda term, it happens
+13:09
+that the solution, the trade off between minimizing the global
+13:15
+loss, and minimizing this penalty term, lies somewhere
+13:20
+where one of the weights is zero, or usually more than one
+13:25
+way can be zero. Sometimes people also call that sparse
+13:29
+weights if we have more than half of the weights zero. But
+13:33
+yeah, it just has a chance if we use a one that this is likely to
+13:39
+have one of the weights zero. And again, for mathematical
+13:42
+details, you're encouraged to check out these lecture notes
+13:46
+here. Okay, so this was a conceptual overview. But I also
+13:51
+want to show you an applied example of that in practice.
+13:56
+So for this example, we are going to use the wine data set,
+14:00
+why the wine data set, it has a few more features than Iris. So
+14:03
+it's a little bit more interesting to look at, on
+14:06
+lasso, or a one penalties as feature selection. So we have
+14:10
+three classes here. We earlier said it's logistic regression is
+14:15
+for binary classification, but we can also extend it to multi
+14:18
+class settings. And we'll talk about this later. And also, my
+14:21
+deep learning lecture has an example of multinomial logistic
+14:25
+regression for explaining that if you're interested
+14:29
+here, it's really the focus is on the features. So we have
+14:33
+different features, I think there are 13 different features
+14:35
+from the alcohol content to the proline content of different
+14:38
+wines. And the other classification task is to
+14:42
+distinguish between different types of wine.
+14:46
+I think it's actually grapes but I'm not sure anymore. Okay. And
+14:49
+by the way, I also have all the code examples nicely organized
+14:52
+in a notebook which I will also share below the video so you can
+14:56
+play around with it a little bit yourself, because I'm skipping
+14:59
+over that
+15:00
+I'd say the data loading step and stuff like that. But it's
+15:02
+all in the notebook if you want to toy around with that.
+15:06
+So starting how we start with any data set, when we do machine
+15:11
+learning in Scikit, learn, we split the data into a training
+15:14
+and a test set. Usually, we also have a validation set, or we use
+15:17
+cross validation. But for simplicity, let's say we just
+15:20
+have a training and a test set here. And we are also
+15:24
+standardizing the features. Again, I'm not explaining how
+15:28
+standardization works, because we have done that many, many
+15:30
+times in this class. And I don't want to make these videos too
+15:33
+long by repeating all these things. Okay, so the main part
+15:37
+here is now using the logistic regression model. So first of
+15:42
+all, note that we set the a one penalty here. But one downside
+15:47
+is if we set an one penalty that we want to use, we have to also
+15:51
+use a different solver. So it's like an unnecessary detail maybe
+15:55
+but the solver is essentially the way or the function or
+15:58
+approach to minimize the loss function in different ways. I
+16:01
+mean, gradient ascent, Newton conjugate gradients, the slip
+16:06
+linear library, which is another get implementation of
+16:11
+kind of like a gradient descent based method. So in that sense,
+16:16
+on the different ways we can optimize the loss, it's just
+16:18
+like a maybe unnecessary detail. But we have to choose something
+16:22
+other than the default value if we want to use the L one
+16:24
+penalty. Oops. And another thing here is that we have
+16:30
+this multi class setting here, because we have more than two
+16:34
+classes. Now, by default, again, it uses something called multi
+16:38
+normal logistic regression. But I wanted to be explicit also,
+16:42
+because for the lip linear, it uses I think, the one versus
+16:45
+rest regression, I'm just being explicit here. And one versus
+16:48
+rest on logistic regression is essentially an extension of
+16:53
+logistic regression to multi class settings where we have
+16:56
+multiple logistic regression models, it might sound super
+17:00
+complicated at this point. But it's actually the concept is
+17:03
+similar to the rich
+17:07
+per class accuracy that we discussed a few weeks ago. And
+17:13
+in particular, what we do is, if we have three classes here, we
+17:17
+we fit three logistic regression models. So we fit one logistic
+17:22
+regression model for class one, versus rest, where rest is class
+17:27
+two and three, then class two, versus rest, where rest is now
+17:32
+class one and one and three. And then class, three versus rest.
+17:37
+Rest is now class one and two. So we have three models. And
+17:41
+correspondingly, we also have three bias units. So intercept
+17:46
+is the bias unit is just a different word for that. So
+17:49
+because if I go back a few slides,
+17:52
+we've seen before, we have only one bias unit, but because we
+17:55
+have three
+17:57
+logistic regression models with this one versus rest approach,
+18:00
+we have knobs
+18:03
+we have now also
+18:06
+three
+18:09
+on three bias units.
+18:14
+And because we have three logistic regression models, we
+18:17
+also have three sets of weights. So one set corresponds to the
+18:21
+first model, one set corresponds to the second model, and one set
+18:26
+corresponds to the third model.
+18:30
+We don't need to discuss all these models, it's essentially
+18:33
+just as just like having multiple regression models here.
+18:38
+And then let's just focus on the first one here, for one versus
+18:42
+rest classification. So one versus the other classes.
+18:46
+And what's interesting here is, first of all, that gives us the
+18:49
+weight coefficients and the magnitude of these weights tell
+18:53
+us also how important each features because in the weighted
+18:57
+sum, the feature is multiplied with a weight. So the larger the
+19:01
+weight, the more contribution that feature has to the weighted
+19:04
+sum, and then also to coming up with a class label. And then we
+19:09
+can see that some of these features are actually zero. And
+19:14
+this is now finally the feature selection step. Yay. So it's
+19:17
+basically that we eliminate certain features, so that only
+19:21
+some features remain and we can think of that really as feature
+19:24
+selection here.
+19:28
+And related to that, why are there these particular ones
+19:32
+selected? I mean, it depends on how strong we set the
+19:37
+regularization strength that we had this parameter lambda. Here
+19:41
+in this context, there is no lambda there is this C
+19:44
+parameter, and C is the inverse of lambda. Why is it see? I
+19:50
+think it's because of support vector machines that a certain
+19:54
+implementation has this parameter c. Lambda in logistic
+19:58
+regression is more popular, but I think
+20:00
+Think the developers of psychic learn wanted to keep things
+20:03
+consistent in the API. So C is used everywhere. And C is the
+20:08
+inverse regularization strength. So that means a small c has or
+20:14
+corresponds to a large lambda. So small c is large
+20:19
+regularization, and a large C is small regularization.
+20:25
+And I encourage you to play around with lambda and you will
+20:28
+see, the smaller you make C,
+20:33
+the
+20:35
+larger the penalty will be and the more zeros we will observe.
+20:39
+Vice versa, the larger you make, see, the weaker the
+20:43
+regularization will be because it's the inverse of lambda. So
+20:47
+the larger you make, see, the less zeros you will see, and the
+20:50
+larger the weights will become.
+20:54
+Okay, and playing around with that is actually a good
+20:56
+exercise. But there is, let's say a more visual approach to
+20:59
+that. And it's called a lasso path. And I also have this as an
+21:04
+example in the code notebook that I'm sharing. So you can
+21:07
+also take a look at that. But what I'm doing here is I'm just
+21:10
+plotting see the hyperparameter over the weight coefficients. So
+21:14
+I'm just comparing what is the size of the weights for
+21:18
+different regularization strengths? Where this is strong,
+21:22
+sorry, it's the other way around, this is weak.
+21:25
+And this is strong regularization, because it's the
+21:28
+inverse. And you can see if we have weak regularization, so
+21:33
+these colors correspond to all the feature values in the data
+21:37
+set, where here, I'm showing you the weights, but the weights
+21:40
+correspond, of course, to the features. And you can see if I
+21:43
+have a weak regularization, you have relatively large feature
+21:47
+weights, and you can also deduce, if you have a
+21:49
+standardized data set, that, let's say these are the most
+21:53
+important features, the pralines and color intensity, because
+21:58
+they have the largest weight, so they contribute more to the
+22:00
+decision
+22:02
+to the class prediction. And you can see, as we increase the
+22:06
+regularization strength, these features approach zero, and some
+22:11
+of them actually get them
+22:13
+also eliminated earlier than others. And yeah, you can think
+22:17
+of it as the sort of feature selection, of course, we can't
+22:21
+really steer it in a way that we can say, Okay, I want to select
+22:24
+exactly five features or something like that. That's not
+22:27
+how it works, but you can play around with and see and yeah,
+22:31
+just eliminate features that way that you have sort of feature
+22:35
+selection by eliminate, eliminate eliminating features
+22:39
+that are not good for the objective function of logistic
+22:43
+regression. Or in another sense, logistic regression regression
+22:47
+will find features that
+22:50
+will keep only the features that are good for making good
+22:54
+predictions. So in that sense, it's like an embedded an
+22:57
+internal, implicit way of selecting features. And also we
+23:03
+can think about the size of the weights as
+23:08
+feature importance. And we will actually also revisit this later
+23:11
+when we talk about Reaper method called recursive feature
+23:15
+elimination. But yeah, this should be it for now, talking
+23:19
+about a one regularized logistic regression, and in the next
+23:23
+video, we will talk about embedded methods in the context
+23:26
+of decision trees and random forests.
+
+##v90:
+
+0:01
+Yeah, so last video, we started discussing embedded methods for feature selection. And as an example, we saw a one
+0:09
+regularized logistic regression. So with embedded methods, we mean, a methods where the feature selection is part of the
+0:17
+model that we are training. And today, we will see another example of embedded methods, namely, decision trees and how
+0:24
+decision trees again, select where features at each node. And then also how it relates to random forest feature
+0:31
+importance, where random forest feature importance is probably something you've already seen or heard about. And today, we will
+0:37
+see how that actually works. And yeah, like a small announcement to make, so my iPad pencil or pen doesn't really work anymore.
+0:47
+So I switched to a pen tablet. And yeah, I heard it's quite a
+0:52
+learning curve. And I'm noticing now it's actually a trickier to use than I thought. So it will maybe take me a few videos to
+1:00
+get really comfortable with it and used to it. And I'm also trying out new software here for the screen annotation. So yeah,
+1:08
+please be patient with the annotation, I hope it becomes smoother in upcoming videos. So just as a small side note here.
+1:17
+So yeah, the broad category of feature selection, just once more, we have the filter methods, the wrapper methods,
+1:24
+and today, the focus is on the embedded methods. Last week, the lasso or a one regularized regression. And now the decision
+1:32
+trees and random forests. And once we have these parts here done, once we check those off, we will move on to these wrapper
+1:40
+methods, where we will talk about methods where we use explicitly an algorithm to do the feature selection. And again
+1:48
+here, the feature selection is part of the algorithm. So yeah,
+1:56
+let's start by talking about decision trees. And in particular, we will take a look at an example data set first,
+2:03
+and then we will just briefly see again, how a decision tree would split the data set. So this is an example I took from
+2:10
+the previous decision tree lecture. So you may recall this figure I'm showing you it's it's quite a few weeks old, but maybe
+2:17
+you recall, we had two features here x one and x two. And there
+2:23
+are two classes, that is the square class and this triangle class here. So that's class table one and the square is
+2:30
+class table zero. And the goal here is to classify the data
+2:35
+points like in a regular classification example. So decision boundary, if I delete this, a decision boundary might
+2:43
+look like like this, for example. So you can see that all the all the class one examples are on one side, and all the
+2:53
+class zero examples are on the other side. So that would be one possibility for a decision boundary. And other decision
+3:00
+boundary, if you look at this closely, could be like this, but
+3:05
+we partition off this space here are these as one class. So
+3:11
+everything, basically here, inside would be one class, and everything outside would be the other class. So let's zoom into
+3:20
+that and actually see a concrete example of how psychic learn would do that. So here I have a decision tree that I actually
+3:29
+fit in scikit learn to classify this data set. And if you don't believe me that this is an actual decision tree, you are
+3:35
+welcome to go back to the decision tree lecture where we had this as a code example, I should probably also put the
+3:42
+links again under the video, so you can then double check and run the code yourself.
+3:47
+So what's going on here is that we have a decision tree that does two splits. So the first split is this one here. That's
+3:55
+split number two. And the second split is this one here, where it's splitting on another feature. So here this is the
+4:03
+bare bones sacred land representation of a decision tree. So you can see here first, it uses x one to make a split
+4:10
+and in particular, it says 5.5 is the cut off here. So we have here 5.5 as x one, the cut off this is our first split here.
+4:21
+And then we have the second split here, this one and if we
+4:26
+look at this, we have x two smaller equal to 10.5. So where might that be? 10.5. That's here. So here's actually our
+4:36
+second split going on. Okay, so we have two splits here. And we
+4:43
+can see based on these splits, the classifier classifies this dataset perfectly. Now, a little bit more information here. So we
+4:52
+start out with an entropy of point 985 which is relatively
+4:57
+high, so the highest entropy for about binary classification problem, if you recall, is actually one if we have two
+5:05
+classes, and it would be one, if the classes are perfectly matched, perfectly mixed, so here we have four and three. So
+5:15
+an entropy that is almost maximal maximum entropy would actually be if we had, let's say, four, and four, or three
+5:22
+and three, if we had an equal class distribution, because Entropy is a measure of, let's say how organized something is,
+5:30
+or how pure something is in terms of mixing, and we have a highest perfect mix, if we have equal proportion. So a high
+5:39
+entropy means a high mix of something. And here, um, when we split, we reduce the entropy to zero, and here 2.811. So there's
+5:51
+a reduction in entropy here happening from point nine 2.8.
+5:56
+And also equally 2.0. If we use that feature, then we still have
+6:03
+our entropy of point eight here. And we want to get down to ideally zero because if we have an entropy of zero, that's the
+6:10
+ideal case, where there is no mixing. That means we have class
+6:15
+labels, all of one kind here. And if we then split on feature
+6:22
+two, we can see, we achieve this very low entropy of zero here.
+6:28
+So that would be the ideal case. I'm just emphasizing the entropy here. Because we will be reusing that when we talk about random
+6:37
+forest feature importance. But one thing you can already recognize here, if I delete the annotation for a second, so one
+6:44
+thing you can already recognize here is that given decision trees have to decide which features to use. So there is a
+6:52
+feature selection going on here implicitly. So in logistic regression, all the features are used all the time. It's a
+6:59
+weighted sum, except of course, when we use the L one penalty where some features get zeroed. out right, here, we only use one
+7:12
+feature at a time, there is no way to at some first decides to use feature x one, and then it decides to use feature x two.
+7:20
+And how is that decided it's essentially looking at what is the feature that minimizes or decreases, sorry, that decreases
+7:30
+the entropy the most, so decrease entropy the most. And
+7:40
+instead of entropy, we also learned this could be, for example, the guinea impurity, or in general, it could be any
+7:48
+impurity measure that we have. There's also a flavor of that,
+7:53
+that we talked about in the decision tree lecture. That's minimizing, sorry, maximizing information gain maximizing
+8:11
+information gain. And yeah, if you don't recall how that
+8:16
+worked. So we can also then I can link the lecture, the decision tree lecture where we had discussed information gain
+8:23
+in detail. But for simplicity, you can also think about it as
+8:28
+minimizing the entropy or trying to get the biggest change from entropy here like minimizing the entropy as much as possible as
+8:38
+one criterion for selecting which which feature goes here and which threshold goes here.
+8:48
+Yeah, moving on another example here. So here, this would be a different way to split the tree. So first, the decision tree uses
+8:58
+feature x two. So here, splitting first on x two
+9:03
+smaller, equal 10. And then, again, splitting on x two again at 7.5. And if you split the decision tree like that, then
+9:12
+you can also reach zero entropy here, which is the ideal case. So we also have a pretty steep decline in entropy. And in fact,
+9:20
+that's the same as before. So both are possible ways to build
+9:25
+a decision tree that has exactly the same performance. So yeah, I
+9:32
+think it's pretty easy to see that decision trees perform feature selection implicitly. So let's go now to a more
+9:40
+interesting example and talk about random forests. And for that, we will be looking at a wind data set that I already
+9:47
+introduced in the previous video. So in particular, the wine data set has 13 different feature levels, the alcohol
+9:54
+content malic acid ash, alkalinity of ash, magnesium, total amount of phenol flavanoids, and so forth, and so
+10:02
+forth. So we have many features here. And let's say we are interested in also understanding, which are the
+10:08
+most important features that are used in a random forest. Because knowing about the feature importance can also help us
+10:15
+interpret certain features. And we could technically also select features based on the random forest feature points for other
+10:23
+models. So we could technically use random forest feature importance, select the most important features and give that
+10:29
+to a model that is more sensitive to the curse of dimensionality, for example, K nearest neighbors. So here, I
+10:37
+have the code example just for loading the wind data set. And yeah, there's nothing special about it, we have already used
+10:44
+that code before. And again, I will be also uploading the full code notebook to GitHub and share the link so that you can
+10:52
+also toy around with all the code. So here, I have just screenshots because it will make it more efficient to discuss so
+10:59
+that I don't have to switch to a Jupyter Notebook during the annotation here. So here, I'm showing you a feature importance
+11:07
+plot by a random forest. Before maybe going over the code, let me just talk a little bit about this figure. And then I will
+11:14
+show you with a code how to create this figure. So these are feature importances, computed by the random forest. And one
+11:23
+property of that is that they sum up to one. So if we have let's say f as the feature importance, if I take the sum of
+11:32
+the feature importances, they should sum up to one, they're basically just normalized that they sum up to one. And I have
+11:37
+each feature here, each of the 13 features in the wine dataset. And also, everything is sorted in descending order. So that the
+11:47
+highest feature importance this year on the left hand side, and the lowest feature importance here is on the right hand side,
+11:53
+I will show you how we get this plot from Sacred learn. And then in the upcoming slides, I will explain you how that's
+12:01
+calculated. So here on the left hand side, I have the code. So we are using a random forest classifier. And we're just using
+12:09
+our 500 estimators, we can also make this larger 1000 10,000 just arbitrary number here, use a random seed so that we can
+12:17
+reproduce the results. And then I'm fitting the random forest on the training data. So I haven't shown you the code for loading
+12:24
+the data, the training data, while let's say for splitting the wind data into training and test, but I have the code in the
+12:32
+code notebook. And it's exactly the same code that we use also in the last video. So the key point here, though, is that
+12:38
+after fitting, we get these feature importances from the random forest. So we get these important values. And these are
+12:46
+Yeah, these values here, you're seeing here on the right hand side. So these are the the bars, the magnitudes. It's floats, so
+12:54
+between zero and one, and such that they sum up to one. And one
+12:59
+thing I'm doing here is I'm actually sorting them. So I'm getting arc sort, I'm using ArcSight, which gives me the
+13:06
+sorting order. So it gives me the sorting indices, why do I need them, it's just for the sorting and plotting this plot
+13:14
+on the right hand side. So what I'm doing here is when I'm plotting this bar plot is I'm looking at the range of all the
+13:24
+features. So that's like a value between zero and 13.
+13:31
+And then I am getting the important values, these are here, these are the sorted importance values, right?
+13:38
+Because I used arc sort with ArcSight, I get the sort order. And then if I do the indices selection here, it will give me
+13:45
+the importances in the descending order here. So the descending order comes from this minus one year. Otherwise, I
+13:53
+would be if I would have ascending order so that they would be going from smallest to highest essentially. Okay, so
+14:01
+this gives me these bars in the sorted order. Why did I use these indices here and didn't swap directly. That's because I
+14:09
+also want the future labels here in the right order corresponding to this bar plots. So what I'm doing here is I'm getting the
+14:16
+feature labels, which are just the columns of my Panda's data frame. And then once I have that, I'm using my indices here
+14:26
+to get the labels here, right. So and again, this one is just the x axis takes between zero and 13 again, so it's just 10123
+14:39
+up to 12. And here, this is really the part where I get the
+14:45
+actual labels here. Okay, and this is it. So here I'm just
+14:51
+doing a cut off so that it looks nicer here. The cut points look nicer, but that's essentially it and these are the feature
+14:58
+importances and now bye I'm just looking at this plot. Let me let me clear the screen here. By looking at this plot here, what
+15:05
+we can see is that Prolene is most important and ash is least important. And I will show you now how this is computed. And
+15:14
+then I will also show you at, say some caveats when interpreting this. Yeah, and like I said, we will be
+15:23
+discussing now how the feature importances are computed. And one thing about random forests that you recall is that they
+15:30
+involve multiple decision trees, right. So actually, we can access the decision trees after fitting the random forest using
+15:38
+this estimators here. And if I have like in the previous slide used 500, decision trees or estimators, I should have a list
+15:48
+of 500 of them. So I'm not showing all of them because that would be of course, too big here for the screen. But we would
+15:54
+have 500 decision trees in this random forest. Each decision tree is different, right, because we're in forest ensemble
+16:01
+method, and we have to have different trees, because otherwise, if they would be all the same, there would be no point making an ensemble. And if you recall from the random
+16:11
+forest lecture, a random forest has two random aspects. One is the bootstrap sampling. So each
+16:31
+decision tree gets a bootstrap sample. And the second part is
+16:37
+the bootstrap sample of the training set. And the second part is random
+16:43
+feature subsets at each node, so while the random forest gives
+16:56
+each decision tree the full feature set, a decision tree itself uses only a random feature set at each node. And
+17:03
+the combination of having this bootstrap sample for each tree. And the random features at each node will make all these
+17:11
+decision trees here that we have different from each other. In addition, you can also see there's a different random state
+17:18
+here for each decision tree used. You can see this this max
+17:23
+features auto setting here. So what does that one mean? So the auto setting when you look in the documentation means that it
+17:31
+uses Max features square root, and feature. So if we have n features, at each node of the decision tree, it would only
+17:40
+consider square root of m features. So let's say we have the Iris data set. And we we split a decision tree, we have
+17:50
+the Iris data set with four features. Originally, a decision tree would only consider a square root of two features at
+17:57
+each node. So two features two random features at each node. So
+18:03
+in that way, each decision tree would be slightly different from each other. But yeah, that's not necessarily the point of the
+18:11
+feature importance. So feature importance could also be computed if we wouldn't use these random features. So and I
+18:17
+will show you now exactly, then how will explain to you how the feature importances are derived from these decision trees. Yeah,
+18:28
+and there are actually two common ways of computing the feature importance in decision trees. So I will call them
+18:34
+method A and method B. So first, let's talk about method A impurity based feature importance. And this is the one,
+18:41
+as far as I know, that is also used in Scikit. Learn when we compute the feature importances, as I've shown you in the
+18:48
+previous slides, and as far as I know, this is also one of the most popular ways of computing the feature importance in random
+18:55
+forests. But it may just be because most people actually use sacred learn. So how does that work? How does the impurity
+19:02
+based feature importance work? So like the name and impurity based implies, it's based on an impurity measure like Guinea or
+19:10
+entropy, it doesn't matter which one you use, it works works the same way for both. So let's maybe walk through it step by
+19:19
+step. So for each given feature, so we are looping over the features, and if we consider the wine data set, we have 13
+19:27
+features there, right? And then what we do is for each tree, so for each tree and the random forest, and if you recall from
+19:35
+the previous slide, we had a random forest with 500 decision trees, what we do is we compute the impurity decrease. So this
+19:44
+is what I showed you when we talked about the decision trees earlier. So we had a decision tree, where we looked at the
+19:51
+entropy could also be the guinea but let's say we looked at the entropy here. And then for the child notes, So let's say we I
+20:03
+don't recall the numbers, but we'd like something like 0.98, and then say 0.0, and 0.81, or something like that. So and then
+20:14
+we would essentially look at this decrease, so we just decrease the entropy from point nine, eight 2.81. And point 0.0.
+20:23
+And we would actually also add a weight. So in terms of the number of examples at that given node, so that gives us an
+20:29
+important, so if we have more examples at this node, so if we have more examples here, that would give us some higher
+20:36
+importance for for this particular split. And then what we do is we look at this impurity decrease over all the
+20:46
+trees. So first of all, for that feature, in that tree itself, and that feature, for example, let's say, this feature is x
+20:56
+one, we might be using, let's say here, another feature, let's
+21:01
+say, m x two, but then oops, then we might be using again,
+21:09
+here, x one, and so forth. So we would look at the impurity decrease,
+21:16
+for the whole tree, how often that feature gets used. And we also do that for all the trees. So we essentially look at all
+21:25
+the times a feature is used. And essentially, also, technically,
+21:32
+the higher up the feature is in the tree, the more important it is, because it splits more data points, right. So the higher up
+21:42
+usually the more important that feature, and this is reflected by weighting by the number of examples. So in a nutshell, how
+21:51
+this feature importance is computed, it's looking at the impurity decrease over that feature in the tree, and then
+21:59
+averaging over all the trees. So it's essentially the average
+22:05
+impurity decrease, that tells us how important the feature is,
+22:12
+the more important the feature is, the more it decreases the impurity, like the entropy, entropy, or the Guinea, for
+22:22
+example. So we get these average, impurity decreases for
+22:27
+each for each of the 13 features here. And once we have that, so
+22:33
+these could be some some numbers, let's say, depends on how you normalize, they could already be between 01, or they
+22:40
+could be just some numbers that you get there. And then they are normalized, such that they sum up to one. And this is
+22:47
+essentially the feature importance that you then get in the random forest. Yeah, so there are also some caveats with
+22:58
+this impurity based feature importance, especially if we have categorical features, with lots of unique values. And let's
+23:06
+say you have a random forest, based on decision trees that use categorical features. This categorical feature, if it has a
+23:13
+lot of values will be used a lot compared to, let's say, other features, just because it has a lot of values, and it has a lot
+23:19
+of value for splitting. And then yeah, sometimes people think it's kind of like inflated. In fact, I mean, this feature is
+23:25
+important for splitting, but it kind of, let's say disproportionately has a high chance of showing up. And vice
+23:34
+versa, if you have, let's say, a second learning a random forest, how you deal with categories is that you do a one hot encoding,
+23:43
+right. And so with that one hot encoding, what you do is you split category, into multiple sub categories. So you're
+23:51
+splitting up a feature essentially. And also, then essentially all the one hot encoded features, they kind of
+23:58
+May, maybe essentially one feature, you spread them out. And this can also kind of be a little bit misleading, because
+24:05
+you're not looking at the original feature anymore. You're looking at that slew of new variables that you create. So
+24:11
+you have to kind of a little careful with interpreting this. I mean, in practice, if you're aware of that, I mean, it's just
+24:17
+kind of reflecting how random forest uses the feature. So the
+24:23
+distinction for me personally, I don't see that as problematic if we really think about what impurity based feature
+24:31
+importance means. And that is basically how, how a random
+24:37
+forest or how decision trees use these features, right? So one
+24:45
+thing is also if you have one hot encoding, where you have one variable that you split into multiple sub variables, remember
+24:54
+at that random forest, we always select
+25:00
+Let's say by automatic settings, the square root of m features at each node. So if you have a lot of one hot encoded variables, or
+25:07
+you have one variable that becomes a lot of new variables, then there's a high chance that one of these variables is
+25:14
+selected at each node. So this kind of categorical variable will kind of be present at each node at some point compared to,
+25:22
+let's say, continuous features. So which can also be sometimes a little bit on, let's say, inflating the importance of
+25:28
+certain features. But again, I think, if we think of these
+25:33
+feature importance values as values, describing how a random forest or decision tree uses the data set, then I think it's
+25:43
+still reasonable to look at these feature importance values. Another thing is, correlated features that they share
+25:50
+importance, right. So if you have two features that are equally important, there's a, let's say, random chance to pick
+25:56
+one feature over the other. So if we have a feature importance plot, and there are two features that are perfectly correlated,
+26:04
+let's say this is one feature, and we have two perfectly correlated features, they might then end up like this here. So
+26:12
+these two are my perfectly correlated features. And they
+26:21
+don't look like in this example, I mean, this is just like something I just made up here. But they don't look like they
+26:26
+are super important to you in this plot compared to this other feature here. However, because they are perfectly correlated,
+26:33
+there's a random chance to pick this one, or this one for splitting a node. So in this way, they also Share, They Share
+26:42
+the entropy or impurity, decrease, right? Because you use
+26:49
+either one or the other, but not both at the same time. So in fact, we are under estimating of how important this feature could
+26:57
+be. So if we were, if we would remove this feature here, the
+27:02
+other feature would gain that importance, right. So in that case, actually, this feature might be more important than
+27:10
+than this feature if we consider that this feature was sharing its importance with another feature. Again, if we think
+27:17
+about what is the most important feature in the data set, then this sharing of the feature points could be problematic for
+27:27
+the interpretation. But again, if we think about the feature importance of a random forest is how a random forest or decision
+27:34
+tree uses different features, then I think this is totally fine. There is no issue with that, we just have to be aware
+27:42
+of how a random forest let's say behaves and there are some caveats. So let me know explain method B for computing feature
+27:53
+importance using random forests. And for that, we will have to take a brief look at bootstrap sampling. Again, I have
+28:00
+mentioned bootstrap sampling before when we talked about how random forest works. And we also talked about Bootstrap sampling
+28:07
+in the context of bagging in the in Samba methods, section or
+28:12
+lecture. And we also talked about it in the context of point
+28:18
+632, Bootstrap and point 632 Plus bootstrap in the previous lectures and so forth. Here, the focus is more on one thing I
+28:27
+wanted to highlight and that is the out of bag sample. So when we consider bootstrap sampling, so we have the original data
+28:33
+set, and then we have a sampling. With replacement
+28:43
+write, sampling with replacement, and because of
+28:49
+that, we will have some data points in the data sets. If they are, let's say, data point x one to extend, they will be then
+28:55
+duplicated. So for example, here I have maybe not a great
+29:00
+example, here, I have x two and x two as duplicated sample
+29:06
+right, or x eight and X eight and so forth. Never have these duplicated on training examples in my bootstrap sample, as a
+29:14
+consequence, there will be some examples that are not used at all in my bootstrap sample for example, here, x 3x, seven
+29:23
+extend and here there are some mistake there should also be some of them, maybe did a copy paste error. In this case, here,
+29:31
+it's six and nine, which are not appearing here. And here there also should be some that are not appearing, I think I see at
+29:38
+least x three I think X seven right, and so forth, X eight.
+29:48
+So there are always some examples that are not present in my bootstrap sample and these we call them the out of bag samples
+29:56
+and we can consider them as kind of test sets or validation, or
+30:04
+maybe better evaluation. Sets, if you think back about how the
+30:12
+points 632 And point 632 Plus bootstrap works. And we will also use that concept that we have these auto back samples for
+30:23
+computing feature and points. Yeah, let's now look at method B
+30:29
+here, the permutation importance. And this involves the order of back samples that I showed you on the previous
+30:36
+slide. And in fact, first, I wanted to explain to you how we can use these out of back samples to compute the model
+30:44
+accuracy. And then we will see how we can use that to compute the feature, importance via permutation. And I will actually
+30:52
+in a later video also talk about generalized form of permutation
+30:58
+importance. But let's do one step at a time, let's first see how we can use the out of bag accuracy using the out of bag
+31:06
+samples. So what we do is, during training, we can actually assess the predictive performance of the decision
+31:14
+trees of the random forest. Actually, if you recall from the ensemble lectures, we did that with the bagging classifier. And
+31:21
+with random forests, it works the same way. So during training for each tree, we can make predictions for the all of back
+31:29
+samples, which are essentially like validation. Or test data
+31:38
+points to the current tree. Let's say for the current tree,
+31:49
+I really need more practice with this pen tablet. But for the current tree, we can not let me rewrite this current. We can
+31:58
+think of these out of back samples as validation or test
+32:03
+data points because the tree doesn't see them right, they are out of back, the tree is only seeing the bootstrap sample. And
+32:11
+then we have these held out ones that the tree is not fit on. And
+32:17
+we discussed in the peer bootstrap lectures that this is approximately 1/3 of the data. So there should be for each
+32:23
+tree, plenty of test data points if we have a sufficiently large training set. So what we do is a how do we how do we actually use
+32:34
+these out of back samples. So what we do is, we consider each training example i, and look at all the trees that did not use
+32:45
+this training example i during model fitting. So if I have a random forest with 500 trees, there might be, let's say, I
+32:54
+don't know, let's say there might be 100 trees, that is not or maybe fewer could be 50. But let's say there's a number of
+33:01
+trees random V, I mean, it's the bootstrap samples are random, right? So there's a certain number of trees, that is not
+33:09
+using a certain training example i And for these, I can then make
+33:16
+a prediction on training example i by a majority vote so I can consider let's say the 50 trees that don't use example i and do
+33:26
+a prediction on example I so I get an example I so I get 50
+33:32
+predictions, right? So I get y hat let's say for tree one, my head for tree two and so forth. And maybe tree one predicts
+33:40
+class level one, tree two pricks class table 233 predicts class
+33:47
+table one class level, let's say 0434, and so forth. And then we
+33:54
+do a majority vote, look at which is the most frequently predicted label and in this case, we can maybe say class one
+34:02
+is the most frequently predicted label. So for example, one sorry
+34:09
+example I we can say, predict class one, and we would repeat
+34:15
+that for all the data points right for for AI, up to n so we
+34:21
+get a predicted label by majority vote for each training example. And based on that, we can then compare it or we can
+34:28
+just look at what the correct label is in the data set right because we have the actual labels and compute the accuracy
+34:35
+from that. And this would be then our out of bag accuracy estimate.
+34:43
+Yeah, and we could actually do something similar to compute the feature importance. So let me clear the screen and then do
+34:50
+some more annotation here. So how does the feature importance
+34:58
+by a permutation then work? So, one thing about this is a very
+35:03
+specific version here for the random forest where I talk about trees. But later in a later video, I will also talk about a
+35:09
+generalized version for that using a separate holdout set, that doesn't have to be, it does not have to be the OBE data set.
+35:22
+So in this case, if this is a little bit short and a little bit complicated, don't worry so much about this because first of
+35:29
+all, this method B is not used in psychic learn anyways, and later, we will see a more, I would say generalized version,
+35:36
+which is, I would say more popular in practice, because we can use it for any type of method. And I will also have
+35:42
+more visualizations later to make this more clear. So here, this is my like the short version of how that can be
+35:49
+specifically used in the context of random forests. So first step
+35:54
+would be counting the votes for the correct class. So we could also, let's say, compute here, the accuracy thing, the same
+36:02
+thing would also apply. And let's say we count the votes for the correct class, for a given decision tree across all the
+36:09
+decision trees. And what we then do is we consider a feature J,
+36:16
+and permute, this feature in the OB examples of a tree. So consider, we have the order of bank examples here. And we have
+36:27
+here the training examples for the rows. So let's say training example one, maybe training example three, and training
+36:35
+example five, and then the columns, here are the features. So let's say this is feature x one, feature x two, and feature
+36:43
+x three. So what we do is, we pick a feature, let's say feature j is here, feature two, we pick it and we just randomly
+36:53
+shuffle all the values here in this column, right. And then
+36:58
+after we shuffled these values, we count the number of correct votes again, afterwards after permutation. And then we look at
+37:09
+how much it has changed. So how much has the number of correct votes changed? So when we could also actually do the same thing
+37:17
+with the accuracy? How much would the accuracy would have changed after shuffling? Right? So it gives us an indicator of
+37:23
+how important that feature is, the more the number of correct
+37:29
+votes changes, the more important the feature is, right? Because the decision trees in that case, have heavily relied
+37:37
+on that feature to make a prediction here for these data points. Right. So in this case, the implementation, the
+37:44
+shuffling, kind of tells us how heavily is the feature used in the decision trees, and in that case, it's kind of correlated to
+37:52
+how good the predictions are before and after shuffling. And then we do that, of course, for all the trees in a random
+37:59
+forest, and average, the importance over the trees and we repeat this for all the features and then can also normalize
+38:07
+these values, such that they sum up to one and this would be a different way of computing the feature importance, but like I
+38:13
+said, we will be revisiting a generalized version of that the shuffling principle when we talk about wrapper methods in a
+38:21
+future video. So yeah, also with that, I want to end this video,
+38:27
+we talked about filter methods before now, we also finished the discussion on embedded methods, it was actually a long story,
+38:35
+but all I wanted to say is that there are some methods where feature selection happens internally like in L one or
+38:43
+logistic regression where some features become zero. And in decision trees where decision trees select different features
+38:49
+and yeah, there are also these random feature random forest feature importances in random forests, which are somewhat
+38:55
+related to the feature selection and Decision trees. And in the next video, we will talk about these proper methods, which are
+39:03
+more explicit about selecting features first of all more explicit in terms of using criterion on something like even
+39:12
+the accuracy here is a concrete thing we want to look at, to
+39:18
+derive the feature importance and they are also explicitly using models we can control which model we use and so forth.
+39:25
+And as we will see then in the next videos, it's actually a very powerful it's computationally more expensive
+39:31
+than of course, like filter methods for example, but they can be also very powerful as we will see
+
+##v91:
+
+0:01
+Yeah, we finally now get to talk about Wrapper methods
+0:04
+for feature selection. Previously, we talked about
+0:07
+filter methods, which use intrinsic properties of features
+0:10
+for the selection, for example, variants thresholds. And then we
+0:14
+also talked about embedded methods where the feature
+0:18
+selection is part of the algorithm, for example, the
+0:21
+feature selection and Decision trees. Now in the wrapper
+0:25
+methods, we use models explicitly for doing these
+0:30
+feature selections. So one example would be recursive
+0:34
+feature elimination, which is the topic of this video. And
+0:37
+then the upcoming videos, we will see also other methods for
+0:41
+feature selection using Reaper methods. So yeah, just as an
+0:46
+overview, again, here are three methods for feature selection,
+0:49
+where today, yeah, the focus is on Reaper methods. Yeah, and
+0:55
+conceptually, a recursive feature elimination is actually
+0:58
+pretty straightforward. So we can summarize the main approach
+1:03
+in three steps. So the first step would be fitting a model to
+1:07
+the data set. And usually, for that, we consider a linear model
+1:11
+or a generalized linear model, like linear or logistic
+1:15
+regression, where linear regression would be a normal
+1:18
+linear model, and logistic regression would be a
+1:21
+generalized linear model. So considering that we have a
+1:25
+linear model, the first step would be just fitting the model
+1:29
+to the data set. So nothing really special here. And then we
+1:32
+look at the model and in particular, we look at the model
+1:35
+coefficients, I will tell you in the next slides concretely how
+1:39
+that looks like. So considering the model coefficients, we then
+1:43
+eliminate the feature with a smallest coefficient. And we
+1:47
+consider this future with a smallest coefficient as the most
+1:53
+unimportant one. One important aspect when we do this is that
+1:57
+we have normalized, normalized, or, let's say, standard
+2:07
+standardised, or features. And we will see later in the code
+2:14
+examples concretely how we can do that. I mean, it's nothing
+2:17
+new. It's something you have been doing a lot of times, we
+2:20
+will, in the code example, see concretely how the workflow
+2:23
+looks like. So now, let's get back to these three steps. Step
+2:27
+one is fitting the model. Step two is eliminating the feature
+2:31
+with a smallest coefficient. And then the last step is
+2:35
+essentially just repeating steps one and two, until we reach the
+2:39
+desired number of features. So it's essentially just two steps
+2:44
+and the one service repeating step one and two. So pretty,
+2:48
+yeah, pretty simple method. Actually, if you look at it like
+2:50
+this, right? Yeah, but one of the crucial parts of recursive
+2:55
+feature elimination is the elimination of the model
+2:58
+coefficients or model weights. So to claim a kind of, like
+3:01
+illustrate this, I have for reference, a linear regression
+3:04
+and logistic regression model here. Linear Regression, as you
+3:07
+may know, is for modeling continuous targets. Whereas
+3:16
+logistic regression is a classifier for targets that are
+3:20
+discrete or categorical labels, as we know, I don't want to go
+3:26
+into too much detail, because that's already covered in other
+3:29
+lectures, right. So we had I mean, most of you probably know
+3:32
+how linear regression works. And we have also discussed logistic
+3:36
+regression before. Yeah, I'm just showing you two figures I
+3:40
+made, just for reference to show you how similar both models are.
+3:45
+So we would use linear regression if we use recursive
+3:50
+feature elimination for regression context. And we would
+3:54
+use logistic regression, for example, as a model for
+3:59
+recursive feature elimination for a classification problem.
+4:03
+Both of them have had the model weights or model parameters,
+4:07
+where we usually have the bias unit. In linear regression,
+4:11
+that's also usually the intercept term. And the model
+4:17
+weights are usually oops, in regression are the slopes
+4:25
+essentially. So and these are the ones where we saw how it
+4:30
+works is essentially we look at, we clear the slide here. We look
+4:35
+at the magnitudes of these model coefficients. And then we
+4:41
+eliminate the smallest one. So for example, if we have
+4:46
+0.1, let's say 0.5, and 1.0. Here as the model coefficients,
+4:53
+we would eliminate the first one which because it's the smallest
+4:57
+one, and if we eliminate this Model weight, we also imply that
+5:02
+we would not consider the first input feature. So we're
+5:06
+essentially getting rid of of the first input feature. So
+5:11
+instead of, let's say, deleting the first input feature, you can
+5:14
+also think about setting this setting this weight to zero,
+5:21
+right. So that would have the same effect, because we compute
+5:23
+a weighted sum here. So if this is maybe not quite clear, I have
+5:29
+another slide to walk you through an example of logistic
+5:33
+regression, how logistic regression again, processes the
+5:37
+input. We have discussed this some time before a different
+5:41
+lecture. So I don't want to go into too much detail. But just
+5:43
+because it helps here to understand how we eliminate
+5:46
+features. I have an example on the next slide. One moment here,
+5:49
+we go to the next slide. Yes, so here, we have an example of
+5:54
+logistic regression with two concrete inputs. And I wanted to
+5:58
+show you how to do the computation and logistic
+6:01
+regression so that you get a better feeling for why these
+6:05
+model coefficients are actually useful for selecting features.
+6:10
+And again, I'm going to skip over most of the details of
+6:13
+logistic regression because I don't want to make you feel
+6:16
+bored, I have another lecture on logistic regression. And yeah,
+6:19
+repeating it all the time would make these videos way too long,
+6:23
+and probably will also make you feel bored. So just for context,
+6:28
+let's, let's consider a simple classification example, where we
+6:33
+have two features x two and x one, two classes that say, class
+6:37
+zero and class one here. And in this case, it just happens that
+6:42
+with a linear classifier, we can classify them perfectly. And we
+6:48
+also, let's say, assume we have standardized or features, I
+6:52
+mean, normalizing them would also be fine, or just having
+6:56
+them on the same scale, we just want to have them on the same
+7:02
+scale. But just for simplicity, assume we have standardized them
+7:06
+so that the features are centered at let's say, zero. And
+7:11
+let's just say in this plot, we have the range between minus one
+7:15
+and one here. And considering this particular input for x one,
+7:21
+that would be approximately, let's say, here and use a
+7:23
+different color would be here, and minus point four would be
+7:28
+that same somewhere here. So we get this particular input
+7:33
+feature. And we want to know whether it belongs to class one
+7:36
+or class zero, of course, we don't have or we don't know the
+7:39
+decision boundary. in multiple dimensions, we mean, we know it,
+7:42
+but we can't see it here would be trivial to say, okay, it
+7:45
+should be class zero if the decision boundary is like that.
+7:48
+But we are here now, doing the computation and see why this is
+7:54
+without, let's say, having the visual as an as an eight here.
+7:58
+So in logistic regression, we compute a weighted sum first, we
+8:02
+call that the net input, that is essentially multiplying the
+8:05
+feature with the model weight. So here, point three times minus
+8:10
+point two, model weight was learned to be minus point two.
+8:13
+So this would be
+8:16
+x one times w one, and then here, that would be x two w two.
+8:24
+And then lastly, we have the bias here, just for simplicity,
+8:27
+I set it to zero, so we have a bias unit of zero, and then we
+8:31
+get the weighted sum of minus point eight, two, then we go or
+8:36
+we have a linear sorry, nonlinear activation function,
+8:40
+the logistic sigmoid function here, and this is a function
+8:43
+that takes inputs from the inputs are between minus
+8:49
+infinity and infinity and the output is between zero and one.
+8:57
+And we can interpret this output here, the output of the logistic
+9:01
+sigmoid function as the class membership probability. So the
+9:05
+probability that a data point belongs to class one given its
+9:08
+feature observations, so here, we now plug in our net input
+9:15
+into this logistic sigmoid function, we get a point three
+9:18
+as the output. So this is our point three, our class
+9:22
+membership probability that this data point belongs to class one,
+9:26
+and then we have this threshold function and by default, the
+9:30
+threshold is at point five, which is just in the center
+9:34
+between zero and one. And we say if this value from the logistic
+9:39
+sigmoid function is greater than point five, we return class
+9:43
+label one. And otherwise we return class label zero. Since
+9:48
+we have something like 0.3, that is smaller than point five. We
+9:56
+Oops, oh, what happened here? So three point three smaller than
+10:00
+point five. I need more practice with this pen tablet here. So
+10:06
+but since point three is smaller than point five, we have class
+10:11
+level zero. And then looking here, that makes also sense if
+10:17
+we consider this context of this decision laundry. Okay, so what
+10:21
+does it have to do now with feature selection. So the bottom
+10:26
+line is that everything depends kind of like on this weighted
+10:30
+sum, right? Because a weighted sum determines the magnitude of
+10:34
+the value we get from here. So if we make the weighted sum
+10:37
+bigger, this value will become bigger. And if this value
+10:41
+becomes bigger, then it is more likely, let's say, to exceed
+10:45
+this threshold. So making these weights here bigger, will help
+10:50
+with exceeding the threshold, let me clear the screen here. So
+10:53
+we have see. So making these weights bigger, makes the net
+10:58
+input bigger, makes the output from this sigmoid function
+11:02
+bigger and makes it more likely to exceed this threshold. So to
+11:05
+make it more likely that it is class one, and then in this
+11:09
+sense, we can consider the weights as how important each
+11:13
+feature is, right? Because it's kind of like quantifying the
+11:17
+influence of the input feature in a sense. So we can say, a
+11:23
+large weight gifts, this input feature a lot of importance when
+11:27
+we compute here, the when we compute the net input, and by
+11:32
+the way, I mentioned, okay, it's more likely to exceed the
+11:36
+threshold, but also can make it more likely to be below the
+11:39
+threshold. If this is, for example, a negative value or
+11:42
+this is a negative value, we are mostly interested in the
+11:45
+absolute value, because that pushes the boundary or the
+11:49
+threshold, more to the left or more to the right, or whether we
+11:54
+are more to the left or more to the right of the threshold. So
+11:57
+what's really important is like this magnitude of the weight
+11:59
+here. So this kind of like gives us an importance of how much the
+12:05
+input feature plays a role when we compute the net input. And
+12:08
+again, this is why we want to standardize or normalize the
+12:12
+weights so that the input features are on the same scale,
+12:16
+which then also have the proportional weights so that we
+12:19
+can interpret the weights better. Yeah, and this is a
+12:23
+hurry it how recursive feature elimination works. So in the
+12:27
+remaining slides, I want to show you an example in sacred learn
+12:31
+how we can use recursive feature elimination. So we are using the
+12:35
+wind data set again, because it has a lot of features. It's a
+12:38
+nice data set for illustrating feature selection. So we start
+12:43
+again with preparing the data data set. So here, again, is the
+12:47
+same code I showed you before in a different video. So I'm not
+12:53
+talking about this again, because it would be quite
+12:55
+boring. But again, also, if you want to run the code on your
+12:59
+computer, I will share the code notebook on the video and link.
+13:03
+So you can also run this code later. I'm just using slides
+13:07
+here, because it's easier for the annotation rather than let's
+13:10
+say, running it in a Jupyter Notebook.
+13:14
+So here's also code that we have seen before. So here I'm just
+13:18
+splitting the dataset into training and test set. And then
+13:24
+I'm using my standard scaler to standardize the data. So I'm
+13:28
+standardizing it and then I will be working with extrange
+13:32
+standardized and X test standardized. Yeah, and this is
+13:37
+the real interesting part where we use recursive feature
+13:41
+selection should have said, Actually, elimination versus
+13:48
+feature elimination, short RFP in Sagat learn. And we're using
+13:54
+it with a logistic regression model here. So how it works is
+13:58
+we can instantiate RFP object from the RFP class. And it gets
+14:06
+us input an estimator, for example here or logistic
+14:09
+regression. And then we can specify how many features we
+14:13
+want to select. In the wine data set. We have originally 13
+14:16
+features and we want to select let's say five, why five? I
+14:21
+mean, this is just arbitrary here, but I will also show you
+14:24
+in a few moments how we can let's say Use grid search to
+14:28
+determine what is a good number for the number of features to
+14:30
+select. There's another parameter here step and step
+14:36
+means how many features do we select at a time because
+14:39
+remember, the three steps in recursive feature elimination
+14:42
+are step one is fitting the model and then step two is
+14:51
+eliminating the pizza Let's say with smallest the smallest
+15:10
+weight. And we could also instead of saying the one
+15:17
+feature with the smallest weight, we can also say, let's
+15:19
+say the two features with a smallest weights, right, we
+15:23
+could have more than one feature. And step determines how
+15:26
+many features we select at each given time. If we have a number
+15:31
+that is greater than one, this algorithm will run a little bit
+15:33
+faster, because I'd say it may select two or three features to
+15:38
+eliminate in each round. So we reach the five faster. But
+15:42
+typically, if we use linear model like logistic regression,
+15:46
+here, it's a very prominent very, but a relatively fast
+15:49
+algorithm or relatively fast feature selection algorithm,
+15:52
+because linear models are very fast to fit even if the data set
+15:56
+is large. So I would technically or I would, in practice,
+16:00
+recommend just using step one here, because why not, unless
+16:03
+you really experience that the method is very slow, then you
+16:07
+can maybe increase that. But other than that, I don't think
+16:09
+there's a good reason to choose a number that is larger than one
+16:13
+year. Okay, so once we have initiate or instantiated this
+16:17
+RFP object, we can then fit it, it behaves just like a normal
+16:22
+psychic learn estimator, so we can fit it into we can fit it to
+16:27
+the standardized data. So what's important here is that the data
+16:31
+is standardized. And then we can use here, the RFP to perform
+16:39
+feature selection by using the transform method. So what will
+16:43
+happen is, if we use transform, X train sub will be a training
+16:48
+subset, where we have only five features now. So the original
+16:53
+feature set, let's say had 13 features. And now, so this would
+16:57
+be x. Rain standardized, and then extreme sub would be a data
+17:08
+set that only has five feature columns. So this would be x.
+17:13
+Rain sub a smaller data set, should have maybe shown shape
+17:21
+here. So you would have seen that, but yeah, I didn't. So you
+17:25
+have to trust me here, you can try this out in the notebook
+17:28
+that I'm sharing, by the way, if you are curious if that's indeed
+17:32
+the case. By the way, if we are curious which features it has
+17:37
+selected from the 13, there is an attribute called support
+17:41
+underscore, and this gives you the indices a Boolean. Mask, a
+17:50
+Boolean mask, essentially means a mask consisting of true and
+17:54
+false values. And if we do that, we can see
+18:00
+the following Boolean mask and it gives us information about
+18:04
+which features are selected true, which features are
+18:08
+eliminated false, so the false features are eliminated, and the
+18:12
+true ones are selected for feature selection. So if we want
+18:16
+to know the names of the features we have in our data
+18:19
+frame, the wind data frame, we have the column names. The first
+18:24
+column, by the way, was the class label, so I'm skipping the
+18:29
+first class over here. And then if I use the Boolean mask as a
+18:32
+selection operator, it's a fancy indexing selector. Then I can
+18:42
+get the names of the features that were selected. And in this
+18:46
+case, we have alcohol, flavonoids, color, intensity,
+18:49
+hue, and proline as the most important features in the wine
+18:52
+data sets, according to our linear model here. Yeah, last
+18:59
+but not least, when it comes here to the code examples, in
+19:01
+this video, I have an example of using recursive feature
+19:06
+elimination as part of a saccade learn pipeline. So why is that
+19:10
+useful? Well, it allows us to use, for example, grid search,
+19:14
+or randomized search or any other hyper parameter tuning
+19:17
+method in let's say, sacred burn, to select a good number of
+19:21
+features for our recursive feature elimination object. So
+19:28
+here, I'm showing you how that works. First, I'm making a
+19:32
+pipeline, a sacred learn pipeline, for example,
+19:34
+consistent of the feature selection here, recursive
+19:38
+feature elimination, and a K nearest neighbor classifier. I
+19:41
+can put any classifier here right so I don't have to put k
+19:45
+and n here. I could in fact, also use logistic regression
+19:49
+here, but I thought it might be quite boring. And also like we
+19:52
+have seen in a previous video if we want to do feature selection,
+19:56
+let's say for logistic regression model we could also
+19:59
+just use a The one penalty, right. So here, we use the the
+20:04
+recursive feature elimination as a general method for feature
+20:07
+selection for any type of model. However, also note that logistic
+20:12
+regression has the assumption that, let's say we have a
+20:16
+linearly separable data set. And the selected features, or
+20:21
+eliminated features are specific, let's say to this
+20:24
+logistic regression model. So we assume for example, certain
+20:28
+features are important for logistic regression. But then
+20:31
+Kenya's neighbor may consider different features as important.
+20:34
+So in that case, it's, it's not optimal. It's more like an
+20:38
+approximation that we do here, we use a simple model here for
+20:42
+feature selection. And then we use the selected features as
+20:45
+input to any, let's say, more complicated model and
+20:50
+complicated in terms of a nonlinear decision boundary.
+20:55
+Okay, but let's maybe continue with this example before we get
+20:58
+too sidetracked with the assumptions we make here. So we
+21:01
+are tuning two things. So first, we are tuning the number of
+21:05
+features. So the original data set has 13 features. So we are
+21:09
+here selecting between one and 12 features. So 13 is the upper
+21:13
+bound, so it selects it, at least it makes a selection, it's
+21:18
+not using the original feature set here. And the number of
+21:21
+features is between one and 12, including 12. And then we also
+21:25
+tuning the number of neighbors, I'm just setting it to the upper
+21:29
+bound of 10. But it was kind of arbitrary here. So you can also
+21:33
+choose a larger number, of course, then we are using our
+21:37
+grid search CV object on the pipeline, we just created with
+21:41
+the parameters, we want to tune here. And we use 10 fold cross
+21:45
+validation, and we run things in parallel on our computer. So
+21:50
+we're fitting them the grid search object on the
+21:52
+standardized data set. By the way, you could also just use the
+21:55
+regular data set and use standard scalar. Here, it would
+22:01
+be even slightly better to use the skinny scalar here, I didn't
+22:04
+do that, but it's also fine. And then yeah, we look at the
+22:09
+results here. So the best parameters from hyper parameter
+22:13
+tuning are k and n classifier with three neighbors. And what
+22:20
+the method finds that five features is ideal here for
+22:26
+recursive feature elimination, using logistic regression and 10
+22:30
+fold cross validation. And this results in a tenfold CV accuracy
+22:39
+of 99%. Just yet, we'll take a look at how well this feature
+22:46
+subset performs on the test set, we get here actually, even 100%
+22:52
+performance using this pipeline on the test set, which is
+22:56
+actually pretty good. So it's, of course a small test set
+23:00
+because it's a small data set in general. But we can see here,
+23:03
+it's actually generalizing very well. So there is no overfitting
+23:07
+quite the opposite actually. So the test performance is even
+23:10
+slightly better than the training set performance.
+23:15
+So it's actually also not the training set performance, I
+23:17
+should say it's 10 fold cross validation performance. And just
+23:21
+for reference, I have the full feature set here. And note that
+23:25
+we discussed that before that k nearest neighbors is prone to
+23:29
+the so called curse of dimensionality. So having too
+23:39
+many features, given a fixed size data set can make the
+23:44
+performance of K nearest neighbors worse. And in this
+23:48
+case, here, we can observe that if we use the full feature set
+23:51
+here, and train a cane and model on the full feature set with
+23:54
+three neighbors, and then look at the test performance we get
+23:58
+only 96% compared to the 90 or sorry, the 100 here. So in that
+24:08
+case, feature selection is actually good. Okay, so this was
+24:11
+an example of recursive feature elimination in scikit learn
+24:18
+actually have one last slide on recursive feature elimination
+24:22
+with scikit learn and I just wanted to show you how we can
+24:25
+use it also with other models other than let's say logistic
+24:29
+regression or linear regression. So, here in RFP we have an
+24:37
+estimator that we provided. And in our example, we used logistic
+24:43
+regression but we can use any estimator here so I have no
+24:46
+reference here can use any estimator that has a coefficient
+24:50
+attribute, for example, the linear SVC support vector
+24:54
+machine classifier and secular and also has that attribute, but
+24:58
+we could also for example, Consider any model that has a
+25:03
+feature importances attribute. And in the last video we
+25:06
+learned, for example, the random forest classifier would be a
+25:15
+candidate that has this feature importance attributes. So we
+25:19
+could technically also use a random forest here for feature
+25:22
+selection. So we are not limited to anything that is a
+25:26
+generalized linear model. However, it's more, let's say,
+25:28
+traditional to use a generalized linear model here. Okay, before
+25:34
+we end this video, also one short note about the pros and
+25:38
+cons, the advantages and disadvantages of recursive
+25:42
+feature elimination. So one advantage is that we can
+25:46
+explicitly select the number of features we want to select
+25:49
+right? So remember, before we could set it to five, if we
+25:53
+really care about selecting five features. One disadvantage,
+25:57
+though, is that well, we are guessing here, but let's say we
+26:01
+have maybe some prior knowledge, that might be something but most
+26:04
+of the time, yeah, there is no, no way we know what is a good
+26:08
+number of features to select. Right. So in this case, we
+26:12
+usually also have to consider running a hyper parameter tuning
+26:16
+technique to find a good number of features, which is, I would
+26:19
+say a disadvantage. One advantage, though, is if we use
+26:23
+linear model is that the search in general, the feature
+26:26
+selection is actually pretty cheap. So it's not a very
+26:30
+expensive method. In the upcoming videos, I will show you
+26:33
+some more powerful methods for feature selection, but they are
+26:36
+also more expensive. Then one advantage is also that we are
+26:41
+taking feature interactions into account. So what that means is
+26:45
+that we are taking all I mean, the group of features into
+26:49
+account, we look at the features together. So if they have a
+26:52
+synergistic effect, that gets also incorporated, because,
+26:56
+right, let's say logistic regression model considers the
+27:00
+combination of features or inputs, compared to let's say,
+27:05
+variance threshold that we discussed before, where the
+27:08
+variance threshold really just looks at one feature at a time.
+27:12
+So it's not modeling any interactions between features,
+27:16
+which can sometimes be not optimal. If you require, let's
+27:20
+say, a combination of features that is only useful if the
+27:23
+features appear together. Then our one disadvantage is that it
+27:30
+has certain assumptions, for example, that the data set is
+27:33
+linearly separable, if we consider a linear model. So the
+27:37
+linear model has certain assumptions. And we really make
+27:40
+these assumptions for feature selection to decide which
+27:43
+features are important. But these assumptions may not be
+27:47
+necessary if we just consider the final classifier. So
+27:51
+basically, I'm trying to say here, that we are using a model
+27:56
+to approximate what features are important, although this is not
+28:00
+all final classifier.
+28:02
+And then one disadvantage is also that we are not optimizing
+28:06
+the performance metric directly. So we are optimizing
+28:09
+essentially, what features let's say important or mostly used,
+28:14
+but it doesn't maybe perfectly correlate with the performance
+28:18
+of the model that we care about. Right? So in that case, it's
+28:21
+also not ideal. And in the upcoming videos, I will show you
+28:26
+a method that looks directly at the model performance, the
+28:30
+predictive performance of the model that we care about to do
+28:34
+the feature selection. So yeah, and upcoming videos we will then
+28:39
+talk about permutation importance and sequential
+28:43
+feature selection. So see you next time
+
+##v92:
+
+0:00
+Yeah, so in this video we are going to talk about
+0:03
+permutation importance. And in particular permutation
+0:07
+importance is part of these wrapper methods for feature
+0:11
+selection that we started discussing in the last video. So
+0:15
+wrapper methods are again methods that involve a model for
+0:19
+doing the feature selection or the feature importance
+0:21
+estimation. And previously, we have seen recursive feature
+0:27
+elimination as one example of these wrapper methods. This
+0:30
+lecture we will take a look at permutation importance. And then
+0:33
+in the next upcoming videos, we will also talk about another
+0:37
+method called sequential feature selection. Yeah, before I give
+0:42
+you the nitty gritty details of how permutation importance
+0:46
+works, I thought it might make sense to just give you a two
+0:49
+step outline here to really show you how beautifully simple this
+0:53
+method is. So how it works in a nutshell is that for each
+0:57
+feature column in a data set, what we do is we shuffle that
+1:01
+feature column. And then what we do is we take an existing
+1:06
+trained model and observe the performance of that model on the
+1:11
+shuffled data set, or the data set with a shuffled feature
+1:14
+column, and compare it to the original performance of the
+1:17
+model. And then there's usually a drop in performance if we
+1:23
+shuffle the feature column. And this drop off performance gives
+1:27
+us an indicator of how important that feature is that we have
+1:31
+shuffled minds out a little bit complicated if I just summarize
+1:35
+it in two steps here. So I will walk through this more slowly in
+1:39
+the upcoming slides. So don't worry. But really the nutshell
+1:43
+explanation here is that we shuffle one feature at a time.
+1:47
+And then we look at the performance of a model before
+1:49
+and after shuffling to assess how important that feature is.
+1:56
+Yeah, and then when we apply this method to each column in
+1:59
+the data set, we can make such a nice bar plot here and show the
+2:03
+importance of each feature and then also optionally, with a
+2:06
+standard deviation. And I will also show you how we can make
+2:09
+such a plot in the upcoming video where I go more into the
+2:13
+code example. So I will give you the more detailed explanation of
+2:19
+permutation importance and the algorithm in a few moments. But
+2:23
+before doing so I wanted to go over some noteworthy facts about
+2:28
+permutation importance. So permutation importance often
+2:32
+gives us similar results as random forest patents based on
+2:37
+the impurity that we discussed before. But the nice thing about
+2:42
+permutation importance is that it is model agnostic, which
+2:46
+means it's not restricted to random forest, but we can use it
+2:50
+with any type of machine learning algorithm or machine
+2:54
+learning model. So yeah, I have to admit that permutation
+2:58
+importance is not strictly feature selection, but it tells
+3:02
+us which feature or model relies on the most. So in that sense,
+3:06
+feature importance is not feature selection, but we can
+3:09
+use feature importance measures to select features, actually. So
+3:13
+it's kind of a very related topic, which is why I am
+3:17
+covering it here in the feature selection lecture. Yeah, and if
+3:22
+you recall the previous video where I discussed random forest
+3:26
+feature importance, you can think actually of permutation
+3:29
+importance as a generalization of method B in the random forest
+3:33
+video. But here we are using the holdout set instead of the out
+3:38
+of bag samples. So if you don't recall what that means, don't
+3:42
+worry so much about it. But if you're interested, you can go
+3:45
+back to the previous video and check out the explanation of the
+3:49
+out of bag examples. So here, let me know walk you through the
+3:55
+permutation importance algorithm in more detail step by step. So
+4:00
+the first step is that we take a model that was fitted to the
+4:03
+training set. And so for that, we can take any machine learning
+4:06
+model or algorithm. And here's just an example. So consider, we
+4:10
+are using a random forest classifier, and then we fit the
+4:14
+random forest to the training set here. So this is how we
+4:17
+start, we just train the model on the data set, nothing really
+4:21
+special about this step. Then what we do is we estimate the
+4:26
+predictive performance of the model on an independent data
+4:30
+set, for example, the validation data set, it could also be the
+4:33
+test set. And then we record it as the baseline performance. So
+4:38
+here's an example where I'm doing this so I'm using my
+4:41
+Fitbit random forest. And then I'm computing here the accuracy
+4:45
+on validation set here. And let's say we get 99% accuracy is
+4:52
+the validation set performance, and I'm recording this as my
+4:56
+baseline performance. So then for each feature j in the data
+5:03
+set, what we do is we randomly permute the feature column in
+5:08
+the original data set. So here on the right hand side, I have
+5:11
+an example data set, let's call that on x. So x are the features
+5:16
+and y are the corresponding class tables, just like always,
+5:20
+and the rows are the training examples. And the columns are
+5:24
+the features. So here I have three feature columns, one, two,
+5:28
+and three. And I have four training examples here. Now, I
+5:35
+have also some example values here just for illustration, just
+5:39
+some values we might observe in that feature column. And what we
+5:43
+are doing is we are shuffling that column, and we are here
+5:53
+focused on shuffling column one, let me use a different color
+5:57
+here. And here is the shuffled column one. And you can see that
+6:02
+the order here in that row in that column has changed. So we
+6:06
+have 1.1, minus point one, and so forth. So for example, these
+6:11
+are flipped now. And these come first before the 1.4, which is
+6:15
+no last. So I'm just randomly shuffling this column. However,
+6:19
+note that we are not touching column two, or column three, so
+6:23
+they stay exactly the same. And also, the class labels stay
+6:28
+exactly the same. So we are not changing those. So now what we
+6:34
+do is we record the predictive performance of the model on the
+6:38
+data set with a muted like the shuffled column. So permuted in
+6:46
+shuffle is here synonymous. And here's an example of how that
+6:50
+looks like. So we are again, taking the same random forest
+6:53
+model here. And now we compute the performance on, let's say,
+6:57
+the permuted data set, and we get, let's say, 85% accuracy.
+7:02
+And note that before we had 99% accuracy. So lastly, let's go to
+7:10
+Step C. So step c is computing the feature importance as the
+7:14
+difference between the baseline performance from step two, and
+7:18
+the performance on the permuted data set. So here, the baseline
+7:22
+performance was 99% accuracy. And the performance of the
+7:28
+permuted data set was point eight, five. So the feature
+7:32
+importance is the difference between the two, that is point
+7:35
+nine, nine, minus point eight, five, which is point, one, four.
+7:44
+So this is our feature importance of feature one here.
+7:49
+And, of course, I mean, we only considered shuffling this column
+7:53
+one time, and there might be something particular about the
+7:56
+way we shuffled or the ordering here. So in practice, it's
+8:00
+recommended to repeat this a couple of times. So if we have a
+8:03
+very small data set, we could repeat this exhaustively,
+8:07
+considering all possible ways we can arrange these values in that
+8:10
+column. But in practice, it's usually more feasible to do this
+8:15
+just a large number of times. So for example, 50 times with
+8:19
+different random seats, you're just shuffling the column 50
+8:22
+times, and then we would compute the feature points as the
+8:27
+average difference. So we would compute this here, from 50 times
+8:32
+randomly shuffling that column. So each time this value here
+8:36
+might be slightly different. So we would then get a slightly
+8:40
+different difference. And the average difference would be our
+8:43
+feature imports. And we will in the next video, see a few code
+8:47
+examples on how to do that. Exactly. So But let's now assume
+8:51
+we get different feature importances for the different
+8:54
+columns. So of course, we would repeat this procedure for each
+8:58
+column in the data set. So let's say we get point one for feature
+9:02
+importance for column one, let's say point of five, for column
+9:08
+two, and maybe point two, one for column three. And now
+9:15
+thinking again, what these numbers represent. So, we have a
+9:19
+baseline model that get nine gets 99% accuracy, and then the
+9:23
+accuracy declines somewhat. And the declining accuracy of our
+9:28
+feature points, we can think about it as how much the model
+9:33
+relies on that feature, because yeah, we are shuffling the
+9:37
+orders. So we are kind of destroying the relationship
+9:42
+between feature
+9:44
+value and class label. So in that way, the model might get
+9:48
+confused now. So the more the accuracy drops, the more the
+9:52
+model was relying on that particular order on that
+9:55
+particular feature. So that case, we can think of this
+9:58
+feature importance as How much the model uses that feature for
+10:02
+making predictions. And if we have these three different
+10:06
+values, point one for me use a different color, point one 4.05
+10:12
+and point to one, the larger the drop, the more, the model might
+10:17
+be relying on that feature. So in this case, point two, one,
+10:20
+feature three might be the most important feature. And then the
+10:24
+second most important feature might be point one, four. So
+10:28
+this might be the second most important feature. And then the
+10:31
+least important feature would be this one here, because there's
+10:34
+only a small difference before and after shuffling that
+10:38
+feature. So let me introduce you to one more method here. So this
+10:45
+method is closely related to the permutation importance. And it's
+10:49
+called the column drop variant. Or we can also call it the
+10:52
+column drop importance. So how is it different, so instead of
+10:56
+shuffling each feature column J, what we do is we temporarily
+11:01
+remove that entire column from the dataset. And then we fit a
+11:04
+model to this reduced data set. And then similar to the
+11:09
+permutation importance, what we do is we compute the validation
+11:13
+set performance, and compare it to before to the baseline
+11:17
+performance. So in a nutshell, the main difference here is that
+11:22
+instead of shuffling a feature column, we remove that entire
+11:26
+feature column. And because we remove that feature column, we
+11:30
+have to refit the model, which can then make this method a
+11:34
+little bit more expensive than the permutation importance.
+11:38
+Actually, it can be a lot more expensive if we have a model
+11:41
+that is very expensive to fit, for example, consider a deep
+11:44
+learning model. But as a consequence, it's I would say,
+11:48
+slightly more accurate method for computing feature
+11:51
+importance, because here, we really get rid of the entire
+11:54
+column instead of just shuffling it. However, because we also
+11:58
+have to refit the model, it's not really the importance of
+12:01
+that particular model anymore. It's more like the importance of
+12:05
+the family of models or the feature importance for that
+12:08
+family of models that we gain from refitting, right. Because
+12:12
+originally, we have a model fit on the baseline performance and
+12:16
+have on the baseline data set or original data set for the
+12:19
+baseline performance. And now we have a refitted model, which is
+12:23
+a second model or a different models, right. So it's not the
+12:25
+same model anymore, compared to permutation importance where we
+12:29
+always reuse the same model, and we just do predictions on new
+12:34
+data sets. But we're not refitting the models in the
+12:37
+permutation importance. Anyways, the column drop variant is also
+12:41
+a very interesting, very useful variant if you can afford
+12:44
+refitting the models. And actually, we will adopt
+12:47
+something similar later in the later video, when we will talk
+12:51
+about sequential feature selection. All right, time to
+12:57
+wrap it up. So here on that slide, top of my head, I
+13:00
+collected some pros and cons of permutation importance. So one
+13:05
+nice thing about permutation importance is that it is model
+13:08
+agnostic. So I can use with any classifier I like, it could be a
+13:12
+random forest, the logistic regression model, a deep
+13:15
+learning model, whatever you like. And similarly, what's also
+13:18
+nice is that it works with any type of metric that we can
+13:22
+compute on the validation set, or the test set. So previously,
+13:25
+we looked at the classification accuracy. But we could also look
+13:29
+at f1 score, Matthews correlation coefficient, r
+13:33
+squared, and anything we really like. Also, what's nice is
+13:39
+that's easy to understand. So what that means is that I mean,
+13:42
+it's just shuffling the column, right? So we are looking at the
+13:45
+performance of the model before and after shuffling a column. So
+13:48
+it's not super complicated. If we have collaborators, and they
+13:52
+ask us, How did you compute this feature importance? Well, we can
+13:55
+actually in a few minutes really easily explain how that method
+13:58
+works. Another thing is, that a feature importance is particular
+14:04
+to a given model, which is kind of like a pro and con. So what's
+14:08
+nice about it is is that it helps us to understand a
+14:11
+particular model better. But on the other hand, if that
+14:14
+particular model is not very accurate, this estimated feature
+14:18
+importance is also not really a good reflection of the
+14:22
+performance or the feature importance of that feature in
+14:26
+general. And also it doesn't really maybe explain how
+14:29
+important that feature is to another model. However, I think
+14:33
+I find this more like a pro argument because it really helps
+14:37
+us understand our particular model better.
+14:41
+So another pro argument is that unlike impurity based random
+14:45
+feature important random forest feature importance, the
+14:48
+permutation importance does not suffer from overfitting since an
+14:51
+independent data set is used. So when we compute the random
+14:55
+forest feature importance, while maybe the random forest is
+14:58
+overfitting, so how am I Should relies on a particular feature
+15:01
+may not be really a useful measure. Whereas, here for this
+15:06
+permutation importance, we are using an independent data set
+15:10
+for example, the holdout data set of the test set which can be
+15:13
+an advantage however, it can also be a disadvantage if we
+15:16
+have a small data set and we can't afford setting aside for
+15:20
+data for validation or testing. So, but in general I feel this
+15:25
+is more like a pro argument. Negative part or aspect of
+15:30
+permutation importance is that, like an impurity based random
+15:33
+forest importance, the importance is undervalued if two
+15:37
+features are highly correlated. So, we discussed this issue
+15:41
+before when we talked about random forest based feature
+15:44
+importance based on the impurity. So, if we have two
+15:49
+features that are highly correlated, they will be sharing
+15:52
+the importance and yeah, this can be a disadvantage. So, we
+15:56
+are maybe under estimating the importance of a feature, if
+15:59
+there is another feature that is highly correlated to that
+16:03
+feature. Why is that? So, think about it like that, if the
+16:09
+features are equally important, the model may use both features.
+16:13
+So, in that case, they are sharing the importance. And then
+16:16
+also if we remove that feature, it still has the other feature
+16:21
+to make the prediction. So, in that case, the performance may
+16:24
+not really drop so much if, if it's using the other feature.
+16:29
+So, and in the code examples in the next video, I will show you
+16:32
+an example how we can, let's say detect whether we have a problem
+16:37
+like that. But yeah, since this has already been a very long
+16:40
+video, let me wrap this up. And in the next video, we will talk
+16:46
+about or I will show you some code examples for your computing
+16:50
+the permutation importance
+
+##v93:
+
+0:00
+Alright, so now that we covered the basic introduction
+0:03
+to permutation importance, let's take a look at some code
+0:07
+examples to see how we can use permutation importance in
+0:10
+practice. Yeah, and as always, I also have the code examples in
+0:16
+Jupyter Notebooks linked below the video. And also, unlike
+0:19
+always, we will be working with a wind data set again, just to
+0:23
+keep things simple. So the wind data set, again, is a data set
+0:26
+consisting of 13 columns. And here is an overview of how the
+0:32
+first five wine rows look like. So there are three classes,
+0:36
+Class One, two, and three. And there are 13 columns, but not
+0:40
+all the columns are shown here due to space constraints. But
+0:43
+yeah, we won't be discussing this wide data set in too much
+0:46
+detail, because we have seen that so many times before. Yeah,
+0:50
+and then also, like always, we will be splitting the data set
+0:53
+into a training and a test set. So here, what we're doing is
+0:56
+we're taking the data set, except the first column, which
+1:00
+is the label column. So we will be splitting the data set into a
+1:05
+training and a test set where 30% of the data is used for
+1:09
+testing and 70% will be used for training correspondingly, notice
+1:16
+here that we are not creating any validation set. So it's just
+1:20
+my personal opinion. But I don't think we need necessarily a
+1:23
+validation set if we compute the permutation performance, because
+1:27
+yeah, usually we should keep our test set independent. But if you
+1:32
+think back of how permutation performance works, based on the
+1:35
+previous video, we are hearing only looking at the drop of
+1:39
+performance when we permute a feature column, so we are not
+1:43
+really recomputing. The test accuracy, we are just using the
+1:47
+test set for looking at how much the performance will drop if we
+1:51
+shuffle a column. Yeah, we are still in the setup stage here.
+1:56
+So here in this slide, we are preparing our model. And in
+2:00
+fact, here it's a random forest classifier. So in the previous
+2:04
+video, we learned that permutation importance is a
+2:07
+model agnostic method. That means we can Yeah, we can
+2:11
+compute that for any type of model. However, we are using
+2:15
+here a random forest, so that we can then compare the permutation
+2:19
+importance to the random forest impurity based performance,
+2:22
+which might be an interesting comparison. So here, we are
+2:26
+setting up a random forest classifier with 100 trees. And
+2:30
+we are fitting it to the training set. And here is just
+2:33
+the accuracy computation. And we will see all we see actually
+2:37
+here that the training accuracy is 100%. And the test accuracy
+2:41
+is also 100%. Which indicates that this is actually a pretty
+2:45
+good model, or it can also just indicate that the data set is
+2:49
+pretty easy to classify. One thing I wanted to note here also
+2:54
+is, then we when we compute the permutation importance, it's
+2:57
+kind of like important to have a very well performing model, if
+3:01
+we want to interpret the feature importance as a general feature
+3:05
+importance. Because yeah, if we don't have a model that performs
+3:08
+well, we might find out what features the model relies on the
+3:13
+most, but it doesn't really tell us let's say how important the
+3:17
+feature is in the context of the target variable, if the model is
+3:21
+not very accurate. So and before we look at the permutation
+3:26
+importance, just for reference, again here is the impurity based
+3:31
+importance. So, this is the random forest impurity based
+3:37
+important that we have discussed already in a previous video,
+3:42
+again, this is just for reference, where we access this
+3:45
+feature importance attribute After fitting the model, then we
+3:49
+are applying arc sort, so that we are obtaining the sorting
+3:53
+order of the importance of values from the largest to
+3:57
+smallest, so from largest to smallest. And then what we are
+4:08
+doing here is we are sorting these important values here
+4:12
+these important values, we are sorting them using our indices
+4:17
+from largest to smallest. And then we do the same thing for
+4:22
+the column names. So these are our feature names. Here we are
+4:30
+also sorting them using our sort indices here. So here and here.
+4:38
+So in that case, why do we do that? That's so that we can have
+4:43
+the feature and points in descending order. And we have
+4:46
+the corresponding names here, which is usually quite
+4:49
+convenient. So we can say Prolene is the most important
+4:53
+feature for the random forest based on impurity, then
+4:56
+flavonoids is the second most important and so forth.
+5:02
+Now comes the interesting part. So here we are now, computing
+5:06
+the permutation importance, we are using ml extent for that
+5:10
+because you have this is a function I have implemented a
+5:12
+long time ago. Later on I will also show you that we can
+5:15
+nowadays also do that in scikit learn. So, but yeah, just for
+5:19
+reference, because I'm also more familiar with that one, we are
+5:22
+using feature importance permutation from an extent. So,
+5:26
+why is the name so weird? Why is it called feature importance
+5:29
+permutation and not feature permutation importance? Why is
+5:32
+it flipped. So, as far as I recall, I mean, has been many
+5:36
+years ago, I wanted to call it like, I wanted to have multiple
+5:41
+feature importance methods. So, in general, I wanted to have
+5:45
+multiple feature importance methods. And this basically here
+5:49
+means feature importance by permutation or feature
+5:53
+importance via permutation or something like that, in any
+5:57
+case, so, how this function works is after importing it, we
+6:01
+call it on or we call it with the here with different
+6:06
+arguments. So, one is the Predict method. So, this is just
+6:10
+a method that performs a label a class level prediction, for
+6:14
+example. So here, we use the forest predict method. So the
+6:18
+forest is the one the random forest that we fit on the
+6:21
+previous slide. And then we provided with a data set here,
+6:25
+we use the test set. And notice, we could also use use if we have
+6:28
+one validation set. But I think personally that using a test set
+6:33
+for that is fine, because we're not really reusing the tested on
+6:37
+different models or something like that, we assume here we
+6:41
+have a final model. And we just want to see or kind of find out
+6:46
+how our model or final model uses the different features in
+6:50
+the data set, then we can use the metric. So here we use the
+6:55
+classification accuracy. And we set a number of rounds. So this
+6:59
+is how many times we repeat the permutation of the column like
+7:04
+we discussed in the last video. So here, we use 50 rounds, and
+7:07
+we start with a random seed of zero. Yeah, and this is
+7:10
+essentially it, all you need is a predict method, a data set,
+7:15
+what metric we want to use, and then the number of rounds. Yeah,
+7:19
+and so a very straightforward function. Yeah, and then we can
+7:26
+plot the feature importances. So there is this imp all attribute
+7:33
+and the input Val attribute that the function returned. So these
+7:37
+are all the importance values that are computed. So when we
+7:41
+have 50 repetitions, we have 50, times the number of features,
+7:47
+let's call the number of features M, we have 50 times M
+7:51
+different values. And over these 50, we could then compute the
+7:56
+standard deviation for each of the M features. And this is what
+7:59
+I'm doing here with SGD. So I'm computing the standard
+8:03
+deviation, or these 50 runs for each of the M features. And the
+8:08
+Invalides are already the importance values, which are
+8:12
+essentially the means the means of these. So embeds are
+8:17
+essentially just numpy mean, imp, all and then
+8:27
+let's get back
+8:31
+xs equals one. So this would be the inverse, it's already pre
+8:37
+computed in the function though, then we are again using arc
+8:42
+sorts to obtain the slot indices from largest to smallest. This
+8:48
+is similar to what we have done previously for the impurity
+8:52
+based random forest feature importance, and then all the
+8:56
+plotting code here is identical. So here, the only difference is
+9:00
+that instead of using the impurity based importance
+9:03
+values, we are using now our permutation based importance
+9:06
+values. And in addition, because we have these standard
+9:09
+deviations, we are also plotting the standard deviations as error
+9:13
+bars. So here, then in the lower right corner, we have our
+9:18
+feature importance plot. So here we have the features again, in
+9:23
+descending order with color intensity as the most important
+9:28
+feature, and then these error bars here are our standard
+9:32
+deviations. Yeah, let's now look at the two methods for computing
+9:38
+feature importance side by side. So on the left hand side here, I
+9:42
+have the random forest impurity based feature importance. And on
+9:45
+the right hand side I have the random forest feature importance
+9:48
+via permutation importance. And often based on my project
+9:53
+experience, I find that these give very consistent results,
+9:57
+which means that the ranking order of the features The most
+10:00
+important features is often very similar or even identical. Here
+10:05
+we can see it's not quite the case. So we see, for example,
+10:08
+proline is top one year, he uploaded his top two color
+10:12
+intensity, his top one here and current density his top three
+10:15
+here. However, if we look at, let's say the top six most
+10:20
+important features here, the features that have some value
+10:23
+here in the permutation importance, we can see that
+10:27
+these are relatively consistent with impurity based feature
+10:30
+importances. So here, these six if I can, if I see that
+10:34
+correctly, are the same. So the order within the CICS, slightly
+10:39
+different, different. But overall, these six are also
+10:44
+represented here as the top six. So at least there is some
+10:47
+consistency. So for example, we can still say, color intensity,
+10:51
+Prolene, flavonoids, are the most important ones. If we look,
+10:55
+for example, at the top three here, it's just slightly
+11:00
+different ordering here. And also, one note I have here at
+11:04
+the bottom is, personally I find it most useful not to scale the
+11:10
+permutation importances. So random forest impurity based
+11:14
+feature importance is usually scaled, such that the columns
+11:18
+sum up to one. So the columns here, the sum of the columns,
+11:23
+that's called feature importances. Foi, they sum up to
+11:27
+one, and this is not the case here on the right hand side for
+11:30
+the permutation importance. So here, the permutation importance
+11:34
+represents the average drop. In our metric, here, we use the
+11:44
+accuracy. And I find this actually more more useful than
+11:48
+scaling it because here I can say, Okay, if I permute color
+11:52
+intensity, my performance, my round forest performance drops
+11:56
+by 10%, which is actually quite useful to know I find. Yeah, now
+12:03
+that I've shown you how to compute the permutation
+12:06
+importance and Emeril extent, for completeness, I also wanted
+12:09
+to mention that nowadays, you can also compute the permutation
+12:13
+importance in scikit learn. And as you might expect, so the
+12:17
+function name is permutation importance. And the behavior of
+12:21
+that function is very similar to ml extend. So here again, for
+12:24
+reference, we are fitting a random forest classifier. And
+12:27
+then once we have fit the classifier, we can provide it as
+12:31
+estimator, to the permutation importance function, provide our
+12:35
+data set, scoring function, for example, accuracy, and set the
+12:39
+number of repeats. So the repetitions, the number of
+12:43
+rounds, and this year will behave exactly like the ML
+12:47
+extent, function. I mean, there are tiny differences. For
+12:50
+example, here, we provide the estimator instead of the Predict
+12:55
+method. And also the name here is slightly different. So
+12:59
+instead of metric, it's called scoring and so forth. But
+13:03
+looking at the results here, side by side, you can see the
+13:07
+other ml extent and the sacred learn functions almost provide
+13:11
+identical results, I think there are some slight differences, you
+13:14
+can see, it's somewhat slightly differences. It's different, but
+13:17
+it has maybe something to do with the random state here, or
+13:22
+something like that, but I wouldn't worry about it too
+13:25
+much. So these two methods are almost identical.
+13:31
+Yeah, now we actually know how to use permutation importance in
+13:35
+Python, using either amid extend and secondary, which is awesome.
+13:39
+However, before I finished this video, I wanted to show you a
+13:42
+few more useful things. So one is using random features as
+13:47
+control. So what I find, technically, or in practice,
+13:51
+relatively useful is to include a random feature in the dataset
+13:55
+as a control when we compute the permutation importance, because
+13:59
+that can give us an idea of what is a meaningful feature
+14:03
+importance and what it is not. So what I'm doing here is, I'm
+14:07
+creating a random column. So what I have here is x one, it's
+14:15
+a data sample from a random normal distribution. And it has
+14:19
+the same size as our, let's say, number of rows in the training
+14:28
+set. And so essentially, if I have a training set, let's say
+14:33
+with 200 examples, I'm sampling 200 examples from random normal
+14:37
+distribution, and I'm reshaping it to minus one one. And this is
+14:40
+so that I can concatenate concatenate it with the original
+14:43
+training set. And then I'm doing also the same thing for the test
+14:47
+set here. So again, I'm sampling from a random normal
+14:51
+distribution here, same size as the test set. So I have now two
+14:57
+random vectors that have the same number have examples as the
+15:01
+training or the test set. And then here I'm stacking it with
+15:05
+my training set or my test set. And then I will basically have
+15:09
+another feature column. So originally, my data set had 13
+15:14
+columns. So we had originally 13 feature columns. And with this
+15:18
+extra column, we have no 14 feature columns. So before,
+15:24
+let's say my test set was 54. Examples with 13 columns. And
+15:29
+with this random column, I have now 14 columns in my test set.
+15:37
+Yeah, and then what I do is just running the permutation
+15:39
+performance as usual. So I have my permutation importancia,
+15:43
+let's say from Scikit, learn, I import my random forest
+15:46
+classifier, initiate my random forest classifier, fitted to the
+15:51
+training set. And here, notice now I have the modified training
+15:54
+set with this random feature. But everything here is the same
+15:58
+as before, when I use the sacred learn permutation importance.
+16:02
+And then here at the bottom, I'm plotting the permutation
+16:05
+importance. And on the right hand side, is my plot. So the
+16:10
+result of executing this code here, below, which I don't
+16:15
+necessarily need to discuss in detail, because it's the same as
+16:18
+before. And what you can see now is that we have this additional
+16:22
+random column here, it's not very interesting, because it's
+16:26
+zero, actually, that's what we might expect. But in certain
+16:30
+types of models depends on your data set, you might find that
+16:34
+the random column has a some some value, some drop, and this
+16:39
+kind of like gives us a threshold of feature
+16:42
+importances. So sometimes you might find that some importance
+16:45
+values are, let's say, having some value here. And then
+16:52
+something like that. And you might wonder whether this is a
+16:56
+meaningful feature importance, or whether it's just maybe due
+16:59
+to chance or due to a random effect. And when we have this
+17:02
+random column, we can actually tell what our threshold here
+17:06
+might be. So if I have something like of this magnitude, I might
+17:09
+argue, okay, everything below below this one is like a
+17:14
+meaningless feature importance. So the only important features
+17:19
+might be those three, for example. Yeah, and another thing
+17:25
+I wanted to bring up is how we deal with correlated features.
+17:29
+So one problem with permutation importance is similar to
+17:33
+impurity based
+17:36
+performances is if we have if we have collinear. Features are
+17:44
+highly correlated features. So what happens is that these will
+17:48
+share the importance. So to kind of illustrate this, I have an
+17:53
+example here, where we have or where I'm creating a data set,
+17:57
+where we have highly correlated features. So this is a kind of
+18:01
+synthetic data set. So what I'm doing here is, first of all, I'm
+18:04
+creating class labels. So I'm initiating an array of 1000
+18:10
+zeros and set 500 of those to one. So what I have then is
+18:14
+basically an array where I have a lot of zeros, 500, and then
+18:19
+500, once as my array as my labels, then I draw 1000
+18:25
+examples from a random normal distribution. It's my first
+18:30
+feature. And then I'm creating a second feature here, where I
+18:34
+draw again, 500 data points from a random normal distribution,
+18:41
+and assign it to the first 500 values. And then I'm again
+18:44
+drawing 500 values for a random normal distribution. But now
+18:48
+what I'm doing is adding the number four, so if we would
+18:52
+visualize that, as let's say, a histogram, or let's say density
+18:56
+plot, how it would look like is, if we have let's say, zero here,
+19:01
+would look like this. And then we have, let's say, the four
+19:05
+here, that would basically look like this, we have basically two
+19:11
+different normal distributions, one is shifted by the value of
+19:14
+four, the mean is shifted to the right by by four units here. And
+19:22
+so why am I doing that is so that we have the first 500
+19:28
+labels of zero, corresponding to this first peak, and the ones
+19:34
+let's say, corresponding to the second peak, so that the
+19:36
+classifier can actually learn something like so that it is
+19:39
+possible, essentially, from this data set here to distinguish
+19:43
+between the labels, zero and the labels, one here. And in
+19:48
+addition, I'm also creating another feature here. So here,
+19:52
+I'm creating another feature x three, where x three is
+19:59
+essentially just A copy of x two. So these should be
+20:03
+perfectly correlated them right. And then lastly, I'm arranging
+20:08
+that into a design matrix. So regular representation for
+20:12
+psychic learn. I'm using swap axes mom, so that I have the
+20:16
+1000. Here, the 1000 1000 examples as rows and three
+20:19
+feature columns, otherwise, it would be three 1000. Ups, which
+20:27
+is not what we want. So this is why I'm using swap X's after
+20:30
+calling Bistek, when I'm stacking these features, okay,
+20:34
+so this is my artificial data set, where I have perfectly
+20:38
+correlated features here in x three and x two. Yeah, then I'm
+20:46
+preparing my data set. And like always, I'm splitting it into
+20:50
+our training and a test set using 30% for testing and 70%.
+20:55
+For training. Yeah, then I'm fitting my random force
+20:59
+classifier that I initialized here, some fitting into the
+21:02
+training set. And then looking at the performance on the
+21:05
+training set, I find it has 99.7% accuracy on the training
+21:11
+set, and 97.6% accuracy on the test set. So it's actually a
+21:15
+pretty good model. But again, the data set was also pretty
+21:19
+simple, because we had this one feature where feature overlap
+21:25
+maybe a little bit here, but not too much. So it should be
+21:28
+possible to classify it as class one and class zero based on one
+21:33
+of the features. So what I also find often useful in practice is
+21:38
+to just look at the correlation coefficients. So I'm just
+21:42
+noticing as skipped one line of code here. So I was computing
+21:46
+the Pearson correlation coefficient from using NumPy.
+21:53
+Like this should be in the code notebook that I uploaded. There,
+21:59
+you have to be always careful in when you use NumPy. Always be
+22:04
+careful to transpose the design matrix, so that you get a three
+22:09
+by three correlation matrix. Otherwise, you will get a
+22:14
+correlation matrix for the training examples that say 150
+22:17
+times 150. However, inside HP, I usually don't have to transpose.
+22:21
+So what I usually do in practice, after transposing, I
+22:25
+look at at the shape of the correlation matrix just to make
+22:30
+sure the shape is the number of features times the number of
+22:34
+features.
+22:36
+In any case, so looking at the correlation coefficients here,
+22:39
+where we can see as of course, that the diagonal is always one.
+22:44
+So um, by the way, perfect correlation. is always, yeah,
+22:52
+it's one that's the perfect the highest correlation we can
+22:55
+achieve. No correlation would be a value of zero, and perfect.
+23:04
+negative correlation would be minus 1.0. So what we can see
+23:11
+here instead, let's maybe let's read it from here, feature index
+23:16
+zero, is perfectly correlated with oops, feature one, so this
+23:24
+one and zero here, they are perfectly correlated. And zero,
+23:33
+and two. Let's say no, there is no correlation between the two.
+23:41
+And um, yeah, this makes sense. Because feature this one here,
+23:46
+feature two, I think I have provided them in the reverse
+23:49
+order. Yeah, x 2x. One, when I stacked on the numpy, we stack.
+23:59
+I had them in reverse order. So this feature here is our random
+24:05
+feature the feature with index two. So this, let me use a
+24:08
+different color.
+24:12
+So there's our
+24:13
+random feature. And for random feature, we would expect that
+24:18
+the random feature is not correlated to feature one or
+24:24
+feature zero. However, these two are correlated with each other,
+24:29
+right? Because we created just a copy essentially, where we have
+24:33
+x three equals 2x Two So in future indices that would be
+24:37
+future index zero, is the same as feature index one are the
+24:41
+features are identical essentially. So it's just for
+24:44
+double checking which features are correlated and here we are
+24:47
+just confirming that two features are correlated and one
+24:50
+feature is not correlated. Alright, let's now compute the
+24:56
+feature importance. Like before, we are using our feature Random
+25:00
+Forest which has been fitted to our new data set here 50 rounds
+25:04
+and using the accuracy as symmetric. And as we can see
+25:08
+here, as we would expect, because feature index one and
+25:12
+zero, the features corresponding to those are perfectly
+25:15
+correlated, we can see that they are sharing the feature points.
+25:19
+So they have exactly the same feature importance. And the
+25:23
+random feature feature two here, feature index two has no
+25:26
+importance or no drop in accuracy, which is also what we
+25:30
+might expect, because there is no correlation between the class
+25:33
+labels. And this random feature that we created. Only those two
+25:38
+features are meaningful here. And yeah, you can see they are
+25:41
+sharing the importancy of both have equal performance drops if
+25:46
+we shuffle. Now, just as an experiment, so the code is not
+25:49
+shown here. But if I would remove one of the features, what
+25:53
+we will see is that the other feature, so if I remove, for
+25:57
+example, this feature, or we see is that the other feature takes
+26:00
+over, so it's almost twice the performance. So here we have
+26:05
+point, let's say point two, five, approximately, and point
+26:09
+two, five. And if I remove that features, if I get rid of this
+26:13
+one, we will find that we get almost twice the performance.
+26:20
+And the reason is that these two features are equally important,
+26:23
+right? So and if these are equally important, they share
+26:27
+the permutation importance because the random forest could
+26:30
+pick either this one, or this one for splitting the notes and
+26:34
+would get exactly the same results because they are
+26:37
+perfectly correlated. Yeah, so the bottom line here is, it's
+26:42
+always a good idea to check the correlation among features if
+26:46
+you're interested in using permutation importance, because
+26:49
+if you find that two features have a very high correlation,
+26:52
+and you want to really, let's say interpret the permutation
+26:55
+importance, it might make sense to actually remove one of these
+26:59
+features because then it tells you a little bit more about how
+27:02
+important that feature really is, compared to other important
+27:06
+other features in that data set. Alright, we reached the end of
+27:11
+this video, which was probably again longer than I intended. So
+27:16
+yeah, this was it for permutation importance, and in
+27:19
+the next video, we will look at sequential feature selection,
+27:23
+which is by the way, my favorite feature selection methods. So
+27:27
+this is going to be fun and then we will also take a look at a
+27:30
+code example of how we can use sequential feature selection
+
+##v94:
+
+0:00
+So in the previous videos, I introduced you to my
+0:02
+favorite feature importance technique, namely permutation
+0:06
+importance. Now in this video, I want to introduce you to my
+0:09
+favorite feature selection technique, namely sequential
+0:14
+feature selection. Yeah, and sequential feature selection is
+0:18
+also part of the wrapper methods that we started discussing in
+0:21
+the previous videos. So we already checked off the filter
+0:25
+methods, we talked about embedded methods, and we started
+0:29
+talking about wrapper methods. For example, we saw recursive
+0:33
+feature elimination. In this video, we will be wrapping up
+0:36
+this big topic of feature selection by introducing
+0:40
+sequential feature selection, my favorite feature selection
+0:43
+technique. But before we get started discussing sequential
+0:48
+feature selection in more detail, I wanted to ask you the
+0:51
+following question, which feature selection technique
+0:55
+would guarantee optimal performance? So, here, what I
+1:01
+mean is, how do you find an optimal feature set? So, maybe
+1:10
+pause this video and think about how would you design a method
+1:15
+that guarantees you to find the optimal feature set for your
+1:20
+classifier? Yeah, so how can we find an optimal feature subset?
+1:26
+After thinking about this for a little bit, and coming up with
+1:30
+interesting ideas and solutions? Let me share my solution with
+1:33
+you. Actually, the answer here is quite simple. So the idea, or
+1:38
+the approach to finding an optimal feature subset that
+1:42
+guarantees optimal model performance is really just
+1:46
+trying out all possible feature combinations. And we will call
+1:50
+that an exhaustive feature selection approach. So how does
+1:55
+that work? What do I mean by that? So if you consider our
+1:58
+favorite data sets, the Iris data set, we have four different
+2:03
+features sepal length, sepal, width, petal length and petal
+2:06
+width? And how do we find out what is the best combination of
+2:10
+features for our model? The answer would be trying out all
+2:15
+possible ones. So in this case, we have 15 possible combinations
+2:21
+from a subset that consists only of one feature like, feature
+2:25
+012, and three, so these other feature indices by the way, so
+2:29
+this would be on future index zero, which index one, feature
+2:33
+index two and feature next three. So we were to try out all
+2:37
+these different feature indices, or combinations of two indices,
+2:42
+combinations of three indices. And lastly, the full feature
+2:45
+subset here. So it's really just trying out all these different
+2:49
+combinations, and seeing what works best for our classifier.
+2:54
+Of course, this could be also very prone to overfitting, which
+2:57
+is why it's important to use a validation set here are even
+3:00
+better K fold cross validation when we try out these different
+3:05
+different feature subsets. And in the next video, I will also
+3:09
+show you an example how we can do that programmatically. But
+3:14
+yeah, before we see how exhaustive feature selection
+3:17
+works in practice, in the next video, let me get to a little
+3:20
+limitation of this approach, which will then motivate why we
+3:23
+are interested in sequential feature selection. And in order
+3:27
+to introduce this limitation, let's take a look at how we can
+3:30
+compute the possible or the number of possible feature
+3:33
+subsets. So we compute these combinations are possible
+3:37
+subsets using the binomial
+3:41
+coefficient. You probably also know this as n, choose k, where
+3:55
+n is the number of items in my set, and k is the size of the
+4:00
+subset that I want to choose. In this case, I used the front
+4:04
+letters I have set of n, I have m, and instead of K i, where m
+4:10
+is the number of features, so the total number of features in
+4:15
+my data set. In this case, if we consider Iris, this is always
+4:19
+four. So we have M equals four, and is the size of the feature
+4:25
+subset that I'm interested in. For example, I can say I'm
+4:28
+interested in only two features, then I would set i equals to
+4:31
+two. And if we are interested in all possible subset sizes, or
+4:37
+subset size one to four, we have actually a sum here, so we
+4:43
+consider selecting one feature, then we consider selecting a
+4:48
+subset of two features three features four features. So this
+4:52
+is illustrated here at the bottom. So when we only want to
+4:56
+select one feature subset, we have four choose one Then if we
+5:00
+want to select, let's say two sub two features as a subset, we
+5:04
+have four, choose two, and so forth. And if I sum this up
+5:09
+here, I get 15 as the number of possible combinations, for
+5:14
+different feature subsets, using, let's say, the Iris data
+5:17
+set here as an example. Now, let's consider a different data
+5:22
+set that we have already talked about, or that we have already
+5:25
+used in the previous videos, the wine data sets. So we have here
+5:29
+the wine data set, where we have 13 different features, the
+5:34
+approach to computing the number of combinations is still the
+5:38
+same. But you can already see that this would become more
+5:41
+expensive, because we have no more different feature sizes.
+5:46
+And also, there are more ways that say, to select two features
+5:50
+out of 13, then there are ways for selecting two features are
+5:54
+the four. And for example, if I would compute the number of
+5:58
+possible feature combinations, I would come up with 8191 in this
+6:05
+case, so as you may have already guessed, one problem with
+6:09
+exhaustive feature selection is that it is very, very expensive,
+6:13
+especially if we have large feature sets, or a large number
+6:17
+of features in our data set. And this motivates the development
+6:21
+or the use of sequential feature selection, which is you can
+6:25
+think of it as an approximation technique that does not
+6:28
+exhaustively evaluate all feature combinations, but only a
+6:32
+subset of those. So this is essentially like, we can call it
+6:37
+a greedy search, or an approximation or a heuristic,
+6:45
+instead of doing this exhaustive search. So how does the
+6:50
+sequential feature selection work? It's actually a pretty
+6:54
+simple technique. But if you, let's say, would try to dry it
+6:57
+out, it can be quite confusing. Here, I have actually a figure
+7:01
+from a paper I worked on with my collaborators last year. And I
+7:07
+put a lot of time and effort into making this figure. So I
+7:10
+wanted to reuse this figure here for this lecture. And no
+7:14
+worries, I realized that this looks really overwhelming here
+7:18
+looking at everything all at once, which is why I will break
+7:21
+this down and walk you through this step by step. Yeah, so
+7:27
+let's start with steps one and two. And previously, I mentioned
+7:32
+the term sequential feature. Selection. So why does the title
+7:41
+of the slide here say sequential backward selection? Sequential
+7:44
+backward selection is a special case of sequential feature
+7:47
+selection. And I will, later on show you also other special
+7:52
+cases. But to keep things simple, let's start with
+7:56
+sequential backward selection, which is maybe the most common
+8:00
+type of sequential feature selection. And, um, yes, step
+8:04
+one here would be starting with the original feature set, which
+8:08
+consists of 29 features in this particular data set.
+8:13
+This is our this is a data set that we have used in this
+8:16
+particular paper. But if you think about, let's say, the wine
+8:19
+data set, we will only have 13 features. But let's maybe stick
+8:23
+with 29. Here, the original features in the paper that I
+8:27
+previously mentioned. So here, the different features have,
+8:31
+let's say, very weird names, this is very special to the data
+8:35
+set that we work with. So for simplicity, you can also maybe
+8:38
+think of feature one feature 234, and so forth, up to feature
+8:43
+29. And, yeah, this would be our starting condition that we use
+8:49
+all the features that we have in the data set. And then in the
+8:52
+first iteration of sequential backward selection, what we do
+8:56
+is we generate all possible feature subsets of size n minus
+9:00
+one. So in this case, it would be 28. So 29 minus one. And how
+9:07
+do we do that? Yeah, we essentially take the full
+9:10
+feature set, and just delete one feature at a time here. So we
+9:14
+create all the different feature subsets consisting of 28
+9:18
+features. And then once we have these different subsets, we
+9:23
+have, we should have 28 subsets, in this case, feature subset one
+9:26
+to 28. What we do is we evaluate each candidate feature subset by
+9:32
+let's say, using K fold cross validation, as an example, and
+9:38
+record the performance of that subset. Okay, now we're ready
+9:42
+for steps three and four. So the previous step, we talked about
+9:47
+creating the subset of size 28, by just removing one feature at
+9:51
+a time, and we also evaluated the performance that we get when
+9:56
+we evaluate one feature at a time. So let's say we get some
+10:00
+thing like 93% accuracy for that feature subset, in 98%, for that
+10:05
+feature subset, and maybe 91%, for that feature subset. Now,
+10:11
+after we have all these performances, we scan these and
+10:16
+see which one gives us the best or the highest performance,
+10:20
+let's say we find it's this subset with 98% accuracy. So
+10:24
+substitute. And all step three is really about is removing that
+10:31
+feature here permanently. So removing the feature that is
+10:35
+absent from the subset with the highest evaluation score, it
+10:38
+just means that now we focus on subset two. So going from step
+10:45
+one to step two, we removed one feature, we went from 28 to 20,
+10:50
+from 29, to 28. Now, iteration two in step four is essentially
+10:57
+the same step, it's essentially similar to going from one to
+11:02
+two, we again, just remove one feature. So we make this size
+11:08
+from 28. Now 27, so we removed one feature, it's exactly the
+11:15
+same approach going from one to two, except that we start now
+11:19
+with substitute the best subset from the previous round. And
+11:23
+this is why it's called sequential backward selection.
+11:26
+Or we can also think of it as an iterative process, where we
+11:31
+remove one thing at a time, and each iteration is really just
+11:35
+the same, we are just using the previous subset for the next
+11:39
+round. So here similar, again, we are removing one feature at a
+11:44
+time, we're now creating smaller subsets 27. And again, we would
+11:49
+evaluate the performance of these subsets, let's say we get
+11:52
+maybe 94% accuracy, maybe, let's say 97% accuracy, and here,
+11:58
+maybe 99% accuracy. And then we would again, select this feature
+12:04
+subset, so we would select last one here, and then repeat this
+12:09
+procedure until we have our desired feature size. Alright,
+12:17
+let's then wrap up sequential backward selection. So we would
+12:21
+be repeating steps three and four, multiple times until the
+12:25
+feature subset contains only a single feature. So this means
+12:30
+that we would be evaluating these candidate subsets to
+12:33
+select the best performing one, select or delete one feature at
+12:37
+a time. And then again, select the best candidate subset, and
+12:41
+so forth, until there's only one feature left. So we start with
+12:45
+29. And we stopped when we have only one feature left. And if we
+12:51
+do that, we will have n minus one iterations. Where n is of
+13:00
+course 29. So we will do this n minus one times. And then we
+13:05
+will consider all these n minus one iterations and select the
+13:10
+final subset as the subset with a highest evaluation score.
+13:15
+And in case of a tie, we would select the smaller speech is
+13:18
+upset, why the smaller subset? Yeah, because it's simply
+13:22
+computationally more efficient to use fewer features. And also,
+13:25
+in practice, if you think about collecting data, collecting
+13:29
+fewer features is always simpler than collecting more features,
+13:32
+right. So we would in the case of a tie, select a smaller
+13:36
+subset. But yeah, and overall, the procedure here is to find
+13:41
+the optimal subset is by repeating this process of
+13:45
+deleting one feature at a time until only one feature is left.
+13:50
+In special cases, you may be interested in having at least,
+13:54
+let's say three features or four features. So you can also stop
+13:57
+this early you can say maybe only three features or something
+14:02
+like that. So it depends really on what your limit is your lower
+14:06
+limit for the feature subset size, if you want to, let's say
+14:10
+get the best possible results from sequential backward
+14:13
+selection. You would really run it though, until only one
+14:16
+feature is left and then look at all the subsets. And we will be
+14:20
+doing that later in the code examples in the next video and
+14:24
+see how that works. Yeah, now we covered sequential backward
+14:29
+selection. And like I mentioned before, there are different
+14:32
+flavors of sequential feature selection. Sequential backward
+14:36
+selection is maybe the most common one. Another common one
+14:39
+though, is sequential forward selection, which I want to
+14:42
+introduce in the following slides. So sequential forward
+14:47
+selection is actually pretty similar to sequential backward
+14:50
+selection. So in sequential backward selection, we remove
+14:54
+one feature at a time and sequential forward selection. We
+14:57
+add one feature at a time starting with An empty feature
+15:00
+set, we grow the feature subset until we have the maximum number
+15:05
+of features reached. So I'm trying to illustrate this here
+15:08
+with a slightly smaller data set. So instead of let's say
+15:11
+using 29 features, we have a smaller set consisting of four
+15:16
+features. In backward selection, we would remove one feature at a
+15:20
+time. But here, we are not doing that we are growing the feature
+15:25
+subset. So what we do is, we consider in the first round, we
+15:29
+consider only one feature at a time. And for each feature, we
+15:33
+train the classifier only on that given feature. So let's say
+15:38
+we train a classifier on feature one, we then evaluate its
+15:42
+performance, do the same thing for feature two, and so forth.
+15:46
+So like before, we would get different performance values,
+15:49
+let's say, let's say 98%, accuracy, say 99%, accuracy 97,
+15:58
+and maybe 93. Then again, we would select the best subset
+16:05
+from these different feature selections, or feature
+16:08
+evaluations. So in this case, 99 is the highest accuracy, so we
+16:13
+would select feature number two for the next round. So the next
+16:20
+round, would then start with feature two. And again, we would
+16:24
+add one feature at a time. So we have now feature two and one,
+16:28
+feature two and three, feature to inform. And again, we would
+16:32
+select the best feature here. And we will do this until we
+16:37
+have the maximum number of features reached like the four
+16:41
+features shown here. So you may wonder, now what is the
+16:45
+performance of this approach, not the computational
+16:47
+performance, but the performance in terms of finding the best
+16:51
+feature subset. So here I have some plots from a paper called
+16:56
+floating search methods and feature selection. And I will
+17:00
+also introduce what the floating means in an upcoming slide. But
+17:04
+let's focus now on just the regular sequential feature
+17:09
+selection. So here we have sequential forward search, and
+17:12
+sequential backward search. And we also have the optimal feature
+17:18
+selection method here. Optimal here means exhaustive feature
+17:24
+search of feature selection, this would consider all possible
+17:28
+feature subsets. And you can see here the optimal performance is
+17:32
+this dotted line here. And considering sequential forward
+17:37
+selection, it's of course, not as good because we make a
+17:41
+locally optimal choice, we are not considering all possible
+17:45
+subsets, because it's a sequential search, where we make
+17:48
+a locally optimal search or choice. And in this case, you
+17:53
+can see there is quite a gap between optimal and sequential
+17:58
+forward. By the way, these other ones here are on genetic
+18:02
+algorithms. And there's also something called max min search,
+18:05
+which is actually not very good. So we're not going to talk about
+18:07
+it. These genetic search algorithms are yet I would say
+18:11
+slightly better than sequential search, but they are also more
+18:14
+expensive.
+18:17
+So here we are only focusing on sequential forward and backward
+18:20
+selection. And here again, for reference, we have the optimal
+18:25
+search. It's the same as on the left plot. But now we have for
+18:30
+comparison, sequential backward selection here, this star, let
+18:34
+me use a different color. So you can see actually, that in this
+18:39
+case, the performance between the optimal results and
+18:44
+sequential backward selection are identical. And here at the
+18:49
+bottom are two plots showing how expensive these different
+18:53
+methods are. So you can see SFS sequential forward selection is
+18:57
+pretty cheap. So the lower the better, it's the time in
+19:00
+seconds. And sequential backward selection is also pretty cheap.
+19:05
+So here the bottom line is that there are methods that are more
+19:08
+powerful. I mean, the most powerful method is of course,
+19:10
+the optimal search the exhaustive one, but it's also
+19:14
+the most expensive one. And if we have large feature subsets,
+19:18
+it's often not feasible to run this at all. So we use
+19:22
+approximation methods like sequential or feature search.
+19:25
+There are other genetic variants here genetic sequential, forward
+19:28
+selection and so forth. But they are very expensive. Cheap
+19:32
+versions are sequential forward and sequential backward
+19:36
+selection. In this case here, sequential backward selection
+19:39
+actually gives you even optimal results on this particular data
+19:44
+set here. So the results for different feature subsets are
+19:48
+identical to the optimal results that you would get by running an
+19:52
+exhaustive search, which is actually great news. Yeah, now
+19:56
+the interesting question is when to use forward selection and
+19:59
+when to use backward selection, if you are just interested in
+20:03
+the best performing feature subset, it might make sense just
+20:06
+to focus on backward selection as you have seen in the previous
+20:10
+plots, because it can find feature subsets of optimal
+20:14
+performance. Now, if you are interested in a fixed subset
+20:20
+size, then I would differentiate between forward and backward
+20:23
+selection. So, consider you have a data set worth 100 features,
+20:28
+and it's too large really to run exhaustive feature search. And
+20:33
+for some reason, you're interested now, let's say in a
+20:38
+subset of size five, in this case, I would run forward
+20:43
+selection, right? Because that will be faster to run than
+20:46
+backward selection, because you start with one feature, then add
+20:51
+another feature, another feature another feature until you reach
+20:55
+five, so you have only five steps here. With backward
+20:59
+selection, you will have many more steps, you will have 95
+21:02
+elimination steps. However, vice versa, let's say you're
+21:06
+interested in 95 features here, it might make sense to run
+21:15
+backward selection, because then you only have a smaller number
+21:20
+of elimination steps, because going from one to 95 using
+21:26
+forward selection will be 95 selection steps, which would be
+21:29
+very expensive in this way, you only have going from 100 to 99
+21:34
+up to 95 which is much more efficient in this way. Okay, so
+21:39
+now we talked about sequential backward selection, and
+21:43
+sequential forward selection, but also in this plot, or based
+21:46
+on the title of the paper that has shown you, there are also
+21:49
+two more things one is called sequential floating forward
+21:52
+selection. And one is called sequential floating backward
+21:55
+selection. So what are those? Alright, let's now make sense
+22:00
+out of sequential floating forward selection. Sequential
+22:05
+floating forward selection is very similar to regular forward
+22:08
+selection, except that there is an optional or additional
+22:14
+floating step. And before I show you this optional floating step,
+22:20
+let me for reference show you the regular sequential forward
+22:25
+selection. So here there is no floating selection, it's just
+22:29
+the regular sequential forward selection. For this example, we
+22:34
+consider a data set consisting of six features here. And
+22:40
+suppose we have already completed rounds 124. And this
+22:46
+is the feature subset after round four. So we have selected
+22:50
+feature 231, and four. So the only features we have not
+22:54
+selected are five and six. So the regular round five, so the
+22:59
+regular round and normal sequential forward selection
+23:02
+would like look like as follows, we would add, feature five, to
+23:08
+the subset, train the classifier, and evaluate its
+23:11
+performance. And then we do the same thing also for
+23:16
+feature six. So we have two subsets here that we evaluate
+23:19
+and we look at the performance, and then we would select the
+23:22
+best performing one in the regular sequential forward
+23:26
+selection method. Alright, let's now see what this floating is
+23:31
+all about. So the floating in sequential floating forward
+23:34
+selection is an optional step, which would be removing a
+23:38
+feature if it improves the performance of the classifier on
+23:41
+that given subset when the feature is removed. So this is
+23:46
+an optional step, and we carry it out at each round. So how
+23:54
+does it look like for you, for reference, consider our original
+23:58
+feature set again with six features. And after round four,
+24:03
+we have the following subset consisting of feature 231 and
+24:06
+four. Now, if you recall from the previous slide, we will do
+24:11
+in regular forward selection is we would select the next feature
+24:15
+here. However, in the floating variant, we have an optional
+24:20
+step, where we optionally remove a feature if it improves the
+24:24
+performance. So here in this example, we would similar to
+24:27
+backward selection, we would remove one feature at a time
+24:31
+again train the classifier, get the performance and then if the
+24:36
+performance here is one of those is higher than the performance
+24:42
+on on the original subset, then we remove that feature
+24:46
+permanently. So for example, let's say we get 98% accuracy
+24:51
+for that feature subset. If removing features three results
+24:55
+and 99% accuracy, we would remove feature 3% permanently at
+25:00
+this step, and then carry out a regular round five. Here, again
+25:06
+with adding a new feature, but now with feature three removed,
+25:10
+but we only do that if it improves the performance
+25:13
+compared to the previous round. So why would actually removing
+25:19
+feature three, improve the performance, I mean, this can
+25:22
+happen because the way we select things in sequential feature
+25:26
+selection, for example, when we had only feature two, we may
+25:31
+have found that feature three is better, let's say than feature
+25:34
+one or four. So we had done at that point, feature two and
+25:38
+three, and added feature one, and maybe there's a high
+25:41
+correlation between feature three and four. And this
+25:45
+combination particularly works well having both of them
+25:49
+particularly works well with feature two. And somehow,
+25:53
+feature three is now not that good anymore, because it kind of
+25:56
+like maybe became redundant or it's not as useful. It's kind of
+26:01
+maybe resulting in overfitting or something like that, if
+26:04
+feature one and four are present. So it really matters
+26:07
+here in which order we select features. So if we have only
+26:11
+feature two and three, this might be better than feature two
+26:15
+and one. But in combination, one and four might be better
+26:20
+together than having feature three. And this is sometimes
+26:23
+also called an epi static effect. So in this case, on the
+26:31
+sequential floating forward selection has that say more
+26:34
+flexibility than sequential feature selection, the regular
+26:38
+one without floating. And also it's better at consider
+26:42
+considering feature interactions in this case. But in any case,
+26:46
+any type of sequential feature selection is kind of like
+26:51
+superior in terms of univariate feature selection where you only
+26:54
+consider one feature at a time, because here you really consider
+26:58
+combinations of features. Alright, so now we have also
+27:03
+covered sequential floating forward selection. There's one
+27:07
+more method sequential floating backward selection. However,
+27:11
+lucky for you, I don't have slides about that, because I
+27:14
+felt like it would become a little bit boring at this point,
+27:17
+because this method is relatively similar to sequential
+27:20
+backward selection except that we have an optional step here.
+27:24
+So in sequential floating forward selection, we have the
+27:27
+optional backward step that we just discussed. And in
+27:36
+sequential floating backward selection, we would have an
+27:39
+optional forward step. And this is really it. So these are the
+27:45
+main methods of sequential feature selection.
+27:51
+Yeah, let me get back to the previously mentioned paper one
+27:53
+more time. So in the paper, they also had a comparison between
+27:57
+sequential floating forward selection and sequential forward
+28:01
+selection. So the floating variant and the regular variant.
+28:05
+And here for reference, this is the regular sequential forward
+28:08
+selection. And here, let's say this is a measure of
+28:12
+performance. And you can see that oops, for the sequential
+28:17
+floating variant, we have slightly higher or better
+28:21
+performance if we use this floating variant. But at the
+28:24
+same time, of course, it would also be a little bit more
+28:27
+expensive. And here on the right hand side, we have the same
+28:31
+results, again, with a larger feature subset compared to this
+28:35
+one. So we can see the floating variants are slightly better
+28:39
+than the regular variants. But again, this would come with an
+28:43
+increased runtime too. So there's always the trade off
+28:46
+between runtime performance in terms of how long it takes to
+28:50
+run the algorithm versus the predictive performance of the
+28:53
+feature subsets. Yeah, so in the next video, I will show you how
+28:58
+to use sequential feature selection in ML extend in
+29:02
+Scikit. Learn. I know though, that some people prefer
+29:06
+mathematical notation over, let's say, conceptual drawings.
+29:09
+So I wanted to already show you the ML extent documentation
+29:13
+here, because I added the mathematical notation for
+29:16
+sequential forward selection and also further below here, which
+29:19
+is not shown here. Sequential backward selection, sequential
+29:23
+floating forward selection, and sequential floating backward
+29:28
+selection. So if you're interested in let's see the
+29:30
+mathematical notation, please go to this website where I have the
+29:35
+algorithms and let's say more mathematical notation. And
+29:38
+again, like I said, in the next video, we will take a look at
+29:41
+the code examples. So yeah, the next video will be on the code
+29:47
+examples, and then we will have finally reached the end of the
+29:51
+feature selection lecture. And then in the next lecture, we
+29:54
+will also talk more about feature extraction.
+
+##v95:
+
+Dataset setup and KNN baseline
+0:01
+All right, it's about time to wrap up this big topic
+0:03
+on feature selection. So in this video, I will show you how we
+0:07
+can use sequential feature selection in Python. And I will
+0:11
+start by showing you an example in ML extend. That's the
+0:14
+original implementation that I created many years ago. And then
+0:17
+later on, I will also show you how we can do the same thing in
+0:20
+Scikit. Learn using, let's say, streamlined implementation with
+0:24
+fewer bells and whistles. So I'm also encourage you to check out
+0:29
+the documentation here, which contains a lot of more
+0:32
+additional examples, which I will not be covering in this
+0:35
+video. Because I don't want to make this video too long and too
+0:38
+bloated. So let's get started by loading watermark, which is a
+0:44
+plugin I developed many years ago to just track the versions
+0:47
+of my notebooks can see our software libraries update over
+0:51
+the years. And it's always good to make sure that the version
+0:54
+numbers match what we expect, in just in case that say some
+0:59
+options don't work anymore, this would be a good place to make
+1:03
+sure that you have similar version numbers when you're
+1:05
+running this notebook. Of course, newer version numbers
+1:09
+are always a good idea to to but if in case something doesn't
+1:12
+work might be related to let's say that you have a very
+1:15
+different version number. We will also be using matplotlib
+1:19
+later. So here I'm just importing matplotlib so that the
+1:23
+plots will show in the notebook. So our first step, our first
+1:27
+real step is preparing the data set. So like before in the
+1:31
+previous videos, we will be using the wine dataset. So here
+1:34
+we are loading it from the UCI machine learning data set
+1:40
+repository using Pandas, then we have our labels for the column
+1:46
+names of the data set. And here I'm just printing out some basic
+1:50
+information. So just checking that everything loaded, okay.
+1:55
+And I'm also making sure that we have the class tables as
+2:02
+integers. Okay, so then what we will do is we will arm divide
+2:09
+the data set into a training and a test set. And we will also
+2:12
+standardize the data set. That's because we will be working with
+2:16
+a K nearest neighbor classifier, and k nearest neighbor
+2:18
+classifiers, as we have learned in the very first lecture in
+2:22
+this course, is sensitive to scaling. Okay, let's divide the
+2:28
+data set here into training and test sets. So the test set is
+2:32
+20% of the data. And the training set is then
+2:36
+correspondingly 80% of the data set. And here, we also
+2:40
+standardize the training in a tested, so nothing new at this
+2:44
+point, this is something we have been doing all along and all the
+2:47
+previous videos as well. Yeah, just to establish a baseline,
+2:51
+before we get to feature selection, let me fit our K
+2:55
+nearest neighbor classifier on the standardized data set, and
+3:00
+then compute the training and the test accuracy. By the way, I
+3:05
+should mention, I'm just using arbitrarily five neighbors. But
+3:09
+of course, this would also be subject to grid search. And in
+3:13
+fact, you can combine grid search and sequential feature
+3:16
+selection. I'm not going to do this here just to keep the code
+3:20
+and the video simpler. But there are many examples of that, that
+3:24
+I added to the documentation I mentioned earlier. Okay, so I'm
+3:28
+looking at the baseline results. Now, what we see is we get 98.6%
+3:34
+accuracy on the training set, and 94% accuracy on the test
+3:38
+set. So we can see the performance is pretty good. I'm
+3:41
+using the 13 features on in the wine data set. But we can also
+3:45
+see that there is some overfitting and, um, like we
+3:48
+discussed in the K nearest neighbor lecture, K nearest
+3:51
+neighbors is one of these classifiers that is kind of like
+3:55
+susceptible to the curse of dimensionality. So here, it
+3:59
+might make sense to select fewer features, because that might
+4:03
+help overcoming the curse of dimensionality and improving the
+4:06
+performance here. So let's start by showing you how we can use
+Selecting the best 5 features
+4:12
+sequential feature selection to select a couple of features. So
+4:16
+here, we will be using five features, Wi Fi features, also
+4:21
+just an arbitrary choice. So later, I will also show you how
+4:25
+we can look at which is a good feature size subset. So whether
+4:29
+it should be four, three to 567 features and so forth. So that
+4:34
+will be the topic of the next section. Here. Let's just assume
+4:37
+we care about the feature subset that costs consists of five
+4:41
+features. So it's slightly less than half of the original number
+4:45
+of features. It's more like 1/3 Because originally we have 13
+4:49
+features and now we have five features. So we reduce the size
+4:53
+of the feature set by approximately two thirds.
+4:57
+So we start by importing the sequential feature selector from
+5:03
+M will extend feature selection. And just to save typing efforts,
+5:07
+I will just import it as sf s to make it shorter. So this
+5:13
+receives as input the model itself, then we can decide how
+5:17
+big our feature subsets should be. And then we can select
+5:21
+whether we want forward or backward selection. So if you
+5:24
+set that to false, it will perform backward selection. And
+5:28
+then there's also the option of performing floating forward or
+5:32
+floating backward selection. So setting this to false will be
+5:36
+resulting in a regular sequential forward selection.
+5:40
+The verbose parameter is for showing output during training.
+5:44
+And this can be particularly useful if you have, let's say, a
+5:48
+very large data set. And you are evaluating a lot of, let's say,
+5:52
+iteration. So if we have a large data set, and you select a small
+5:56
+number of features, there will be a lot of iterations. And it
+5:58
+might make sense to show some output so that you can
+6:01
+approximately Guess how long it will take to complete. You can
+6:05
+also choose what scoring metric you want to use. So by default,
+6:10
+it should use accuracy for classifiers and r squared for
+6:14
+regression models. But just to be explicit, we will be using
+6:18
+accuracy here for the model evaluation for evaluating the
+6:21
+feature subsets. There's also a CV option here. So M CV stands
+6:28
+for cross validation. So here we'll do five fold cross
+6:31
+validation to evaluate how good a particular feature subset is.
+6:35
+So using cross validation together with sequential feature
+6:39
+selection is always a good idea to prevent also overfitting when
+6:42
+selecting these feature subsets. Um, there should also be an
+6:45
+optional and jobs parameter, which you can set to minus one
+6:50
+to fit things in parallel, that is also good for improving the
+6:56
+runtime performance. So that's a fitness model. And here you can
+7:00
+see, it's in my on my computer, running eight jobs in parallel
+7:04
+to make things faster, I can also just set it to one or none.
+7:08
+So if you don't want to use multi processing, but if your
+7:11
+computer supports that, it's usually not a bad idea. So you
+7:15
+can see some output here. By the way, if you don't want to see so
+7:18
+much output, you just set that to zero or to one, then it will
+7:21
+show you fewer output. But yeah, what we can see here is it's
+7:26
+fitting things and then in the end, um, so you can also see one
+7:29
+out of two, two out of five, sorry, one out of five, two, out
+7:32
+of five, three out of five, and four out of five features until
+7:35
+it reaches the five out of five features. Because it's forward
+7:39
+selection, it will start with one feature, and start with five
+7:43
+features. And you can also see the performance of the different
+7:47
+feature subsets. And you can see here that the performance
+7:51
+improves, the more features we use. So here we get 99% accuracy
+7:57
+using five fold cross validation. After this has
+8:00
+finished, we can then look at the feature indices. So here we
+8:04
+have indices, 069 10, and 12 as the selected features for our
+8:11
+five feature subset. And if we are interested in the names,
+8:15
+there are two ways to do that. So first, if I go back maybe for
+8:18
+a second, we could be actually using a data frame directly in
+8:24
+sequential feature selection. And then we can also directly
+8:27
+access the column names. But yeah, some secondary operations
+8:31
+don't support that. Or, for example, the standard scalar, if
+8:34
+you would give it, let's say, a data frame, if you would do
+8:38
+this, it will still result either the standard scalar or
+8:42
+the trend tests, but function will still result in a numpy
+8:47
+array. So in that case, you would have to do certain steps
+8:51
+here manually if you want to fit the SFS on a data frame. So in
+8:56
+any case, it was like a little side note. So here, these are
+9:00
+the indices of the features. And if you fit SFS on a data frame,
+9:07
+you could also access the feature names directly using
+9:10
+here, k feature names underscore. Otherwise, we have
+9:15
+the feature names and columns, right. So we could also just use
+9:18
+this one here as a mask to select the feature names from
+9:22
+our columns. So here, the best subset of features is alcohol,
+9:29
+flavonoids, color, intensity, whew, and proline. Okay, so now
+9:33
+that we have selected these, the subset of five features, let's
+9:38
+take a look at the model performance of a K nearest
+9:41
+neighbor model fit on this particular subset.
+9:45
+So what we get here is 99% training accuracy. I believe
+9:49
+that was also true previously when we fit the KNN model on the
+9:53
+whole data set. But what we can see now is that the test
+9:56
+accuracy has improved. Now we get here 97% thing before it was
+10:02
+94.44%. So yeah, the feature selection here was successful in
+10:08
+terms of selecting a feature subset that improves the
+10:11
+performance of the model.
+Inspecting the results
+10:18
+Yeah, so in this section, now I want to show you some additional
+10:21
+things we can take a look at, after fitting the sequential
+10:24
+feature selector. So after fitting the sf s object, we have
+10:29
+this subsets dot underscore attribute, which will give us a
+10:32
+lot of information about our sequential feature selection
+10:35
+run. So here, this is a dictionary that contains all the
+10:39
+different feature subset sizes, so two, a 1234, and five, and
+10:48
+for each feature subset, we have the cross validation scores. So
+10:52
+these should be the five cross validation scores. And then this
+10:55
+is the average score. If you use the pandas data frame, the smart
+11:00
+one would also reflect the column name of the feature
+11:03
+subsets, which is also sometimes useful if you, let's say, want
+11:07
+to really more easily read what these features are, instead of
+11:11
+looking at these arbitrary indices. Now, this dictionary
+11:16
+contains all the information that we might need, but it is
+11:19
+not super pleasant to look at. So I will show you how we can
+11:25
+show these results in a data frame more conveniently. But
+11:28
+before doing that, we can also collect additional information.
+11:32
+So I implemented this get metric dict function, which will also
+11:36
+in addition to, let's say, just showing the cross validation
+11:39
+results, compute standard errors and the confidence interval. So
+11:44
+if you carry out this optional step here, it will add more
+11:49
+information to this dictionary. So there are the confidence
+11:52
+interval bounds on the standard deviation, and the standard
+11:55
+error of the cross validation scores. Now, we can use this
+12:00
+dictionary to show it more, let's say pleasantly, in a
+12:04
+panda's data frame, which is what I'm doing here by calling
+12:08
+Panda's data frame from dictionary on our metric
+12:11
+dictionary. So I think this is already much easier to look at
+12:16
+than the dictionary above. So here again, you have the
+12:19
+different feature subset sizes, with a different indices of
+12:23
+features. And then we can look at the average performance here
+12:26
+in this column. And we also have the confidence interval and
+12:29
+standard deviation and standard error and so forth. But yeah,
+12:33
+sometimes it's even more convenient to look at this in
+12:36
+terms of a plot. So there's also this plot, sequential feature
+12:41
+selection function in extended plotting, which I'm importing
+12:45
+here. And here, I'm now creating a plot with a standard deviation
+12:49
+as the arrow bars. So looking at this, we have our plot now. And
+12:54
+I think this is a really nice visualization where we have the
+12:57
+accuracy on the y axis, and then the sizes of the different
+13:01
+features, or feature subsets on the x axis. So we have one
+13:05
+feature, and we can see that the more features we add to our
+13:10
+subset, the further it improves. Now, you may wonder, I mean,
+13:14
+there's certainly a trend here, you may wonder if it might be
+13:18
+beneficial to have even six or seven features in our subset. So
+13:23
+this is what we will be looking at in the next section. So where
+13:26
+we will look at all possible subsets sizes, and then see
+13:29
+which one gives us the best performance.
+Selecting the best subset of any size
+13:40
+Yes, so in the previous section, we saw how we can use the SFS.
+13:44
+To select a feature subset of a very specific size, we chose the
+13:48
+size to be five, but it was relatively arbitrary. So in this
+13:52
+section, I want to show you how we can be, let's say more
+13:54
+flexible with that. So for example, you might be interested
+13:58
+in a feature subset between that same size three and size 10. So
+14:03
+you can actually oops, put in a tupple here as an argument. And
+14:10
+then it will evaluate all subsets sizes between three and
+14:13
+10. And yeah, give you the best performing one as a result.
+14:17
+However, sometimes you are even, let's say less constrained, and
+14:21
+you really just care about what is the best feature subset of
+14:24
+any size using sequential forward selection. In this case
+14:28
+you are you can set the lower limit to one in the upper limit
+14:31
+to the size of your data set. You can also be more arbitrarily
+14:35
+or more generally set the shape to one that is the size or the
+14:40
+number of features in your data set. Or if more conveniently,
+14:44
+you can just set this to best and then it will select the best
+14:48
+feature subset of any size. So let's run this here. And then
+14:53
+after running this so notice that there are no results
+14:58
+because we set verbose to zero, so it's not printing anything.
+15:02
+But yeah, we can see it has finished here. And then what we
+15:05
+do is we again, take a look at our plot. So here, I'm first
+15:11
+computing, also the standard deviation and confidence
+15:14
+interval and set error. So just setting it to some value here.
+15:17
+And then I'm plotting this metric dictionary using the
+15:21
+progress of his function again. So now here, what we can see is
+15:26
+all the different feature subset sizes that were selected by
+15:30
+sequential forward selection. So we can see here 125, is what
+15:35
+we've seen before. So there is no change, because we already
+15:38
+evaluated that previously, there shouldn't be any difference. Or
+15:42
+we have now these additional feature subsets from six to 13.
+15:47
+And you can see that on the performance of the size, feature
+15:52
+subset size of five is actually the best one here. So looking at
+15:56
+this plot is actually very useful to determine what is the
+15:59
+good feature, subset size, or what number of features should
+16:02
+be used. And we can see here, there's also more variability
+16:06
+around using more features. So actually, sometimes it might be
+16:10
+good to focus, also a feature subset that has a low
+16:14
+variability, but gives us also the best performance in here,
+16:17
+five seems like a good one. And since this is also the best
+16:22
+performing one, it should be the one that is returned, or that is
+16:26
+saved here by the SFS. So when we do that, we get a subset of
+16:31
+five features, because it's the best performing one. And again,
+16:34
+we can see these are the same ones that we actually got
+16:38
+previously here, too. Yeah, and then I think I skipped over this
+16:44
+previously, once we have the features. Let me scroll up
+16:48
+again, we can, of course, use the sequential feature selection
+16:53
+Selection object to perform this transform, which will then of
+16:58
+course, give us the subset of features we want to select based
+17:02
+on these indices here. So there's a transform method After
+17:06
+fitting that we can use to transform the training set and
+17:10
+the test set. So this is all I wanted to say about the basic
+17:14
+usage of the sequential feature selector. And yet again, like if
+17:19
+you're interested, there is this link with more usage examples,
+17:24
+including how we can use it in grid search, and so forth. So I
+Exhaustive search
+17:29
+also want to show you how to do sequential feature selection in
+17:33
+psychic learn. But before doing that, a little side note here,
+17:36
+let's take a look at exhaustive search. So in the video, in the
+17:39
+previous video, I mentioned that exhaustive search is the only
+17:43
+method that guarantees us to find the optimal feature subset.
+17:48
+Because sequential feature selection, after all, is still
+17:52
+an approximation method. So in the previous video, I also
+17:56
+showed you how we can compute the number of combinations for
+17:59
+different feature subsets. So if we have the wide data set, we
+18:03
+have 13 features. And if we select or consider all different
+18:09
+subsets sizes, and do an exhaustive search, the number of
+18:12
+combinations is 8191, which is the large number, but I would
+18:18
+say this is still doable or reasonable. I recommend in
+18:21
+practice, always computing this before running an exhaustive
+18:25
+search. Because if you have let's say something that is
+18:27
+greater than 100,000, or 1 million, it might be not, might
+18:32
+not be feasible to run this on your computer
+18:35
+yet, and to make this computation convenient. There's
+18:38
+also a Num combinations function in ML, extend which you can
+18:42
+import from ml extend math. So here, I'm computing now the sum
+18:47
+of all the combinations. So each one will compute the
+18:51
+combinations for a specific n. So the n here represents the M,
+18:58
+actually, I should have maybe used a more consistent notation.
+19:00
+And k here represents this i here. So this is for, let's say
+19:05
+13. Selecting, let's say one feature out of 13. And then I'm
+19:10
+repeating this for all the different subsets sizes up from
+19:13
+one to 13. And then yeah, the sum is essentially the sum here.
+19:19
+So here, this should give me a number like 8191. Okay, so now,
+19:26
+we, let's say, I think that this is still a reasonable number
+19:30
+that shouldn't take too long because the wine data set is
+19:33
+relatively small, I think it's below 1000 training examples. So
+19:38
+here we are using the exhaustive feature selector from Emily
+19:42
+extend, and this one will allow us to specify a minimum number
+19:46
+of feature and the maximum number of features. So here we
+19:49
+are looking at any feature set size between one and 13, where
+19:53
+13 is the maximum size in our data set. Maybe it's better to
+19:57
+keep it more general. So we can reuse the code for different
+20:01
+datasets, we can maybe write it like that. We also printing the
+20:05
+progress because it can sometimes be useful, especially
+20:08
+if you have expensive model to train or you have a large data
+20:13
+set a lot of training examples, it might make sense sometimes to
+20:16
+print the progress so you can see or guess or eyeball how long
+20:21
+it might take to finish this run. So let's run this here. And
+20:27
+yeah, it should not take too long. Let's maybe see. One
+20:32
+problem? Yeah, there we go. So one problem with Jupiter is that
+20:35
+it is not super often updating the display here. But yeah, we
+20:40
+selected now 8191 features didn't take that long, so which
+20:45
+was fine. And then we can look at the best subset. And yeah,
+20:49
+but it's kind of surprising here is that the best feature subset
+20:52
+of all possible sizes, doing an exhaustive search is exactly the
+20:56
+same one we got from our sequential feature selector, the
+21:00
+forward search, which here means that our approximation method
+21:04
+was actually giving us the optimal results in our case,
+21:08
+which is actually pretty cool. Okay, so then, lastly, the last
+Sequential feature selection in scikit-learn
+21:14
+topic for today is to show you how we can use sequential
+21:18
+feature selection in scikit learn. So the ML extend version
+21:21
+is something I implemented many years ago. And over the years,
+21:24
+we added many bells and whistles. So there were lots of
+21:28
+contributors to ml extend, which helped improving this
+21:31
+implementation. But then, also for psychic learn how there was
+21:35
+a desire to keep the function a bit simpler. So a few years ago,
+21:40
+we started migrating the Emily extend version to psychic learn.
+21:44
+And it has a simpler interface, because there are not that many
+21:48
+bells and whistles. And I would recommend you to use that one.
+21:52
+So if you don't care about floating search, then this might
+21:57
+be a good one to use. And also, if you don't care, that say
+22:00
+about a feature range. So if you are interested in a specific
+22:03
+feature set size, and you don't care about floating variants,
+22:07
+then I would say why not using sacred learn, because they could
+22:09
+learn is very well maintained. And usually, you would also
+22:14
+reduce, let's say the overhead of using too many libraries by
+22:17
+just using what's already available in sacred learn. So
+22:21
+overall, the usage is very similar, except of course, the
+22:25
+attribute names are a bit different. But it also has cross
+22:28
+validation, parallelism, and a scoring function here to select
+22:34
+on what metric we use for evaluating the subsets. And then
+22:38
+you can use the direction forward for forward selection
+22:40
+and backward for backward selection. Notice here there is
+22:44
+no floating variants. So if you want to use floating forward or
+22:47
+floating backward selection yet, then I would recommend using ml
+22:51
+extent. And then here you can also specify the number of
+22:55
+features. And yeah, the results should be hopefully the same.
+22:59
+And looking at this, it's 069 10 and 12, which is the same that
+23:04
+we got with exhaustive search, and our manual sequential
+23:09
+forward selection and not the manual but the one where we let
+23:13
+it select the best one. Okay, so this is it then for our feature
+23:18
+selection, so let me enter this video and not keep you here for
+23:22
+too long. And then yeah, in the upcoming weeks, I'm planning to
+23:26
+make a few more videos on feature extraction, which is
+23:29
+related but different topic as you will see
 
