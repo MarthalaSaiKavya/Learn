@@ -37665,23 +37665,2912 @@ practice.
 
 ##v92:
 
+0:01
+Yes, in the previous video, we discussed what learning rate
+0:05
+decay is and why it might be useful. Let's now see how we can
+0:09
+do this in practice in pytorch. So first, the manual way, the
+0:14
+tedious way, we can define our own function to do learning rate
+0:17
+decay in pytorch. So here, I defined a function called the
+0:21
+just learning rate. And this is implementing the exponential
+0:25
+decay that we talked about in the last video. So what it is
+0:28
+doing is it's every 10th epoch. So this line may read a little
+0:33
+bit counter intuitively, because this modulus operator is
+0:39
+essentially doing a division and then returning the remainder of
+0:43
+that division. So if I have a number that is not divisible by
+0:49
+10, it will return the remainder. And here, it's
+0:53
+essentially saying if there's no remainder, then do this. So it's
+0:56
+essentially doing something every 10 epochs. So if the
+1:02
+number is divisible by 10, do this. And what I'm doing here is
+1:06
+I'm essentially implementing the exponential decay, and I'm
+1:11
+applying it to the learning rate. So I implemented this in a
+1:16
+way here that looks a little bit complicated. That is because
+1:19
+there are different optimizers. And some optimizers have a
+1:23
+different learning rates for different parameter groups and so
+1:25
+forth. So this will essentially take care of updating all the
+1:30
+learning rates that are relevant. Alright, so this would
+1:34
+be the tedious way and then you can call this function after
+1:38
+every epoch. So if you have a for loop so far, epoch in range,
+1:46
+num epochs or something like that. And then for each, I'm not
+1:53
+writing it out, but for each mini batch, essentially, then
+1:58
+you do your training, and you would have this function for
+2:01
+each epoch, but not for each minute bit. So what you would
+2:04
+put it essentially here, like, just learning rate, and so
+2:12
+forth. I can't write down here because I have my color bar
+2:14
+here. But he would put essentially the function here,
+2:18
+adjust learning rate with the optimizers input, the epoch
+2:22
+number, the initial learning rate and the decay rate, and
+2:25
+then it will update every 10th epoch. However, this is just
+2:29
+the other manual way. So you can see how you could implement it
+2:32
+yourself if you have an idea for a new learning rate. But in
+2:35
+practice, if you want to just use an existing common way of
+2:39
+doing learning rate decay, you can use one of the built in
+2:42
+functions in pytorch. So for that, I recommend going to this
+2:46
+website, they have a selection of different learning rate
+2:50
+schedulers. Here's just an example. That is a very generic
+2:54
+one. So here, I chose a screenshot of this particular
+2:59
+example, because it came with a practical example. So I didn't
+3:01
+have to retype it. So how this works is essentially that you
+3:06
+initialize the scheduler. So here, it's a lambda learning
+3:09
+rate scheduler, you give it the optimizer, and then these
+3:12
+values. And then you iterate over the epochs. And then for
+3:17
+each epoch, you call this dot step, essentially. And then you
+3:22
+have your train function and validation function that we
+3:24
+usually use in this class, too. So essentially, you have two
+3:27
+steps, only one step is initializing it. And the second
+3:31
+step is essentially using it. And that's it. And you can do
+3:36
+that with any type of scheduler they have on that website. So
+3:41
+here, I'm showing you now how that works with the exponential
+3:45
+learning rate scheduler. So here, I have first an
+3:49
+initialization of a model, then I initialize my optimizer here,
+3:53
+I'm using a stochastic gradient descent optimizer, and then I'm
+3:57
+initializing my scheduler. So here, notice I'm giving it the
+4:01
+optimizer as input. And then I have my main training loop. So
+4:08
+five epochs, set my model into training mode, and then I
+4:11
+iterate over the mini batches. And this is our typical model
+4:16
+training. So we call the model, compute the loss, set the
+4:22
+gradients to zero to back propagation. Yeah, do the
+4:27
+gradient. So here, this is the applying the gradient. So
+4:31
+backward, we'll compute the gradients. Here, we are doing
+4:33
+the gradient update. Here's some logging. And then notice after
+4:37
+the epoch, that's where we call the scheduler step. But you can
+4:40
+also actually put it up here if you want to. So it doesn't
+4:44
+really matter.
+4:47
+Alright, let's now talk about my favorite way of learning rate
+4:51
+decay. So I'm not using learning rate decay that often, because I
+4:55
+usually find that Adam, an optimizer that we will be
+4:59
+discussing later, works pretty well out of the box. But yeah,
+5:02
+sometimes I compare it to SGD and learning rate decay. And I
+5:06
+find it actually, yeah, this method works actually best
+5:09
+compared to other methods I've tried. And yeah, I got this from
+5:12
+a paper in 2016 on deep residual learning, which is the paper
+5:17
+that originally proposed the rest net, which we will be
+5:21
+talking about also next week, it's among the most popular
+5:25
+convolutional networks here. But yeah, here, I'm not sure if they
+5:29
+proposed this learning rate decay method for the first time.
+5:32
+But yeah, that's at least where I got the inspiration for that.
+5:35
+So what they do is on they use regular SGD with a mini batch
+5:40
+size of 256. And then they start with a learning rate of point
+5:44
+one, which is actually quite large for SGD. But yeah, they
+5:48
+start with point one and then divided by 10 every time then
+5:52
+when the error plateaus. So essentially, if they do the
+5:58
+training and notice that the loss doesn't further go down, I
+6:01
+mean, of course, there's some wiggle room. So if it stays
+6:05
+stays, let's say within a certain margin, then they divide
+6:09
+the learning rate by 10. So yeah, that's the whole trick.
+6:12
+And they also actually use weight decay of point 001. So
+6:18
+weight decay, we discussed this in the previous lecture, that's
+6:21
+essentially L two regularization, and they use a
+6:24
+momentum of point nine and momentum I will explain in the
+6:28
+next video. But let me show you how this works in practice in
+6:33
+pytorch. So I prepared a code example. So I put it here as
+6:37
+scheduler, I, as an ipython or Jupyter Notebook. And I will
+6:42
+share that on the repository, like always. So I will include a
+6:45
+link under the video. And yeah, so what I'm doing here is I'm
+6:52
+initializing the multi layer perception from last week, where
+6:56
+we used batch norm and dropout. And I'm now using SGD with a
+7:01
+learning rate of point one. And here, this is the learning rate
+7:06
+scheduler from pytorch that can be used, similar to what they
+7:10
+proposed on the previous slide, where they have basically the
+7:15
+monitoring of the plateauing error, and the divide by 10
+7:19
+every time the error plateaus. So this is essentially this
+7:23
+learning rate scheduler here. So I'm providing it with the
+7:27
+optimizer. And the factor is essentially by how much we divide
+7:31
+it. So point one means times point one and times point one is
+7:35
+essentially dividing by 10, like they describe in the paper. But
+7:39
+yeah, you can of course change that it's another hyper
+7:41
+parameter. Then there's a mode. So the mode, it really depends
+7:46
+on where or what you apply this to. So you can apply this to
+7:52
+anything you like during training. So here, they say, error,
+7:58
+it's not quite clear what they mean by error, it could be
+8:01
+either the loss or the classification error.
+8:04
+Personally, I tried on different things. And I find it usually
+8:08
+works best if I do this on the arrow on the validation set or
+8:12
+accuracy on the validation set. So I usually like to work with
+8:16
+accuracy instead of error. Because I know it's more
+8:19
+positive, it sounds better, like having a high accuracy sounds
+8:22
+better than having a low error. For some reason, I don't know, I
+8:24
+like accuracy. It's maybe also because in the context of psychic
+8:28
+learn, everything is an accuracy. And I really like
+8:30
+psychic learn. It's a for those who haven't taken 451. It's a
+8:36
+package for traditional machine learning, which has a very nice
+8:39
+API. Anyways, um, so here, I have a modified version of my
+8:45
+train model function that we used in previous lectures, I
+8:47
+will show you the relevant parts in the next slide. And I'm
+8:53
+applying this reduce L or L or on plateau method or scheduler
+9:00
+to the validation set accuracy. And essentially, I'm saying I
+9:05
+want to maximize the validation set accuracy. So every time it
+9:10
+plateaus, I want to divide the learning rate by 10. So I'm I'm
+9:13
+saying max, because for accuracy, the higher the better.
+9:17
+If I use the mini batch loss, I would put min here, right. So
+9:25
+essentially, I tried it with many different things. The
+9:30
+training set loss, the training set accuracy, the validation set
+9:33
+accuracy, the validation set loss. And from all my experience,
+9:37
+I find that using it with a validation accuracy happens for
+9:41
+me at least to work best. Alright, so and here are the
+9:45
+relevant parts from this train model function. So here, I'm
+9:53
+zoomed in. Again, you can find it next to this notebook in the
+9:56
+GitHub repository, I will include the link at the bottom.
+10:00
+And yeah, essentially, we have the loop over the epochs, then
+10:05
+the loop over the mini batches here, I just left out all the
+10:09
+code because it would be too long otherwise. And then I'm
+10:12
+just saying if we use a scheduler, so this can is by
+10:16
+default, none, but we can, of course, like I showed on the
+10:20
+previous slide, provide here the scheduler. So if we have a
+10:25
+scheduler, and it's set to validation, accuracy, it will
+10:29
+essentially just do this step based on the validation accuracy,
+10:33
+which we collect during training. So I have a
+10:35
+validation accuracy, I keep track of during training, I do
+10:39
+this for logging purposes, so I can do a plot later on. And so
+10:42
+yeah, do it on the latest validation set accuracy, if it
+10:45
+hasn't improved substantially compared to the previous
+10:49
+iteration. So I think it's for over three iterations, then it
+10:53
+will divide the learning rate by a factor of 10. But you can also
+10:57
+set a number to include like, how often does doesn't have to
+11:03
+stagnate before you divide by 10. So there are a lot of
+11:06
+options that you may also want to choose. But I found just
+11:08
+this works well for me. Yeah, related to learning rate
+11:12
+schedulers and optimizers, I also wanted to say something
+11:16
+about saving models in pytorch. We haven't talked about saving
+11:21
+models in pytorch yet. But yeah, it's kind of an important
+11:24
+topic, right? So if you train a model, let's say for a certain
+11:28
+number of iterations, and you want to use it another day for
+11:32
+making predictions, it's of course important to save that
+11:35
+model. So you don't have to retrain it from scratch every
+11:37
+time, right? But also, sometimes you just want to train it
+11:41
+longer, let's say you train it for 100 epochs, and you find
+11:44
+huh, the loss has not quite converged yet, let me train it
+11:48
+longer. So instead of just rerunning the training from
+11:51
+scratch, you can, in that case, then just let's say, laud your
+11:54
+model from a previous round, and then continue running it. So
+12:00
+saving a model in pytorch is actually quite simple. So there
+12:03
+are two ways of doing it, but I will only show you the
+12:05
+recommended way of doing it. So the recommended way is using
+12:10
+torch safe on the model state dictionary. So the model state
+12:15
+dictionary contains all the model settings and also all the
+12:19
+model parameters. However, then also, if you use an optimizer
+12:23
+that has a state, for example, if you use SGD and change the
+12:26
+learning rate, the learning rate would be a state essentially.
+12:30
+So you can also save that. So here, you can do optimizer dot
+12:35
+state dict. And then it will also save that it will all be
+12:38
+saved as I think they are actually pickle files, but I'm
+12:42
+actually not sure what I think they could be email files, I
+12:45
+honestly forgot, I just call them dot p t files, pytorch
+12:48
+files. And yeah, these contain the settings for your model,
+12:53
+essentially. And then if you want to laud your model, you can
+12:58
+use so you have to do it in two steps, you have to first
+13:02
+initialize your model. Because here, really, you're only you're
+13:07
+only saving the parameters of the model, like the weights and
+13:10
+everything. And here, you can hear you, for instance,
+13:15
+initialize your model, it has to be the same model that you
+13:18
+saved. And then what you do is you have like this Lord state
+13:23
+dict. So it's easy to remember, because this is called state
+13:26
+dict here. And this is essentially just Lord state
+13:28
+dict. And then but you have to do an inner torch load here,
+13:32
+which is loading this pytorch file. So if you do that, it
+13:35
+will laud the model. And it will essentially laud the weights in
+13:41
+this state dict are the weights, it will laud the weights into
+13:45
+that model here. And that's all there is to it, essentially. If
+13:50
+you have an optimizer, though, that you saved, and you want to
+13:53
+reuse, you do the same thing here for the optimizer, for
+13:56
+instance, you just initialize a blank optimizer, let's say a
+13:59
+student optimizer with the model parameters, and then you laud
+14:04
+the state dict. So if you had used a learning rate scheduler
+14:08
+that changed the learning rate, it will then update the learning
+14:10
+rate. So you don't have to remember or check manually. And
+14:14
+then you also for the scheduler, if you use the exponential
+14:18
+scheduler, it will, of course, you have change over time,
+14:20
+right? So in that way, um, you can also then get a lot the
+14:27
+scheduler with its parameters. All right, so and that is
+14:31
+essentially how you save and laud models in pytorch.
+
 ##v93:
+
+0:04
+Alright, let's not talk about momentum learning. Momentum is
+0:08
+a term that we can add to SGD, such that it takes into account
+0:12
+the previous updates, and stabilizing stochastic gradient
+0:16
+descent, may essentially making it less noisy. So here's a
+0:21
+definition of momentum from physics from Wikipedia here. So
+0:25
+in Newtonian mechanics, linear momentum or translational
+0:28
+momentum, or simply just momentum is the product of the
+0:32
+mass and velocity of an object. Of course, when we talk about
+0:36
+stochastic gradient descent and weight updates, we don't have a
+0:39
+mass, but we can consider a velocity of the updates like on
+0:43
+the other speed of the updates, essentially. So what we are
+0:48
+trying to do in momentum learning here is essentially is
+0:51
+we are trying to accelerate the convergence by dampening
+0:55
+oscillations using this velocity, which is the speed of
+0:59
+the movement from previous updates. So by take a kind of
+1:03
+taking into consideration how the updates have progressed over
+1:08
+the course of the times, we can use that to, you know, to
+1:12
+dampen these oscillations, essentially. And this goes back
+1:15
+to a paper from 1999. But it's still a very popular technique in
+1:21
+deep learning, especially in combination with learning weight
+1:23
+decay. So here's an illustration of how this looks like how we
+1:29
+can dampen or how these oscillations are dampened. So on
+1:34
+the left hand side is just a sketch of how your mini batch
+1:37
+learning with SGD might look like where we have due to the
+1:41
+noise, this little zigzag, but you can see on average, I mean,
+1:45
+there's some, some force going into this direction. And we
+1:50
+kind of can use this velocity to get to add this velocity to the
+1:56
+updates to dampen out this oscillation such that the
+2:00
+oscillations here, we can so it's not not like before, like
+2:04
+as noisy as before, it's a little bit dampened. Yeah, so
+2:09
+the key takeaway is essentially this in regular gradient descent,
+2:14
+we usually move in the opposite direction of the gradient. So
+2:18
+it's like the usual update. But now with momentum, we now also
+2:23
+move in the average direction of the last few updates. So we look
+2:27
+into the average direction from the last updates, essentially,
+2:31
+that's our velocity. So why does it help? I mean, it helps with
+2:37
+dampening the oscillations, but it can also help us to jump out
+2:42
+of local minima. Because imagine this, if you Yeah, if you do
+2:47
+the updates, they are maybe noisy, but at some point, you
+2:49
+land on a flat surface, then the gradient will be zero, right?
+2:54
+And how do you get out of this flat surface? So the velocity
+2:57
+term, the additional velocity term can actually help pushing
+3:01
+you out of this. Yeah, of this flat surface. So I was trying to
+3:07
+illustrate this in this drawing here at the bottom. So here,
+3:10
+this is our loss for some weight w i. So again, just a very
+3:15
+simplified loss on curve. And this red line here, the one here,
+3:21
+this is our loss. And these circles are, let's say the
+3:26
+current locations and a current time step. So let's say this is
+3:31
+time step one, time step two, time step three, time step
+3:34
+four. And it may happen. So you go down here. So there's a
+3:40
+certain slope, right? So this is fine. And then the next update
+3:45
+is this one. But now you have this flat surface. So there's
+3:49
+essentially no gradient, right? So there's no slope, it's flat.
+3:52
+So regular gradient descent would stop at this point, because
+3:56
+it's a flat surface, but this velocity, because it's taking
+3:59
+the average direction of the previous updates into account,
+4:02
+may give it just the necessary push to fall further down,
+4:06
+further down, basically. So I'm using these velocity terms that
+4:12
+can help us basically escaping local minimal settle points
+4:16
+where we have, yeah, we have flat gradients. Yes. So how does
+4:21
+this velocity based updating look like concretely? He was
+4:26
+trying to sketch this out. Let's walk through it step by step. So
+4:32
+let's start at the bottom here. So this is essentially if you
+4:34
+just look at this without reading anything here on the
+4:37
+slide, this is essentially our regular gradient descent update
+4:41
+that we do in SGD. So let's say we want to update weight w i j
+4:47
+in the network. So t is the time step. So at the current, let's
+4:52
+say t plus one is the current time step or then the way that
+4:55
+is used for the next iteration. So we consider the weight at the
+4:58
+current time step minus delta w i j t at the current time step
+5:05
+where this is here the partial derivative of the loss, the loss
+5:12
+with respect to that weight times the learning rate at so
+5:17
+this whole thing here, that's how much we change the weights
+5:20
+essentially. Okay, let me delete that notation because there will
+5:25
+be lots of more notation on that slide, I don't want to make it
+5:28
+too cluttered. But again, so this at the bottom is
+5:31
+essentially how the regular gradient descent would look
+5:34
+like. Now, instead of using, I have it actually up here, sub
+5:40
+using the regular partial derivative of the loss with
+5:42
+respect to the weights multiplied by the learning rate
+5:45
+eta, we modify this. So we add an additional term here, this is
+5:51
+shown here. So we are adding it to this regular update. And this
+5:57
+is the we call this whole thing, essentially the velocity. So
+6:03
+instead of just using this, this part, which we usually used
+6:07
+before, we now have this party on the left hand side. So what
+6:12
+is this? So it is the delta w term from the previous time step
+6:19
+time t minus one, that's the velocity of the previous time
+6:24
+step. And the alpha here, this is the momentum rate. Usually in
+6:30
+practice, we use a momentum rate between point nine and point
+6:33
+999. And you can think of it as a as a friction or dampening
+6:39
+parameter, right? So the larger we make this, the larger this
+6:46
+term, the previous velocity term will become right. So in that
+6:50
+way, the larger this this alpha is, the more the normal update
+6:59
+will be influenced by the previous update. So this is
+7:03
+essentially like a moving average in a way. Yeah, this is
+7:09
+essentially it right. So we are essentially just adding the
+7:14
+previous update to it multiplied by a certain number. And
+7:18
+essentially, you can think of it as a moving average. Well, yeah,
+7:21
+that can is a velocity term, or momentum term. And this one,
+7:27
+then we call it the velocity. And we use it then to update the
+7:31
+weights. And this is essentially how momentum works. How does
+7:36
+momentum look like in, like in practice without my scribbled
+7:41
+the sketches that I showed you before. So here's actually a
+7:45
+real simulation of momentum. So here, they call that alpha term
+7:49
+beta. But yeah, we call it alpha and same thing. And here, I'm
+7:55
+showing you this for two momentum values, here's zero
+8:00
+momentum. So that's just like the regular gradient descent.
+8:04
+And again, this is like for a very nice loss surface here. In
+8:08
+real world scenarios for deep learning, you won't have such a
+8:11
+nice loss surface. But this is just a simplification, of course.
+8:16
+So here, you can see it's very noisy, very oscillating. And
+8:21
+with momentum, it oscillates less, essentially. So it's a
+8:24
+bit more stable, because it's considering the average
+8:27
+direction, you can also see there are probably fewer
+8:30
+updates, yeah, definitely fewer updates, because you can see,
+8:33
+these points are very close to each other, whereas these are
+8:36
+more spaced out. Yeah, this is essentially how momentum works
+8:42
+and looks like. In the next video, I will talk about
+8:46
+adaptive learning rates. First, there's also an algorithm called
+8:50
+RMS prop. And then we will combine these adaptive learning
+8:54
+rate concepts with momentum, which will yield Adam, which is
+8:59
+probably the most widely used SGD based optimizer in deep
+9:03
+learning.
 
 ##v94:
 
+0:00
+Yes, in the previous video, we talked about adding this
+0:03
+momentum term, which is essentially a velocity term that
+0:07
+helps dampening the oscillations in stochastic gradient descent.
+0:12
+But it also can help with overcoming like flat regions on
+0:16
+the loss surface, for instance, on saddle points or local
+0:19
+minima. So in addition to this momentum term, we learn now
+0:23
+about a slightly related also, slightly different concept
+0:27
+called adaptive learning rates. So adaptive learning rates are
+0:30
+essentially about accelerating and accelerating the learning
+0:36
+rate at the right moment. So speeding the learning up when we
+0:40
+are going into the right direction and slowing it down
+0:42
+when we change directions. And then we will see how we can
+0:47
+combine this with momentum learning. And the combination of
+0:50
+both there's an algorithm that does that it's called Adam. So
+0:54
+Adam is essentially a combination of adaptive
+0:56
+learning and momentum learning. Yeah, there are many different
+1:01
+flavors of adaptive learning rates out there. And discussing
+1:04
+them all would be a little bit of out of the scope of this
+1:07
+course. However, um, yeah, just to go over the main concepts, I
+1:11
+will show you a simple example. And yeah, the key takeaway, like
+1:14
+I said in the previous slide is that we decrease the learning
+1:17
+rate of the gradient changes the direction, and we increase the
+1:21
+learning rate if the gradient stays consistent. So for
+1:24
+instance, if we do these updates, and they are all going
+1:29
+to the same, roughly same direction, then we accelerate
+1:33
+because yeah, in this way, it's probably likely the correct
+1:37
+direction. So in that way, we can just speed it up and
+1:41
+converge faster. However, if we have something where we change
+1:46
+the direction, for example, so let's say we have an update like
+1:49
+that, and there's another change, then it will slow down
+1:52
+the update, so that it is, if it's a wrong direction, there's
+1:56
+maybe some noise, so that it is not heading too much into this
+1:59
+wrong direction, for example. So if there every time there's a
+2:02
+change in direction, it will essentially slow down.
+2:09
+Yeah, so how does it work? How can we use an adaptive learning
+2:12
+rate? There are essentially two main steps for doing that. So
+2:17
+step one would be initializing a so called local gain for each
+2:21
+weight. And if you look at this, here, when we compute the delta
+2:27
+w ij term, and if you only if you remove this one, this would
+2:35
+essentially look like the regular delta term that we
+2:38
+compute. So this is essentially our gradient of the loss with
+2:43
+respect to that weight that we want to update times the
+2:45
+learning rate. So this is the learning rate. But the difference
+2:51
+now is that we add this gain and this gain, as you can see is
+2:58
+also index ij. So it's the gain associated with that particular
+3:03
+weight. And in that way, you can think of this one as a learning
+3:06
+rate just for this particular weight. So you can have unique
+3:09
+learning rates for different weights or different directions
+3:12
+in that way. So now after initializing this local gain, we
+3:20
+have a second step. So this is what we then do during learning,
+3:23
+we are modifying this gain. So similar to modifying the weights,
+3:28
+we modify this gain. So we either increase it if it's
+3:32
+consistent, or otherwise if it's inconsistent. So if we change
+3:36
+the direction, then we decrease or Yeah, we Yeah, we change the
+3:40
+dampen the gain essentially. So like I'm saying here, multiplying
+3:46
+by a factor has a larger impact if the gains are large, compared
+3:50
+to adding a term and addition to in contrast to this addition.
+3:56
+And that means, um, so how this is set up, it means that if we
+4:02
+are going into the right direction, we are slowly
+4:05
+accelerating. So, so this is if we are consistent, and we are
+4:10
+adding this beta term, and we make it bigger by a small value
+4:16
+here by beta, let's say, beta is point nine, we increase it by
+4:20
+point nine in each round, essentially. But if we change
+4:27
+the direction, we slow down faster by multiplying by this
+4:33
+term here, for instance. So here, for instance, we would
+4:36
+multiply a beta is point nine, we will multiply this by point
+4:40
+one. And this can have a stronger dampening effect when
+4:45
+we change the directions. This is kind of intuitive, because
+4:48
+yeah, if we let's say, drive a car, and we see the road is
+4:55
+clear ahead, we start to accelerate, but we don't go
+4:59
+crazy and stomp on the gas, we start accelerating in a
+5:02
+reasonable manner. And let's say we want to make a turn or
+5:07
+something like that, or we are in the turn. Usually, we
+5:10
+accelerate a lot before a turn, we don't slowly accelerate in
+5:14
+most cases, at least I mean, if it's a very sudden turn, if we
+5:17
+have to avoid an obstacle or something like that, we have to
+5:20
+push the brakes pretty hard to turn left or right to avoid the
+5:24
+obstacle.
+5:26
+Alright, so there is a particular implementation of an
+5:30
+adaptive learning rate that was very popular for, yeah, for a
+5:34
+time. It is called RMS prop. And I think it's from a course
+5:39
+Geoff Hinton taught, you can find references to that on the
+5:43
+internet. But there is no official paper of that or
+5:46
+corresponding to that. It's something Geoff Hinton was one
+5:51
+of the persons popularizing and working on your networks
+5:54
+throughout the last 60 or so years, 50 years. Yeah, it has
+6:02
+been mentioned in one of his talks, and people started using
+6:05
+that and performed pretty well. It's essentially a modification
+6:08
+of our prop, which was published in 2000 around 2000. And yeah,
+6:15
+it's also relatively similar to another concept called delta.
+6:19
+So the main idea behind this RMS prop, I mentioning it because
+6:23
+it will be relevant when we talk about the Adam algorithm. So the
+6:27
+main concept is we divide the learning rate by an
+6:29
+exponentially decreasing moving average of the squared
+6:32
+gradients. So it's essentially a modified version of this
+6:36
+adaptive learning rate that I showed you on the previous
+6:39
+slide. So the previous slide was a very simple type of adaptive
+6:43
+learning rate, this is a little bit more sophisticated. Because
+6:47
+it takes us into account that gradients can vary widely in
+6:51
+the magnitude. So some weights or gradients are larger than
+6:54
+others. And the RMS and RMS prop stands for root mean squared,
+7:00
+because it's related to these squared gradients. And it also
+7:07
+has an effect of this dampening effect. In addition to the
+7:11
+adaptive learning, it also has this adept dampening effect of
+7:14
+the momentum on the oscillations. But in practice,
+7:18
+yeah, people thought it might work better than using
+7:21
+momentum. So this RMS prop, people found works better than
+7:25
+just momentum. But yeah, nowadays, people use a
+7:28
+combination of Adam, or the people use Adam, which is a
+7:32
+combination of RMS prop and momentum. Okay, but let's talk
+7:37
+about this RMS prop first, before we go into the Adam, Adam
+7:41
+algorithm. So there is now a mean square term here that is
+7:45
+the moving average of the squared gradient of each weight.
+7:49
+It's kind of, in a way similar to momentum, but we have now,
+7:53
+instead of just considering the moving average, we have the
+7:55
+moving average of these squared gradients. There's a beta term.
+8:02
+So t is again, the time step. For instance, the iteration, and
+8:09
+w ij is the weight we want to update. So we have the mean
+8:14
+squared gradient of that weight at a given time step. And this
+8:19
+is computed by multiplying a beta with the mean square value
+8:25
+from the previous iteration. So and then, on top of that, we add
+8:31
+these squared gradients for the current iteration. So this is
+8:36
+the mean term here, right? So this is something we keep from
+8:41
+from the previous rounds. And this is only for the current
+8:45
+round for time step t. So it's essentially the gradient of the
+8:49
+loss of partial derivative of the loss with respect to the
+8:52
+weight should be a partial here. And we square those essentially,
+8:59
+so they are always positive values. Yeah, and then this is
+9:05
+how we compute the mean square value. And then we use that mean
+9:09
+square value to scale the gradients at that update. So
+9:14
+here, we are just computing the mean squared term, and here we
+9:17
+are applying it. How do we apply this? So if you look at this,
+9:23
+again, this is like the regular gradient descent update, right,
+9:29
+we take a step into the direction, the negative
+9:33
+direction of the gradient. So we subtract the gradient times the
+9:37
+learning rate. But now, in addition to doing that, we scale
+9:42
+by this mean squared term, and we take the square root, so it
+9:46
+has the same unit as the weights. So and this is
+9:51
+essentially it, it's very similar to what I showed you
+9:53
+before, the adaptive learning rate where we have a gain that
+9:57
+we modify, except that this is a certain type of gain that is
+10:02
+working a little bit differently. And yeah, we have
+10:05
+the small epsilon to avoid division by zero errors. In a
+10:10
+way, it's also somewhat similar to the momentum term. So when we
+10:13
+look at Adam, we will see there are two things the momentum term
+10:17
+and this term, and they are actually also themselves very
+10:19
+similar. Except this is like a scaling factor, in a way, and
+10:23
+the momentum is something that we add on top. So let's then
+10:30
+now talk about this, Adam, because I mentioned it so many
+10:33
+times, it stands for adaptive moment estimation. Again, it's
+10:37
+probably the most widely used optimization algorithm in deep
+10:40
+learning as of today, I use it a lot, because I find it just
+10:44
+works very well out of the box. And I always find I get almost
+10:48
+always the same, or even better performance as with SGD, plus
+10:54
+momentum and learning rate schedulers, but I need way less
+10:57
+tuning. I mean, here, I mean, tuning of the learning rate and
+11:01
+the strength of the scheduler. So like I said, it's a
+11:06
+combination of momentum and RMS prop. And to get to make this a
+11:12
+little bit easier to read. Um, I was also should say, if you
+11:17
+want to read the original paper, which contains way more detail,
+11:21
+this is the paper where it was proposed from 2014. So here, you
+11:26
+can find also more information. So here, I'm rewriting this
+11:29
+slightly to make this a little bit, I would say easier to see
+11:33
+how it is related to momentum. So here, on top, this is the
+11:39
+original definition of the momentum that we defined in the
+11:44
+last video. And I'm just replacing this delta w by this
+11:50
+MT. So I'm just using a different notation here, I'm
+11:54
+just changing the notation, not changing any concept. I'm just
+11:57
+saying, okay, let's call this one now, m at time step t. So
+12:01
+the momentum term, m for momentum at time step t. And
+12:05
+here, the, this is the current time step. And this is the time
+12:08
+step for the next round, essentially. So here, this is
+12:13
+the rewritten version of that. But you can see, it's slightly
+12:19
+different now, because we have this modified version where we
+12:24
+have alpha, but instead of using the learning rate here, we use
+12:30
+one minus alpha. So it's not exactly like the same, like the
+12:34
+original momentum term, it's slightly different. So we have
+12:38
+this one minus alpha, instead of the data in the original
+12:43
+momentum, but you can see how similar it is, right. So we have
+12:47
+we have both on alpha times m, which we have here. And we have plus here, we have the gradient, the same thing, except again, the only
+12:58
+differences here, we have the learning rate. And here we have
+13:01
+one minus alpha. Okay, so here, I was just rewriting the momentum
+13:07
+term from the previous slide, exactly the same thing, just
+13:10
+carrying it over. And now we have this RMS prop term that I
+13:15
+showed you a few slides ago. So here we had the better term for
+13:19
+multiplying it with a mean square, I'm just abbreviating
+13:22
+here as R. And then we have one minus beta times the squared
+13:28
+gradients. So this is essentially the same I also
+13:31
+showed you before, now I'm just using our so it's shorter. And
+13:34
+then for Adam, we combine both, we have momentum. So we have
+13:40
+the learning rate times the momentum term, it's essentially
+13:43
+our velocity. And we scale that momentum term by this arm as
+13:49
+proper term. So square root r plus this epsilon. And this is
+13:55
+essentially how Adam works. So we have the momentum term and
+14:02
+here, the arm is prop term. Okay, um, there's a slide, I
+14:15
+would say modification of that in the paper. So here, that's
+14:18
+the original paper, how it is defined in the paper. And what I
+14:23
+haven't contained or included in the slides for simplicity was
+14:27
+this bias corrected, first moment estimate, and the bias
+14:31
+corrected second raw moment estimate. So here, the
+14:34
+difference is essentially that I should also say, I'm calling it
+14:39
+alpha and beta. So here, they have beta one and beta two. So
+14:43
+if we go back, I call that alpha, just because I was, I
+14:48
+don't want it simpler. But this is essentially beta one. And
+14:53
+here, this is beta two. In the paper, I just found it somehow
+14:59
+more intuitive to say alpha and beta, because we also used alpha
+15:02
+before when we talked about momentum. So yeah, they just
+15:07
+correct this term by having another scaling by so they scale
+15:12
+the momentum term by dividing by one minus beta to the power of
+15:16
+t, where t is the time step essentially, and they do the
+15:20
+same thing for on this V term. Yeah, and this is essentially it.
+15:25
+So in the next video, I will show you how we can use these
+15:28
+optimization algorithms in pytorch.
+
 ##v95:
+
+0:02
+Alright, let's now talk about how we can use these optimization
+0:05
+algorithms in Python. And I can promise you this is going to be
+0:09
+a very short video because it's super simple to do in pytorch.
+Optimization Algorithms
+0:13
+So the most common optimization algorithms are still SGD, the
+0:18
+regular SGD with momentum. And Adam, there are of course,
+0:23
+other optimization algorithms, and I will mention some of them
+0:26
+in the next video. But yeah, these two are usually the ones
+0:29
+that most people use in practice. And if you are also
+0:34
+interested in using other types and exploring them, you can also
+0:38
+find them here under this website. And there's also a
+0:41
+more detailed description of the parameters that we can use. So
+0:46
+how we use them here, you have already used optimum SGD before
+0:50
+and previous code examples and the homework, I think. So right
+0:55
+now, the only difference is really that here, I added the
+0:57
+momentum term to it. Usually, I find that using a learning rate
+1:02
+of point or one or point or one works well. But you have, of
+1:06
+course, to experiment with it, it really depends on the data
+1:09
+set and weight initialization and data normalization, batch
+1:14
+norm, and so forth. There are many, many things that affect
+1:17
+finding a good learning rate. So it's something you have to try
+1:20
+out in practice. When I use SGD, I usually also use a learning
+1:24
+rate scheduler, I will show you or give you the code for
+1:28
+reference later in the slides. And if I use a learning rate
+1:32
+scheduler, I usually also use a learning rate of point one. For
+1:38
+Adam, I usually don't do anything I use usually a learning
+1:42
+rate of point or one or point or five. These usually work well
+1:47
+for me. But again, it depends on the problem I recommend also
+1:51
+exploring some different learning rates. But most of the
+1:54
+time, something like point or five works well for me. And it's
+1:59
+sometimes also easier to find a good learning rate with Adam
+2:02
+compared to SGD with SGD, I have to try out many more things to
+2:07
+get it to work with with whereas with Adam, usually, multiple
+2:11
+learning rates can work well in practice. So if you're using any
+Saving Loading Optimizers
+2:18
+of these like the momentum or Adam versions, also the momentum
+2:22
+version of SGD or Adam, then yeah, and you want to save your
+2:26
+model for continuing training later on, you also have to save
+2:31
+and load the optimizer because there is now a given state. So
+2:35
+there's a state for the momentum and also for the adaptive
+2:38
+learning rate component, the RMS proper component. But yeah, I
+2:41
+talked about saving and loading optimizers. And in earlier
+2:45
+videos, I think it was like two or three videos ago. So if you
+2:48
+work with the momentum version or the Adam and you want to
+2:53
+continue training at a latest time point, make sure you know
+2:57
+how to save and load the optimizer states too. So just a
+Atom Parameters
+3:03
+little bit more about Adam. So in the previous video, I showed
+3:06
+you that there are two parameters. So the alpha
+3:10
+parameter for the momentum term and the beta parameter for the
+3:13
+RMS prop term. Yeah, they are also available to modify in the
+3:20
+Adam optimizer. So here, they are both called betas, like in
+3:24
+the paper. So this would be beta one. And this one would be beta
+3:29
+one, two. And this one would be then beta two and beta two. So
+3:34
+just so you know what they mean. So the first value is for the
+3:38
+momentum beta. And the second value is for the RMS prop beta.
+3:41
+Personally, I never change these that usually works well for me
+3:45
+just keeping them as they are by default. And also in many
+3:49
+papers, when you read deep learning papers, almost no one
+3:53
+changes these parameters, they always say they use the default
+3:57
+parameters because they are they usually work pretty well in
+4:00
+practice. Here are two examples. I'm so of using these different
+Examples
+4:07
+optimization algorithms. So here I was using an SGD with a
+4:11
+learning rate scheduler having the learning rate when it
+4:14
+plateaus, and also momentum term of point nine. So the momentum
+4:18
+term here was point nine, the learning rate was point one, and
+4:23
+it was halved. Every time the validation accuracy was
+4:28
+plateauing when it was not improving. So it was
+4:30
+fluctuating. And then I was having the learning rate to
+4:34
+stabilize the training. So that's then more like the fine
+4:36
+tuning stage. And you can see in the beginning, it's rather
+4:40
+noisy. And then probably after this having it stabilizes more
+4:44
+because there's no improvement anymore. So we can have the
+4:47
+learning rate and then remove that oscillation. So that's what
+4:51
+I was doing here. And with this setup, I reached accuracy of
+4:54
+test accuracy of 97.34%. On the right hand side, I was just
+4:58
+using Adam with default parameters, I think I used the
+5:01
+learning rate of point 005 here. And I got also essentially the
+5:07
+identical performance. But here you can see, because we are not
+5:11
+we're not using the learning schedule here, probably, we see
+5:15
+it's a little bit noisy here around that region. But to be
+5:18
+honest, both work perfectly fine in practice. And I find usually
+5:23
+Adam works a little bit better for me. But I'm also a very
+5:26
+impatient person. I think if I would toy around with the SGD
+5:30
+more, I could probably also get a similar good performance or
+5:33
+even outperform it. But yeah, Adam is something if you are
+5:37
+lazy, like me, it usually always works pretty well. And I kind of
+5:42
+like it for that reason. So in the next video, I want to just
+5:46
+briefly go over some, I would say I am more advanced concepts
+5:50
+regarding optimization algorithms, I want to talk about
+5:53
+them in detail, I just want to mention them by giving you
+5:55
+references for future study if you're interested.
 
 ##v96:
 
+0:02
+Yeah, I wanted to end this lecture with some additional
+0:05
+topics, because over the years, I booked marked so many
+0:08
+interesting articles, I didn't even have a chance to read them
+0:11
+all, there are hundreds of interesting articles related to
+0:14
+optimization. But yeah, if you're interested, I have a
+0:17
+small selection of things here that you may find interesting.
+0:22
+So let's start with Adam. So going back to the original
+0:26
+paper, the Adam paper from 2014. So you can see there are
+0:30
+several other methods that they looked at. And this is from
+0:33
+2014. Nowadays, there are maybe at least five times more
+0:37
+methods out there that people suggest to use compared to
+0:41
+regular SGD. So one thing, for example, that we also didn't
+0:45
+talk about is SGD Nesterov, which is a modified version of
+0:48
+SGD with momentum. It's like this Nesterov momentum. In
+0:52
+theory, it may work better than the regular momentum. I also
+0:55
+wanted to cover it in this lecture, actually, I made the
+0:58
+slides for that, but then I removed them because I noticed
+1:01
+otherwise, the lecture will be just too long. And most people
+1:04
+in practice use the regular momentum again, anyways. So SGD
+1:08
+with a regular momentum is also among the best algorithms, even
+1:12
+though it's the simplest one. And I will explain to you in a
+1:15
+few slides why. So Adam, like I said, is cool, because it
+1:19
+doesn't require as much tuning. But also, SGD is also in terms
+1:25
+of generalization performance, really good. So to make this
+1:30
+point, so this plot, this is looking at the training cost or
+1:34
+training loss. And you can see in this paper, they find that
+1:37
+Adam really performs best compared to other methods when
+1:40
+it comes to the training cost or loss. However, a training low
+1:44
+training cost doesn't imply that the final model generalizes
+1:50
+well to new data, maybe it's just overfitting. So what I
+1:53
+mean is, of course, we want to achieve a low training cost, but
+1:56
+that alone is not enough, we can end up with a low training
+2:00
+cost. But then if we have a high degree of overfitting, then the
+2:04
+resulting model still isn't so good, for example, compared to
+2:07
+a model that has a higher training loss, but lower
+2:11
+overfitting and may have a better generalization
+2:13
+performance. So to explain you more in detail what I mean,
+2:17
+here's a visualization from a paper from actually don't know
+2:22
+which year I think was 2017, I should have included it here.
+2:25
+But here, um, they also looked at different optimization
+2:29
+algorithms, they looked at the training error here, and the test
+2:33
+error. So what is interesting is that they find they have Adam,
+2:38
+the more optimized one, like hyper parameter tuning, and the
+2:42
+default one, most people I said use the default one, but in this
+2:45
+case, the default one performs really bad. The tuned one
+2:49
+performs better here. But yeah, in contrast to the previous
+2:51
+slide that I can't explain, in contrast to the previous slide,
+2:55
+they find that on the training set on SGD performs better than
+3:00
+Adam. So HBS heavy ball method, it's another method. But this is
+3:04
+like a little bit different from what I've shown you in the
+3:06
+previous slide. Nonetheless, the takeaway here is more like
+3:12
+what's happening on the test set. So in the test set, that is
+3:15
+usually what we care about here, we also find this regular SGD
+3:19
+performs better than Adam. And this is not unique to this
+3:24
+single paper. This is something that has been observed by other
+3:28
+people as well, that SGD, if it's tuned well, it has usually
+3:33
+the best generalization performance. One possible
+3:36
+explanation for that is that SGD is just noisier. And because of
+3:40
+this noise, it's maybe easier to avoid certain sharp minima, or
+3:46
+it's easier to, it's a first of all wiggle out of some local
+3:50
+minima, but then also maybe to don't find such a good loss. So
+3:55
+if you find a loss, that is very low, you may end up overfitting.
+4:00
+In that case, maybe having a higher training losses, maybe
+4:03
+sometimes not as bad. Okay, so that is one point why people
+4:08
+still sometimes prefer SGD compared to more fancy algorithms
+4:13
+algorithms like here listed here. Um, yeah, there was also a
+SGD
+4:18
+fun paper where they essentially suggest switching from Adam to
+4:24
+SGD over the course of training. So they say despite superior
+4:28
+training outcomes, adaptive optimization methods, such as
+4:31
+Adam and a grad, or RMS prop have been found to generalize
+4:34
+poorly compared to SGD. So it's essentially what I said in the
+4:38
+previous slide, that regular SGD can usually yield better
+4:42
+generalization performance. And they say these methods tend to
+4:45
+perform well in the initial portion of the training, but are
+4:47
+all performed by SGD in the later stages of training, we
+4:51
+investigate a hybrid strategy that begins with training and
+4:54
+adaptive method. So using Adam, and then switching to SGD when
+4:57
+appropriate. So here, they have essentially compared SGD and
+5:04
+Adam, so we're using SGD first, and then, sorry, using Adam
+5:09
+first, and then switching to SGD. So yeah, here is also,
+5:13
+again, a plot showing the test error showing that with SGD, you
+5:17
+can end up with a lower test error, so a better
+5:20
+generalization performance compared to the orange to Adam.
+Strengths Weakness
+5:27
+Here's a blog article, also listing all the strengths and
+5:33
+weaknesses of these different algorithms, like taking an
+5:36
+objective view. So here, they didn't develop a particular
+5:40
+method, because usually, when you read a paper, where people
+5:43
+propose a new method, the new method is, of course, better
+5:46
+than the previous methods. But here, this is someone just
+5:48
+summarizing these different methods and coming up with some
+5:52
+takeaways. So yeah, in terms of the state memory, how many
+5:57
+memory that requires an addition on your GPU, because you have
+6:01
+additional parameters, but then also the hyper parameters that
+6:04
+you need to tune. So of course, SGD is the simplest one,
+6:08
+momentum, you add an additional number of parameters here. And
+6:13
+also tunable parameters. I don't know where the second one comes
+6:17
+from. Yeah, one is the learning rate. And the other one is, of
+6:20
+course, the momentum term, but the beta. But yeah, I was just
+6:23
+wondering, okay, anyways, um, so yeah, so here, they also say
+6:27
+that it's the best for generalization, but retake
+6:31
+requires extensive training. So requires more tuning for the
+6:35
+learning rate, but also more epochs. And then this one
+6:41
+accelerates and overcomes weaknesses, so forth. And here
+6:49
+with Adam, they also say it generalizes worse than SGD. So
+6:55
+yeah, this is a interesting other algorithm, Adam W. So it
+6:59
+improves Adam in terms of generalization and but requires
+7:04
+more state memory. It's the same as this one. So it's in that way
+7:08
+not much worse than regular Adam. But Adam W is also
+7:11
+something I've recently seen people using it's a little bit
+7:14
+better than the regular Adam. But yeah, if you're interested,
+7:17
+you can read this article for more details for more detailed
+7:20
+comparison of different methods. So here was also an interesting
+7:26
+take on Adam again. So people often use Adam and say Adam
+7:32
+performs just well across many different architectures. And
+7:36
+here this person argues this maybe because architectures
+7:40
+evolved to make Adam the best optimizer. So here the person
+7:44
+says that it is known that Adam will not always give you the
+7:47
+best performance. Yet most of the time people know that they
+7:50
+can use it without its default numbers with it. Yeah, so you
+7:56
+don't need to change the default parameters. And usually you can
+7:59
+get good performance on your problem just out of the box. So
+8:03
+that is also what I observed in practice. But here, the argument
+8:07
+is, maybe it's not because Adam works so well, it's because
+8:10
+Adam worked so well in the past. And now with these new
+8:14
+architectures, people just keep using Adam and the new
+8:17
+architectures that evolved, expect that people use Adam. So
+8:22
+Adam is essentially a good fit for these architectures, because
+8:25
+these architectures were evolved with Adam in mind. So there's
+8:29
+like this evolution kind of bias here. So here, the person also
+8:34
+says usually people try new architectures, keeping the
+8:37
+optimization algorithm fixed. And most of the time, the
+8:40
+algorithm of choice is Adam, this happens because as
+8:43
+explained above, Adam is the default optimizer, it's like a
+8:45
+chicken egg problem in a way. So yeah, and recently, that was
+Independent Evaluation
+8:52
+so that a couple of weeks ago, actually, in a talk, this
+8:55
+figure, so there was also some additional independent
+8:59
+evaluation of these different optimization algorithms. And
+9:03
+here, essentially, the argument is, really, it does not matter
+9:07
+what type of optimization algorithm you use. So on the
+9:10
+left hand side, this is a resonant 18 residual network,
+9:14
+which we will talk about. Yeah, this next week, so it's a type
+9:19
+of convolution network. And here, this is a multi layer
+9:22
+perception. And they train this on cipher 10. So both methods
+9:26
+and here, this is the accuracy on the test set. And sorry, the
+9:33
+blue one is the test training set and the red one is a test
+9:37
+set. Let me write this down, train and test. And you can see
+9:45
+the training set accuracy for both convolutional networks, and
+9:49
+fully connected networks, multi layer perceptrons here are
+9:53
+essentially the same the trainings and accuracies.
+9:55
+However, the tests that accuracy here, that's a huge difference.
+9:59
+So architecture make can make a huge difference in terms of the
+10:04
+generalization performance, even though let's say the training
+10:06
+accuracy remains the same. So architectural choice is very
+10:10
+important. However, in contrast to the architecture choice, so
+10:14
+here, they trained a VGG 13, which is a different convolution
+10:19
+network. So for this training here, they used different
+10:24
+optimization algorithms, for example, SGD, SGD with momentum,
+10:28
+SGD with Nester of momentum, or Adam here, and you can see that
+10:32
+the while the training performance is slightly different,
+10:35
+maybe the test set performance is almost identical, you can see
+10:39
+that there's almost virtually no difference in the test performance,
+10:43
+maybe one or 2% points. And yeah, here really, what we can
+10:47
+see is that, honestly, the type of optimization algorithm that we
+10:51
+use doesn't matter that much as we might think it's really, if
+10:55
+you want to, let's say get better performance, it's
+10:57
+probably better to look at different architectures rather
+11:01
+than different optimization algorithms. That being said,
+Adobe Leaf
+11:05
+there was recently also a new optimizer that was pretty
+11:10
+popular, or became very popular very quick. Let's say I saw that
+11:13
+in several discussion forums. So there's this this add a belief
+11:18
+optimizer, which is essentially a modification of Adam. So here
+11:23
+on the left hand side is the regular Adam optimizer. And on
+11:28
+the right hand side is this add a belief optimizer and in blue.
+11:31
+So I can also release blue here in the blue font, you can see
+11:36
+the little changes to it. I don't want to discuss this in
+11:39
+too much detail, because I want to wrap up this lecture, it was
+11:41
+long enough. But yeah, this is another interesting or new
+11:44
+optimizer. And of course, you can see it performs better than
+11:50
+the other ones in blue here. That's the other belief
+11:52
+optimizer. And it outperforms other optimizers using VGG 11
+11:57
+and resnet 34, which are both convolution networks that we
+12:00
+will talk about. And we will also start using cipher tendon.
+
 ##v97:
+
+0:01
+Yeah, hi, everyone. So we finally put behind us all the
+0:04
+stuff about, yeah, making neural networks learn better and train
+0:08
+better. So what would be more exciting than introducing a new
+0:12
+neural network architecture. So today, I want to talk about
+0:15
+convolutional neural networks, which are especially good for
+0:18
+image data, convolution neural networks, that's a big topic. So
+0:21
+actually, I have enough slides to talk about it, like for at
+0:25
+least three or four weeks. But I'm trying to keep it focused.
+0:28
+So I reduced my slides a little bit to two lectures. So in the
+0:33
+first lecture today, I want to talk about the basic concept
+0:37
+behind convolutional networks, and what you can do with them
+0:40
+and how they work on the big picture level. And then in the
+0:43
+next lecture, I will go more into these different types of
+0:47
+convolutional neural network architectures. Because yeah,
+0:50
+there are lots of neural network architectures that have been
+0:52
+developed in the last couple of years, like residual neural
+0:55
+networks, VGG networks, and inception networks, and so
+0:59
+forth. So in the next lecture, we will talk more about these in
+1:03
+detail. Whereas in this lecture, I will give you a big overview
+1:07
+of how convolutional neural networks work.
+1:10
+Yeah, so here are the topics I have in mind for today. I know
+1:14
+it looks like a lot, but most of them will be very short videos.
+1:18
+I just try to make more subsections to keep things more
+1:21
+organized. And I think, based on what I heard based on the
+1:24
+feedback, you like a shorter video. So in that way, I will
+1:28
+try to keep them shorter, and have more more short videos
+1:32
+rather than having fewer long videos. So first, I want to talk
+1:36
+briefly about applications of CNN. So what we can do with CNNs.
+1:41
+And then we will talk about image classification, in
+1:44
+particular, because image classification is one broad
+1:46
+aspect or one popular application area of CNNs. And
+1:51
+that helps us also studying CNNs better when we use a simple
+1:54
+application first, then I will go over the basics of
+1:58
+convolutional networks, like the main aspects behind them, and
+2:03
+then focusing on convolutional filters and weight sharing.
+2:07
+That's one aspect that is part of the convolution architecture.
+2:11
+So we will learn a little bit about that. Then I will do some
+2:16
+little nitpicking here. So discussing briefly the
+2:20
+difference between cross correlation and convolution.
+2:23
+It's not particularly important, but maybe one day you will get
+2:27
+an interview question about that. And then you know the
+2:29
+answer. Then we will talk about just very briefly about back
+2:34
+propagation in convolutional networks. So it will be a very
+2:38
+short video, because we I don't want to go into the mathematical
+2:40
+details, it will take too much time. And it's not super
+2:43
+important, because you know, we can use auto grad. And yes,
+2:47
+starting maybe the back propagation in more detail for
+2:49
+convolutional networks and deriving it by hand, that would
+2:51
+be something for a more advanced course, maybe. Then I will just
+2:56
+briefly outline what types of convolutional neural network
+2:59
+architectures are out there. But this will be mainly a topic for
+3:04
+next week. And then we'll briefly see what CNNs can see.
+3:08
+So looking, looking a little bit behind the curtain and see what
+3:14
+information the CNN image looks at and how it processes this
+3:19
+information. And then lastly, we will finally then see how we can
+3:24
+use convolutional networks in pytorch. And this is actually
+3:27
+not too complicated. So also there, don't worry, it will be a
+3:31
+rather short video. So next lecture, just to give you an
+3:35
+outlook next lecture, we will then talk about some more
+3:38
+advanced concepts. So for instance, if you are already
+3:42
+roughly familiar with convolution networks from some
+3:44
+other resources, and you wonder why we don't discuss certain
+3:48
+certain things today, that's because I moved them up to the
+3:51
+next lecture next week. Otherwise, today's lecture would
+3:55
+be really too long. So next week, we will talk about
+3:58
+padding, then on special versions of dropout and batch
+4:01
+norm that work with convolutional networks, then some
+4:05
+considerations for training CNNs on GPUs. And then these common
+4:10
+architectures like VGG 16, residual networks, fully
+4:14
+convolutional networks and inception. There, of course, maybe 50
+4:18
+more architectures that we can't cover here. But I would say
+4:21
+these are still the main ones, there are some other ones that
+4:25
+are also popular. But again, we can't talk about everything
+4:29
+here. So these will be the main ones. And then I will also show
+4:32
+you how transfer learning works. So I recommended transfer
+4:37
+learning to some students in the context of your class projects.
+4:41
+So when I was reviewing your class projects, I said sometimes
+4:44
+might be good to use transfer learning. And here in the next
+4:48
+week's lecture, I will then also explain what it is.
+4:50
+Essentially, it is training the network on a large data set, and
+4:55
+then fine tuning, fine tuning it on a smaller data set. Because I
+4:59
+noticed many students only have small data sets like 500 images
+5:03
+and something like that. And usually, it's tricky to get good
+5:06
+performance on a small data set. So in that way, it's sometimes
+5:10
+helpful to pre train the network on a larger data set before
+5:13
+fine tuning it to your target data set. But yeah, again, we
+5:16
+will discuss that next lecture. So today, we will then start
+5:20
+with first topic, what CNNs can do.
 
 ##v98:
 
+0:01
+Yeah, let's start this lecture by talking about common
+0:04
+applications of convolutional neural networks. And instead of
+0:08
+saying convolutional neural networks all the time, which is
+0:10
+pretty hard for me with my German accent, I will just
+0:13
+abbreviate them as CNN. So CNN, that's a common abbreviation.
+0:18
+Another common one is saying confidence. So either one is
+0:22
+fine. Both are commonly used in the literature. Alright, so what
+0:26
+can CNN do the simplest application of CNNs would be
+0:31
+image classification. So here's an example of binary
+0:36
+classification. It's similar to what we discussed for logistic
+0:43
+regression. Except now, of course, we have images as input
+0:48
+instead of simpler, let's say flower classes. So here, that's
+0:52
+the binary classification problem with cats versus dogs.
+0:58
+And yeah, the input image is put into the network. There are
+1:02
+convolutional layers. In the end, they're usually fully
+1:05
+connected layers. They're not shown here, we will see another
+1:08
+type of architecture later that shows the fully connected layer
+1:12
+more explicitly. But then yeah, it produces a probability score
+1:16
+that this image is a cat. And yeah, you can also extend that,
+1:20
+of course, to multi class classification using a softmax
+1:23
+layer that we also discussed before. So essentially, it's the
+1:26
+same thing as we did with multi layer perceptrons, except that
+1:29
+we have convolution layers, which we will discuss in more
+1:33
+detail in this lecture. Another common application of CNNs next
+1:38
+to regular classification is object detection. So here, this
+1:43
+is like you can think of it as a mix between classification and
+1:47
+on object detection, because usually, you predict a bounding
+1:51
+box, but you also predict a class label corresponding to
+1:54
+the bounding box. So yeah, you have essentially two tasks. So
+1:58
+one is essentially identifying objects, for instance, here, a
+2:02
+car, another car, but then also assigning the class label to it.
+2:05
+So the network essentially learns how to draw these boxes.
+2:09
+So you can think of it as a type of regression task, where you
+2:12
+can learn these two coordinates here, and these other
+2:16
+coordinates, you can derive them from the other two
+2:18
+coordinates. So here, you're essentially learning, learning
+2:24
+the bounding box construction, but then also assigning the
+2:27
+label. One common example of that is YOLO, you only look
+2:31
+once, but then of course, yeah, multiple different methods for
+2:34
+that also. So this is like the original YOLO paper, I just
+2:38
+referenced it here, because it might be the, I would say
+2:41
+easiest starting point if you're interested in that topic. So we
+2:44
+won't be talking about this in this class, because yeah, there
+2:48
+are so many other topics to talk about, it is a slightly out of
+2:50
+the scope of this class. But if you're interested, this is a
+2:54
+good paper to start with. So related to object detection,
+2:59
+there is also the task of object segmentation. It's relatively
+3:04
+similar, but in addition, you have to identifying what instead
+3:08
+of into identifying just a box. So here, for reference, the
+3:11
+boxes are also shown what the task here is to get to kind of
+3:16
+have an exact mask for that object. So if this is a person,
+3:20
+instead of having just the bounding box around the person,
+3:22
+you can see it's also yeah, extracting this mask here. So
+3:26
+it's in that way, a little bit more of a precise version of
+3:30
+object detection. So here again, as a paper or mask RCN, that's
+3:37
+the mask RCN is like the I would say one of the most traditional
+3:40
+methods for this. Again, that's a good starting point if you are
+3:43
+interested in that topic. There were a few students who were
+3:47
+you know, or could benefit from object segmentation in their
+3:51
+class project. And I also shared some tutorials for how to do
+3:56
+that in pytorch with those students. But again, this is, I
+3:59
+would say slightly out of the scope of this class, it's more
+4:02
+like an advanced topic. So in this class, we won't be talking
+4:05
+about this in too much detail. I just wanted to mention that this
+4:08
+also exists. Yeah, another task that is something that I have
+4:14
+worked on pretty extensively in the past, that's related to face
+4:18
+recognition. So face recognition, it's an another
+4:22
+task, it's somewhat related to classification, but not quite.
+4:26
+So here, it's really more about pairwise comparisons. I mean,
+4:31
+you can phrase image recognition or face recognition, sorry, face
+4:35
+recognition as an image classification task. So if the
+4:38
+task is to identify a person, you can have it as a
+4:42
+classification task, where I'd say there are 10,000 potential
+4:47
+people and you want to know who that is in that picture compared
+4:50
+to the database of 10,000 images. But then it would be an
+4:55
+image classification class task with 10,000 classes, which would
+4:59
+be relatively expensive computationally. And also,
+5:03
+because you don't have many examples per class, it would be
+5:06
+really tedious to train such a system. So usually how people
+5:10
+approach face recognition is by something called a pairwise or
+5:16
+triplet loss. So in that way, what you learn is you learn a
+5:20
+certain type of similarity score. So if you have two input
+5:23
+images of the same person, it should give you a high
+5:27
+similarity. And if the pictures depict different people, it
+5:32
+gives you it should give you a low similarity score. And then
+5:35
+you can set a threshold and say, if the similarity score is above
+5:39
+a certain threshold, then it's the same person. Otherwise,
+5:42
+it's a different person. And for that, I mean, there are also
+5:44
+many, many different methods. One traditional method would be,
+5:47
+for example, using Siamese networks, where you basically
+5:50
+have two convolutional networks, and they produce embeddings,
+5:56
+like feature representations of that image. And then based on
+5:59
+the feature representation, you compute a similarity, if they
+6:02
+are similar to each other, it could be, for example, lower to
+6:07
+distance or a small cosine angle, then these are the same
+6:12
+person. And otherwise, they are different people. But yeah,
+6:15
+again, this is another topic that might be out of the scope
+6:19
+of this class. In this class, we will be mainly focusing on
+6:22
+convolutional networks for classification. Except there's
+6:25
+one more topic we will use later on in this class with
+6:28
+convolutional networks. And that is generative adversarial
+6:31
+networks. So we can also use convolutional networks for image
+6:35
+synthesis in the context of a so called generative adversarial
+6:46
+network, and generative adversarial networks are
+6:49
+essentially networks that can generate data. So I will explain
+6:53
+that in more detail in a dedicated lecture dedicated to
+6:57
+generative adversarial networks. But here is just the big big
+7:00
+picture outline. So here how that works is you have a
+7:04
+generator and a discriminator. And the generator takes in some
+7:09
+noise. So usually you sample from a random distribution from a
+7:14
+normal distribution, a random vector, and then you put it
+7:16
+through a convolution network that constructs an image from
+7:22
+this noise vector. So in that sense, it's more like an inverted
+7:25
+convolutional network. So it will output generated image. And
+7:31
+then the discriminator has to say whether this image is real
+7:35
+or generated. So you train the generator so that it fools the
+7:40
+discriminator into thinking that this generated image actually
+7:44
+comes from the training set. And then the discriminator tries to
+7:50
+distinguish between generated and real images better. So you
+7:53
+train the discriminator to become better at distinguishing
+7:56
+those. And you train the generator to become better at
+8:00
+fooling the discriminator. And you do that. It's basically like
+8:03
+a game, a min max game. And you do that until the generator is
+8:07
+able to produce realistic looking images. But these are
+8:11
+images that are, for instance, not contained in the training
+8:14
+set, they are more like interpolated, or they are
+8:17
+synthesized. So they might look similar to the training set
+8:20
+images, but they are usually images that are not one of the
+8:24
+training set images. So why is that useful? Yeah, you can do a
+8:27
+lot of fun things with that. And also, I, for example, seen
+8:31
+recently, people started using that to make synthetic training
+8:35
+examples. So for example, produce larger training sets.
+8:39
+But you can also do that for image manipulation. We also used
+8:43
+or use that for a project called privacy net where we were
+8:47
+removing sensitive or not so sensitive, but private
+8:51
+information from images, or images that you have for face
+8:55
+images where people, for instance, could use that
+8:57
+information for profiling. And we used GANs to kind of alter
+9:03
+the images such that they still look like images of real people,
+9:07
+but where the sensitive information is hidden. And yeah,
+9:10
+there are lots of applications of GANs. And that is also some
+9:13
+topic that we will discuss in more detail later. So yeah, this
+9:16
+video hopefully gave you a big picture overview of all the
+9:19
+different things you can do with CNNs. So in this lecture, we are
+9:23
+now focusing specifically on image classification. Because
+9:27
+yeah, this is still an introductory lecture. So we
+9:30
+can't do everything at once. Let's start with the simplest
+9:33
+task.
+
 ##v99:
+
+0:00
+Yeah, but before we dive into convolutional neural networks, I
+0:04
+actually wanted to motivate the problem of computer vision and
+0:07
+image classification first, because it's actually a pretty
+0:10
+hard task. And I think you don't maybe fully appreciate the good
+0:16
+performance of convolutional networks, before you thought
+0:18
+about how difficult computer vision and image classification
+0:21
+actually is. So for instance, if you take a look at this cat
+0:27
+image here, so it's the same cat and you as a human, you probably
+0:32
+have a easy time telling that this is the same cat in the same
+0:36
+cat picture, right. But for a computer or for, let's say,
+0:39
+standard neural network, it's actually a pretty difficult
+0:42
+task. So why is that? I mean, if you remember how you used
+0:47
+multi layer perceptrons, you were essentially concatenating
+0:51
+these image rows into a one long vector, right. So if I have,
+0:58
+let's say this is the first row, and this is the second row, and
+1:04
+this is the third row. So usually how that would look like
+1:07
+you would create this long vector as input to the multi
+1:16
+layer perceptron, then you have your first hidden layer, and
+1:22
+everything is fully connected, right. So I don't want to draw
+1:25
+all of it, but it would be a pretty dense network. So there
+1:30
+are some other challenges with that. But if you recall how you
+1:33
+would compute the activation here, it's essentially a
+1:38
+weighted sum of the weights and the inputs plus bias here. So in
+1:45
+that way, you are essentially summing up the feature values,
+1:49
+right. So and if you have an image like that, it's the same
+1:52
+image as the one on the right hand side, but everything is
+1:55
+darker. So what happens here is that all the activations will
+1:59
+actually be lower compared to this one here if you have because
+2:02
+if the image is darker, the pixel values are lower. So in
+2:06
+that way, also when the lighting and contrast and everything
+2:10
+like that changes, it will severely affect the network
+2:14
+performance. So one thing, of course, it's important to
+2:17
+normalize the images. But also, even if you take care, let's
+2:20
+say of the lighting and contrast, other issues are, it
+2:23
+might happen sometimes that the image is just like a little bit
+2:26
+on distorted, right. So here, you can as a human still tell
+2:29
+it's the same cat, right. But if you take a look at this sum
+2:33
+again, so now, for instance, let's say on the left hand side,
+2:41
+when you take a look at this pixel region, this pixel region
+2:44
+might be contained here, higher up here, right. So if I have my
+2:49
+vectors, but then the same region is lower here on this
+2:53
+side, so it might be actually somewhere here. So in that case,
+2:56
+it would fall here. And here, and here, there are vastly
+3:02
+different weights involved when you compute the activations,
+3:05
+right. So everything has every every line, here's a different
+3:10
+weight. So you would compute totally different activations
+3:12
+again, depending on where the object is located in the image.
+3:16
+So image classification is actually a pretty hard task, if
+3:19
+you think about it in the context of a multi layer
+3:21
+perceptron. So how do we make sure that we get good
+3:25
+performance? Of course, yeah, for that one solution would be
+3:29
+the convolutional network. But before convolutional networks
+3:32
+were invented, what were some other strategies? So a classic
+3:35
+strategy was, for example, doing feature extraction manually. So
+3:41
+by that, I mean, instead of providing the input image, as
+3:45
+the input to the network, for instance, instead of having
+3:48
+iris flowers, the image input, what people would do is they
+3:51
+would study these flowers, or think about these flowers, and
+3:54
+think about what are some features that we can extract
+3:57
+from these flowers, and then we can just work with these
+4:00
+manually extracted features. So in the case of the iris flowers,
+4:03
+these features would be, for example, the sepal length, sepal
+4:06
+width, petal length, and petal width. So here, you essentially
+4:09
+had a domain expert, someone who really understands these flowers
+4:12
+and might have a hypothesis and say, Hey, maybe these different
+4:17
+iris classes, they differ, yeah, by the dimensions. But another
+4:21
+person also, I mean, might say it is maybe the color. So you
+4:24
+could also, for instance, think about describing the color as a
+4:28
+potential feature. But yeah, the bottom line is, we would use
+4:31
+these hand engineered features, we would think about the image
+4:35
+instead of just giving it as input and extract some features
+4:38
+manually. And another traditional approach would be
+4:41
+also, for instance, for face images, to get these or extract
+4:48
+these facial landmarks. So that is also a traditional technique
+4:53
+where people instead of when they did face recognition
+4:55
+provided the full images input, they would develop an algorithm
+5:00
+that maps these points to the eyes, the nose and the mouth,
+5:04
+and then do a comparison based on these facial key points.
+5:07
+That's another hand engineered, I would say hand engineered
+5:10
+feature technique.
+5:14
+Yeah, and also, one other traditional technique, it's also
+5:19
+kind of beneficial, though, still for convolution networks is
+5:22
+to pre process the images. So for instance, if you think back
+5:26
+of the MNIST data set, and the MNIST data set, all the digits
+5:29
+were already kind of cleaned from background, if you imagine
+5:34
+someone is writing on a piece of paper, the piece of paper
+5:37
+background was removed, it was just the image of the digit. And
+5:41
+also, they were all pretty centered in the center of the
+5:44
+image. But if you take a look at real world images, usually, you
+5:49
+don't just have the object of interest in that image, you have
+5:52
+a lot of other stuff there. So for instance, here, you have
+5:55
+like this cat in the park or forest here. And in traditional
+5:59
+computer vision, people would manually extract or also
+6:03
+develop some background removal tools to to first extract the
+6:07
+image before doing classification, because that
+6:09
+makes the task simpler. So basically, yeah, extracting
+6:14
+centering and cropping and things like that. Of course, this
+6:18
+can still be beneficial for convolution networks, especially
+6:21
+if the data set is small. Nowadays, however, if you have a
+6:25
+really large data set, millions of examples, convolution
+6:29
+networks can also perform well on these if all the other things
+6:33
+are included, because if you have a large amount of images,
+6:36
+then the network will learn how to focus on the important parts.
+6:40
+For instance, if the task is, let's say animal classification,
+6:44
+it will learn how to focus on the animal region in these
+6:49
+images, it will essentially learn the it will learn how to
+6:54
+extract these objects, there will be an implicit feature
+6:58
+extraction inside the conversion network, we will see that later
+7:03
+in this lecture, I will show you some examples of how conversion
+7:07
+networks learn and how they are able to learn these feature
+7:10
+extractors, essentially. So in that sense, it's also why we call
+7:14
+deep learning, sometimes feature learning or automatic feature
+7:18
+learning. So deep learning is essentially capable of
+7:22
+implicitly learning how to extract features, instead of
+7:26
+doing this manual feature extraction. So in the next video,
+7:31
+I want to then now finally talk about how these conversion
+7:34
+networks work. So we'll zoom in into one of the would say
+7:38
+earliest architectures and then describe to you all these
+7:42
+components step by step.
 
 ##v100:
 
-
-
+0:02
+Alright, let's now talk about the basic concepts behind
+0:06
+convolution neural networks. So I showed you this figure before
+0:10
+it's from an article you can find here if you're interested. I
+0:14
+thought that was actually a very nice summary figure of the
+0:17
+different assumptions that neural networks make. So for
+0:20
+instance, the multilayer perceptron assumes that the
+0:24
+features are independent. So that's the basic assumption
+0:27
+behind the multilayer perceptron architecture, I just
+0:30
+see, actually, this should be fully connected, usually in a
+0:35
+fully connected or multilayer perceptron. Anyways, so another
+0:39
+one is that we have a time dependency or sequence. And that
+0:44
+is something we will talk about when we talk about recurrent
+0:47
+neural networks. So if you think about text, so here, we have
+0:52
+essentially a sequence dependency, if you want to
+0:54
+analyze text from left to right, or something like that, or you
+0:57
+want to do stock market predictions or something where
+1:00
+you have a sequential component to the data, that would be
+1:05
+something for recurrent neural networks. For convolutional
+1:08
+neural networks, we have this locality assumption. So this is
+1:12
+what we are going to talk about. And specifically, this is for
+1:16
+two dimensional convolutional networks, you can technically
+1:19
+also use one dimensional convolution networks to analyze
+1:23
+text. But here, we are going to focus on the two dimensional
+1:26
+case for simplicity, that is image analysis. So here, imagine
+1:31
+this is our input image here, and how or what the conversion
+1:36
+network is doing. It's assuming essentially, that these patches
+1:40
+here, the pixels in a certain neighborhood, they are connected
+1:44
+to each other, or they are related to each other. And it
+1:47
+makes sense. So for instance, if I draw a face, as let's say, my
+1:51
+my image, you know that if you take this region, these are all
+1:55
+the pixels for the eye that have a relationship to each other. So
+1:59
+in that way, on these pixels here in the eye region, they are
+2:02
+not independent, they have some, yeah, some local dependency,
+2:06
+right. So and that is what the CNN is trying to capture. So
+Early convolutional networks
+2:13
+here's an illustration of one of the earliest convolutional
+2:17
+neural networks, at least that's the one I think that was the
+2:20
+first published version of it. So this is nearby Yanli Kuhn and
+2:25
+co authors, back in 1989. So that's a long time ago,
+2:30
+actually. But this is still relevant. It's still, um, I
+2:34
+would say the main architecture for image classification. I
+2:38
+mean, not this particular architecture, but the
+2:40
+convolutional neural network architecture in particular. I
+2:43
+think this one is actually called Lynette.
+2:45
+Five, there might be other variants of Lynette five. And I
+2:52
+will also show you how to implement that and pytorch and
+2:56
+how to apply to MNIST. But yeah, let's focus on the big picture
+3:01
+here first. So here, the authors used input images, handwritten
+3:07
+digits similar to MNIST. So here's an example of how they
+3:11
+look like. And the goal back then was here, here, in that
+3:14
+case, handwritten zip code recognition. And the inputs were
+3:18
+256 times 256. I think that's 16 by 16, smaller than MNIST. And
+3:26
+you can see, like I showed you on the previous slide, there are
+3:28
+these image patches, or these patch regions that are analyzed.
+3:34
+And you can see what is going on here is that what's illustrated
+3:39
+is that pixels from this patch region go into here into some
+3:45
+will become a pixel in the next layer. So if you have multiple
+3:49
+layers, like input, hidden layer one, hidden layer two, hidden
+3:54
+layer three, and then here the output, then you can see, there
+4:00
+is always a patch that is analyzed, and it goes into the
+4:02
+next layer. And the same thing is going on here. So that way,
+4:07
+there's some feature extraction going on. And in fact, also, this
+4:11
+is only a static image, what you would do is you would slide this
+4:15
+patch here over the image. So you would start in the left
+4:18
+corner, and then move it to the right and so forth. So you
+4:22
+essentially move this on, you move this around like this, from
+4:29
+left to right, and then from top to bottom. But this will become
+4:33
+clear, I will show you, of course, additional illustrations
+4:37
+where this will be more, I would say clear here, this is a very
+4:39
+old figure. And some things are maybe not so easy to see here.
+4:44
+Another thing, for instance, to highlight here is that there are
+4:48
+two, two of these, and actually, in fact, there are 12. So then
+4:52
+they are dotted between, so there would be 12 of these so
+4:56
+called, yeah, feature maps. And let me just maybe forward
+5:00
+because I have another illustration of the same
+5:03
+architecture that is a little bit more clear.
+5:07
+Yeah, so here's another illustration of that
+5:10
+architecture, except that the inputs are a little bit larger,
+5:13
+they are 32 by 32. It's from a slightly newer paper, where they
+5:17
+apply this to document recognition instead of just zip
+5:20
+code recognition. So here, this also includes letters and not
+5:23
+only digits. But again, the same concept applies. And I think
+5:27
+this is a little bit easier to, yeah, to interpret. And this is
+5:30
+Yeah, this is the linear five. And I will show you a code
+5:34
+implementation in pytorch. I just implemented that also in
+5:37
+code. So what's going on here is essentially that we have these
+5:45
+what we call convolutions, this operation, where you take a
+5:48
+patch from the input, and then project it up to here. And how
+5:53
+this is computed, I will, of course, explain it to you for
+5:56
+now, just assume, somehow, these pixels get
+6:02
+summarized into a single pixel, which goes into the next map.
+6:05
+These are the so called feature maps. So here I have 1234566 of
+6:14
+these feature maps, that's this number here. And the input is 32
+6:20
+by 32. And if I do this, if I start in the left corner, then
+6:24
+compute the first pixel here, and then I move this by one
+6:31
+pixel to the right and then compute the next pixel here, and
+6:35
+then move this again to the right and compute the next
+6:37
+pixel, my output would be 28 by 28. Because that's just because
+6:42
+of the cutoff because of the kernel here, in this case is
+6:45
+three by three, or I think it might be actually bigger, you
+6:49
+cut off something on the left and on the right hand side. But
+6:52
+this is a detail that we will discuss in a later video. I
+6:58
+think this is actually a five by five kernel, then it makes
+7:00
+sense. So if we have a five by five kernel, we would, on each
+7:04
+side, cut off two pixels. So we lose two pixels of the input. So
+7:10
+that's just why it's 28 by 28, and not 32 by 32. But again, we
+7:14
+will discuss that in a future video, how exactly things got
+7:18
+calculated and cut off. So here, the just the big picture is
+7:22
+that we go from the input to these feature maps. And then we
+7:27
+go to another feature maps thing here, and another and another,
+7:32
+and so forth. So we extract these feature maps. And what you
+7:36
+can see is, first of all, there is here, a step where we add
+7:42
+channels. So in fact, there are no six channels here 123456. And
+7:52
+we do that by using different, different arm of these feature
+7:57
+detectors. Let's call that a feature detector. And we have
+8:06
+six of these feature detectors. In each feature detector, we
+8:10
+slide over the image. So let's say we have this red feature
+8:14
+detector that we slide over the image to produce this feature
+8:17
+map. And then we do the same here with the green one, the
+8:21
+green one would be another feature detector, and then it
+8:24
+produces this feature map. And just assume that we have six of
+8:28
+these. And here there is a so called sub sampling operation.
+8:33
+We will see later, this is also called max pooling. And here,
+8:37
+what we do is we just reduce the size. So this is like, so this
+8:42
+first is the convolution, and the sub sampling, you can think
+8:45
+of it as, let's say size reduction. And then again, we do
+8:53
+another convolution. Now we have 16 feature maps, then we do
+8:58
+another sub sampling another size reduction. And then we end
+9:05
+up with these here. And these here, they get now reshaped. So
+9:10
+we can say reshape. And if you will see the code later, it will
+9:16
+also become way more clear. So that's just a reshape operation
+9:20
+to reshape that into vector. And for instance, when we have this
+9:28
+reshape one, we can then use a fully connected layer, and
+9:33
+another fully connected layer to compute the class labels, the
+9:38
+outputs. So I illustrated this here in this slide. This is
+Automatic feature extraction
+9:43
+essentially the main I would say the main idea behind convolution
+9:47
+networks, besides using these local filters, it's that we have
+9:52
+automatic feature that extractor, this is essentially
+9:55
+the deep learning part about it. So instead of having a human
+9:59
+manually extracting features from input images, there's now
+10:04
+this automatic feature extractor, the convolutional
+10:07
+layers. So the convolutional layers are doing automatic
+10:11
+feature extraction that is learned by using back
+10:15
+propagation. And then in the end, part of the convolution
+10:18
+network is here, this fully connected part, or can think of
+10:23
+it as the multi layer perceptron part. And this is then
+10:32
+essentially just like a classifier. So here, when it
+10:36
+gets these fully connected, sorry, the vector, the reshaped
+10:41
+vector, this is essentially then here like a regular
+10:44
+classification. And this is a feature vector that was
+10:47
+automatically extracted using these convolutional layers. Yeah,
+Hidden layers
+10:55
+and each convolutional layer, you can think of it as one
+10:59
+hidden layer in this network. So if we are counting the number
+11:02
+of layers, we have five networks, five layers in this
+11:06
+architecture. So the first convolution here, so it's the
+11:09
+first convolution layer here, the sub sampling there, it's
+11:14
+essentially just, it's also sometimes called pooling. It
+11:20
+doesn't have any weight parameters. So there's no real
+11:26
+learning going on. So we usually don't count those as layers, we
+11:30
+only count the layers that have weights. So in this case, first
+11:35
+layer, second layer, the other convolution layer, and then we
+11:41
+have 122 fully connected layers. So that's three, four, these are
+11:48
+essentially hidden layers. And then we have this output layer.
+11:52
+So it's another one, it's our fifth layer. That's why the
+11:54
+network here has five layers. Yes, so here's an annotation of
+Annotation
+12:03
+everything I talked about in the previous slide. So yeah, this
+12:08
+first number here represents the number of channels. This, the
+12:12
+second and third number represents the height and width.
+12:15
+So the size, so let's say height and width. Like I said, this
+12:24
+last part is a multi layer perceptron part. The sub
+12:28
+sampling nowadays is usually called pooling. And yeah, this
+12:34
+these are the so called feature detectors. Nowadays, also, we
+12:39
+call them kernels or filters really depends on kind of who
+12:44
+the author is and who, let's say for the library. So some machine
+12:49
+learning or deep learning libraries use the word kernel,
+12:52
+some use the term filter. And nowadays, they are pretty much
+12:57
+interchangeable. I most often happen to use kernel, but I also
+13:01
+recently tried to use the fill a term filter. More often, it's a
+13:05
+little bit more modern. On here, so one more note about these
+13:11
+Gaussian connections. So this is essentially on what they did
+13:17
+here is they used fully connected layer together with a
+13:21
+mean squared error loss. This was usually called a Gaussian
+13:24
+connection. And nowadays, as you know, in multi layer
+13:27
+perceptrons, it's more more common to use a fully connected
+13:30
+layer with a softmax activation and the cross entropy loss. So
+Summary
+13:36
+here is a summary of the three main concepts behind convolution
+13:41
+networks. So based on what I just showed you in the previous
+13:44
+slides, so there's one aspect that's the sparse connectivity.
+13:48
+So that means that a single element in the feature map is
+13:50
+connected to only a small patch of pixels, which is very
+13:53
+different from fully connected neural networks. So just to
+13:57
+illustrate what I mean, again, so if I have my input image
+14:00
+here, then I have my on my feature maps here in the next
+14:08
+layer. And we use these kernels like I explained to essentially
+14:15
+focus on a small region and then project this as a, let's say
+14:18
+activation into the next layer. That is what we do in the
+14:21
+convolution network. If you recall in the multi layer
+14:24
+perceptron, we didn't have this sparse connectivity, we had a
+14:27
+full connectivity. That means, when we had an input image, we
+14:31
+were usually reshaping it into a long vector, right? So this one
+14:36
+here would become like a long vector. And then how this worked
+14:42
+was for all the inputs. So the whole thing, when became activation
+14:47
+in the next layer, so the whole maybe do this differently. So in
+14:54
+the next activation in the next layer, if this is our next
+14:56
+layer, all the all the inputs were connected. So in that
+15:02
+sense, it would be similar to using a kernel that has the same
+15:06
+size as the whole image, and then projecting it here, right.
+15:10
+So if we had a full connection, so sparse connectivity, that's
+15:14
+one aspect behind convolution networks. But then there's also
+15:18
+the aspect of parameter sharing. So what that means is that we
+15:23
+use the same, exactly the same filter here, or kernel, or
+15:28
+feature detector that we slide over the image. So once I
+15:31
+compute this one here, I move it by one position to the right,
+15:36
+let's say like this. And then I compute it for the for the next
+15:39
+position. But I'm not creating a new filter, I'm using the same
+15:43
+filter, and just move it by one position up to the right. So in
+15:47
+that way, I'm doing a parameter sharing here, I'm reusing that,
+15:51
+and again, in a multi layer perceptron, we would have a
+15:55
+completely different set of weights for each hidden
+15:58
+activation, right. So for this second one, I would have a
+16:01
+completely new set of weights, which is not the case for the
+16:07
+convolution network for the convolution network, we just
+16:10
+slide the same weights over by one position and reuse that. So
+16:14
+this is why you can think of it as a very general purpose
+16:17
+feature extractor that should work for all regions in that
+16:21
+image. But yeah, what we have is we have multiple of these
+16:26
+feature detectors, or we can have multiple to produce these
+16:30
+different feature maps, right. So there could be three feature
+16:33
+maps. So I can have three of these filters. But for each
+16:36
+feature map, I'm reusing the same one that I'm sliding here.
+16:39
+Yeah, and another aspect is that we have many layers. So when we
+16:47
+do the convolution here, we construct feature maps, and we
+16:50
+do this many, many times. And over time, this is essentially
+16:55
+over many layers. Usually, what we do is we create more
+17:01
+channels when we go from one to the next layer. And this is
+17:06
+essentially to extract patterns. And he was I will show you an
+17:10
+example later, what effect that house has is that it is basically
+17:15
+essentially trying to extract local patterns from the global
+17:19
+ones. So you have a big picture. I mean, big in terms of the size
+17:26
+of the pictures relatively large, but then you're over with
+17:30
+the course over the training, it will, from this global picture,
+17:33
+extract local images. So information about the eye and the
+17:37
+nose and things like that. So it will sort of just regarding this
+17:40
+whole thing as one image, it will then have one feature map
+17:44
+that represents, let's say, I and one that represents nose and
+17:52
+so forth. So in that way, it's learning these more local
+17:56
+patterns from this global image. Okay, so this was really the big
+18:02
+big picture overview. I can imagine there was a lot of new
+18:06
+stuff going on in this video. So things might be unclear. Instead
+18:10
+of maybe re watching this video, I recommend you maybe for now to
+18:14
+keep going and watch the next video because I will go into a
+18:17
+little bit more detail about the convolutional filters and the
+18:20
+weight sharing. And I think this might clarify some questions you
+18:23
+have. And if things are still unclear after that, then maybe
+18:27
+revisit these two videos. But right now, I would say, if
+18:31
+things in this video were unclear, keep going before you
+18:34
+rewatch this one, because the next video really might clarify
+18:37
+some things.
 
 
