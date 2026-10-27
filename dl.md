@@ -23103,4 +23103,14585 @@ like more than two classes.
 
 ##v56:
 
+0:00
+Yeah, let's now generalize the concept of logistic regression
+0:04
+to multiple classes. This is also known as softmax
+0:08
+regression, or sometimes also called multinomial logistic
+0:11
+regression. So for this, we will consider a relatively simple
+0:15
+data set the MNIST data set. I already introduced this in the
+0:20
+introductory lectures. So these are 60,000 handwritten digits in
+0:24
+the training set. And yet it's a nice and balanced data set. So
+0:29
+balanced means that there's the same number of training
+0:32
+examples per class. So in this case, we have 10 classes, the
+0:36
+handwritten digits on zero to nine, and there are 6000 digits
+0:40
+per class. Here's an example of how these digits look like. And
+0:44
+each of these on training examples here has an image
+0:49
+dimension of 28 times 28 times one, so 28 for the height and
+0:54
+28 for the width. So this is the number of pixels. So we have a
+0:58
+total 784 pixels of features per training example. And pytorch,
+1:05
+we will be using a format, so called NCHW, which is how we
+1:11
+represent a mini batch or an image batch. So here, in this
+1:17
+case, we have 128 examples in that mini batch. So the one at
+1:23
+28 is for this in here, then we have the color channel, we have
+1:28
+only one color channel, because these are black and white
+1:31
+images. So there are no red, green and blue colors. And then
+1:35
+we have the height, so 28 pixels. And for the width, we
+1:42
+have also 28 pixels. This is usually how we read in the data
+1:45
+set into pytorch. And we will be also looking at code examples
+1:49
+for that. So yeah, just to recap, we have 60,000 training
+1:56
+examples, and then the corresponding labels. And then
+2:00
+we have for the test images and test labels 10,000 each. So
+2:07
+that's just how the data set looks like. Um, yeah, for soft
+2:10
+max regression, we will actually concatenating these images, or
+2:16
+these features in the image to a long vector, like we discussed
+2:20
+in the introductory lecture. So here's just an example of how
+2:24
+kind of diverse these handwritings are. So these are
+2:28
+all the letter seven, sorry, the number seven. So illustrations
+2:33
+of different sevens. So different people writing down a
+2:36
+seven, and you can see, varies a lot. So personally, where I grew
+2:41
+up in Germany, we usually write a seven like this with this
+2:45
+crossline here. In the US, it's more common to write it like
+2:48
+this. But you can see, they're also very interesting flavors of
+2:52
+flavors of this, for example, looks like a C almost here, this
+2:57
+one is actually interesting, because in Germany, we write a
+2:59
+one as follows like this, this is a one in Germany. In the US,
+3:03
+one is usually written as this one. So but you can see, just by
+3:06
+looking at these handwritings, it's sometimes maybe not even
+3:09
+clear what the number is. So if I wouldn't tell you that these
+3:13
+are different illustrations of sevens, some people might think
+3:15
+these might be ones. And yeah, this actually, I don't even know
+3:19
+it could be a C if you have a data set of letters and digits,
+3:22
+for example. So yeah, like I mentioned in the context of
+3:28
+pytorch, and when we work with unstructured data, also later
+3:31
+with convolution networks, we would be working with the format
+3:35
+the n ch w as follows. So this would be a four dimensional
+3:42
+tensor. Think I introduced that in the first lecture of this
+3:47
+course, so long time ago. So yeah, here's how it would look
+3:51
+like in pytorch, where we have this four dimensional tensor.
+3:56
+Actually, in this case, it's a three dimensional tensor, I only
+3:59
+represent one single image. So it's a single image here at the
+4:04
+bottom, representing the number three. And you can see there are
+4:11
+different values from zero to 0.5. I think the highest one
+4:15
+would be approaching one. And that is because I normalized
+4:21
+these pixels by dividing them by 255. And this is because these
+4:27
+values between or around zero, or in this case, between zero
+4:31
+and one work better with gradient descent, it would be
+4:34
+even better, for example, to normalize these images such that
+4:38
+they are centered at zero. So you can, for example, subtract a
+4:42
+point five, if you have the range between zero and one, you
+4:46
+can subtract a point five, and then it will be ranging between
+4:51
+minus point five, two point five. And this would work even
+4:56
+better. Or people say that would work better with gradient
+4:59
+descent, because now it's centered at zero, and you can
+5:02
+have positive and negative inputs equally. However, in
+5:05
+practice, personally, I, for these simple data sets, I don't
+5:08
+notice a big difference, especially if we work with
+5:11
+logistic regression. Sometimes I put more effort into
+5:15
+normalizing the input images, for example, doing the standard
+5:18
+normal standardization, the what people call the standard normal
+5:24
+data. So it's giving you our data, the properties of standard
+5:29
+normal distribution. But of course, if your data is not
+5:32
+normally distributed from begin with, it will also not be
+5:34
+normally distributed after normalizing. So what I mean is,
+5:37
+for example, if you have, it's called x prime, if you have a
+5:42
+given feature, max, you subtract the mean of the feature and then
+5:48
+divide it by the standard deviation. So this would be
+5:51
+called standardization. Or some people just call that normal z
+5:57
+score normalization. Um, this is also recommended, we can do that
+6:03
+here, too. But since the images are the feature, sorry, the
+6:08
+features are all equal, they are all from zero to 25 at 155. For
+6:13
+pixels, it wouldn't make a big difference whether we use this
+6:18
+standardization or just scale them between the range minus
+6:22
+point five and point five. So that's like a minor detail.
+6:26
+Alright, so but I'm getting sidetracked here. What I wanted
+6:30
+to mention is the main point here is what we are doing now is
+6:33
+we are concatenating. So if I go back, we are concatenating the
+6:37
+rows. So if you consider, fortunately, there's a line
+6:42
+wrapping here, if you consider this here as the first row, then
+6:46
+I can maybe write this down first row.
+6:47
+First row, then second row, third row, and so forth. If we
+7:09
+concatenate these rows, we get a one long vector here. That's how
+7:15
+it looks like. So here, I've concatenated these rows, just to
+7:18
+illustrate this again, let me jump back one more time. So here
+7:22
+in green, this would be really the first row on in this image
+7:26
+here. In blue, this would be second row. And the third row
+7:31
+here in red would be this one. If we concatenate them, by that,
+7:35
+I mean, if we make one long vector, so the green one first,
+7:38
+then the blue one. And then the red one, we can use that as
+7:44
+input for our logistic regression model. And in the
+7:47
+case of the MDS data set, we have more than two classes. So
+7:50
+we are going to use softmax regression. Yeah, to just
+7:54
+briefly recap on before I introduced the softmax model,
+7:57
+here's a drawing of the regular logistic regression model for
+8:01
+the binary classification case. So as input, we have a feature
+8:06
+vector. And then we have this weight vector. So we compute the
+8:10
+dot product between the two at the bias unit, which gives us
+8:14
+the net input. And then we put the net input through a non
+8:18
+linear activation function, the logistic
+8:22
+sigmoid function, which we defined as follows.
+8:30
+And then if so what it what it represents is the probability. So
+8:35
+this present represents the probability that a training
+8:37
+example belongs to class one, if we wanted to compute the
+8:44
+probability that it belongs to class zero, we can yeah, we
+8:48
+could, we could compute it as
+8:55
+one minus this right, one minus this probability, this would
+8:59
+give us the probability that it belongs to class zero. But back
+9:08
+to this one here now, so we have a probability and it belongs to
+9:13
+class one. And then we can say if this probability is greater,
+9:18
+if p is greater than point five, then class one. And if it's
+9:27
+smaller than point five, class zero. So how can we generalize
+9:35
+this now to multiple classes? So for that, we can actually
+9:39
+extend this model. So here's a drawing of a model that would
+9:42
+work with a multiclass classification data set, where
+9:46
+we have more than two classes. So just to jump back one more
+9:50
+time. So this model here that I'm circling in green, this can
+9:55
+actually be thought of as a model that is embedded in this
+9:58
+bigger model here. So if we have the same inputs here, it's the
+10:03
+same as before our feature vector of dimensionality m, we
+10:07
+can think of everything I'm drawing now in green, as the
+10:12
+same model that I showed you before, right. So if you look at
+10:15
+this, it's the same model. I mean, it's of course a little
+10:17
+bit skewed, because these lines are a little bit different, but
+10:20
+it's essentially the same model. And so this would be one
+10:23
+logistic regression model. And for that one, we have a feature
+10:26
+vector of dimensionality m, so we can have the feature vector.
+10:30
+Let's write it down like one, one, like this, one, one, one,
+10:38
+two, and one, let's say three, if we have three classes. Sorry,
+10:48
+if we have three features, let's do m to have it more general. So
+10:52
+if we have m features, we have this feature vector here. And
+10:58
+notice now, I mean, we have multiple of these logistic
+11:01
+regression models, the second model would be this one here,
+11:04
+right? So another logistic regression model, same inputs.
+11:08
+And for this one, we can also have a feature vector for this
+11:11
+one, we could have the feature vector to 122 and two m. And
+11:20
+then there's a third model here, right? So this is the third
+11:26
+model. And for that, we also have a feature vector, we can
+11:30
+write it as on w three, one, w two, three, two, and w three,
+11:36
+three. Right. So if I call this feature vector, let's say, let's
+11:41
+call it w one. And this is w two. And this is w three. Right. So
+11:58
+I have now three feature vectors. So if I stack them, I
+12:03
+can stack them to make a feature matrix. So this matrix here, so
+12:07
+I can write this matrix as I think I would need to transpose
+12:14
+this. So we would have w one, transpose, w two, transpose,
+12:24
+and three transpose. So this would be my feature matrix of
+12:29
+the majority h times m, where h is the number of output nodes
+12:34
+here. So this would be one way I could generalize my logistic
+12:38
+regression model. And then we can compute also the class
+12:43
+membership probabilities here. However, notice now, the class
+12:46
+membership probabilities work a little bit differently. So
+12:50
+because we don't have a binary classification problem now, but
+12:52
+each node is still binary. So here, let's say in green, this
+12:56
+would be the probability that this is class one. In blue, this
+13:02
+is the probability that is class two. But now each probability
+13:08
+works like this. That it is the probability that this is the
+13:14
+class. So the probability that is class three, versus not being
+13:17
+class three. So what can happen is that or what will probably
+13:23
+likely happen is that these probabilities don't sum up to
+13:26
+one. So for example, for a given input, if we have the digit
+13:29
+three, we may get a probability that this is point three, or
+13:35
+let's say, 33%. That this isn't class one. Let's say 40% that
+13:46
+this is class two, and then 70% that this is class three. So but
+13:56
+yeah, these don't sum up to one. So for example, if the
+13:59
+probability is 40%, this is class two, the probability that
+14:03
+this is not class two would be 60%. And for this one, for the
+14:08
+first one, the probability that it would be class three would be
+14:14
+67%. In any case, these probabilities don't sum up to
+14:19
+one, if we also take a look at this one, these don't sum up to
+14:23
+one, it can be a little bit weird. So if we have a number,
+14:27
+let's say the digit three, how can it be 33%? Number 140%,
+14:34
+number two, and 70% probability number three, it doesn't really
+14:39
+make intuitive sense. I think this would make sense if we have
+14:44
+a data set when the classes are not mutually exclusive. For
+14:48
+example, if you have something like a vehicle, there's a high
+14:53
+probability that an object in an image is a vehicle, there's
+14:57
+maybe also probability greater than 50%, that this is a car.
+15:02
+And then maybe a probability, a certain probability that it's a
+15:04
+certain brand of a car and so forth. So where we don't have
+15:08
+mutually exclusive classes, but in the case of digits, it would
+15:11
+be more intuitive if these probabilities sum up to one. And
+15:16
+for that, we have this multinomial logistic regression
+15:19
+model or softmax regression model. So what I showed you in
+15:22
+the previous case was more like a concatenation of individual
+15:25
+logistic regression models, here would be the real multinomial
+15:28
+logistic regression model where we assume that the classes are
+15:32
+mutually exclusive. So what is the difference between this
+15:36
+slide and the previous slide? So if I go back one more time in
+15:39
+the previous slide, it's hard to see now, but we had one sigmoid
+15:44
+activation in each node here. So I'm getting rid of this sigmoid
+15:49
+activation and have a so called softmax activation. And also
+15:55
+notice that I'm drawing it a bit differently before I was drawing
+15:58
+it inside here, because they were all independent from each
+16:02
+other. Now, the softmax activation is actually not
+16:06
+independent for each node. So all the activation go into the
+16:11
+same softmax activation. And then there's some computation
+16:16
+going on, I will explain to you how that works in the next
+16:18
+video. And what comes out are these activations that now sum
+16:23
+up to one. So these sum up to one. So for example, the first
+16:27
+one may be 10% probability that it belongs to class one, then
+16:32
+that might be 20% for class two and 70% for class three and so
+16:39
+forth. And how can we then convert it into a class label,
+16:43
+we would take the arc max. So the arc max is the position, the
+16:49
+index position of the highest value. If I scan these three
+16:53
+positions, let's say, position one, position two, and position
+17:00
+three, the highest index 70%, this would be three. So this
+17:04
+would return class label three, if I apply the arc max. If this
+17:09
+is unclear, we will walk through the step by step in the next
+17:12
+video. So this was just the introduction of how the softmax
+17:17
+regression model looks like. It's basically here, the
+17:21
+concatenation of individual logistic regression models. And
+17:25
+in the next videos, we will talk about softmax, and this arc max
+17:28
+and how we also compute the loss function.
+
+##v57:
+
+0:02
+Yeah, in the previous videos, I showed you how the softmax
+0:06
+regression model looks like. Now let's talk about the
+0:09
+multicategory cross entropy loss that we will need for training
+0:12
+such a model. And for that, we will also need the one hot
+0:16
+encoding scheme for representing the class labels in a way that
+0:20
+is compatible with the multicategory cross entropy
+Recap
+0:23
+loss. So yeah, this is just a recap a slide I already showed
+0:27
+you in the previous video. It's how the basic setup looks like
+0:31
+where we have an input feature vector and then we have multiple
+0:35
+sets of feature of sorry of weight vectors, we have multiple
+0:40
+sets of weight vectors. If we have h classes, we have h weight
+0:46
+vectors, which we combine into a matrix W. So we discussed that
+0:51
+before, I don't need to recap this, I think. But yeah, what we
+0:54
+are focusing on now is how we compute this softmax activation
+0:59
+that comes from these different net inputs. So here's an
+Softmax Activation
+1:04
+overview of how the softmax activation function looks like.
+1:07
+It's fundamentally not very complicated. It's essentially a
+1:10
+normalization function. So it's in a way you can think of it as
+1:14
+a generalization of the logistic sigmoid function for making the
+1:20
+probabilities to sum up to one. So let's say we have a class
+1:28
+labeled t, so the possible class labels are one to h. And with a
+1:36
+softmax activation, we can compute the probability that a
+1:40
+given output belongs to class t. So if I go back here, this is a
+1:51
+z one, z two, up to z h, we have h net inputs here. And from that
+1:59
+one, we can compute this a one, which is essentially the
+2:02
+probability that class label belongs to class one, given the
+2:10
+input vector, or here in this case, let's write this as z one
+2:16
+as the net input, because here we have written this as a
+2:19
+function, softmax activation function. And how this works is
+2:24
+there are two parts, there's it's essentially an exponential
+2:27
+function. So you have e to the power of the net input as the
+2:32
+numerator. So I is the index over training examples. And here
+2:43
+in the numerator, we sum over all exponential terms. So we
+2:53
+have these exponential terms, j, also one to h. And if we have h
+3:00
+class labels, we have h activations, and h net inputs. So
+3:05
+here we are summing over h, sorry, j, you were assuming from
+3:10
+j to h. So this is essentially a normalization term. So if we
+3:15
+apply this, the probability will be smaller than one between zero
+3:22
+and one. And the probabilities from all the net inputs will
+3:25
+sum up to one. So consequently, if I go back one more time here,
+3:29
+so the sum, let me write this on the right hand side, the sum of
+3:35
+all these is should be one after this normalization function. So
+3:46
+yeah, this is essentially how this softmax activation works.
+3:50
+Now, let's talk about the loss function. So before we can talk
+OneHot Encoding
+3:55
+about the loss function, there's one more thing, we have to talk
+3:59
+about the one hot encoding, which is an encoding scheme for
+4:03
+categorical variables. And we can also apply this to the class
+4:08
+label variable. So you can use that in different contexts, you
+4:12
+can do that for encoding features, you have probably seen
+4:15
+that in the context of traditional machine learning. But
+4:18
+yeah, we can also apply this one hot encoding scheme to the class
+4:22
+label variable or the class label vector, which is
+4:25
+essentially also categorical variable. So imagine we have a
+4:30
+data set that consists of different class labels here, each
+4:35
+row represents one training example. So we have the first
+4:41
+training example with class label zero, the second one with
+4:43
+class level one, then class label three, and then class
+4:46
+level two, and the possible class labels are three. So let's
+4:49
+say we have class labels on in between, it's a set between
+4:58
+012 and three, these are possible class labels. Now we
+5:04
+can convert this into a one hot encoding on the right hand side
+5:08
+here. So we have now a column for each possible value. So
+5:16
+class zero, one, two, and three. And each row still represents
+5:21
+one training example. So here, this is still the first training
+5:25
+example, the second row is still the second training example, the
+5:28
+third row is the third, and this is the fourth, I can maybe write
+5:31
+this down. So this still refers to the training examples 123 and
+5:38
+four. And then we can look at all these four features here. So
+5:47
+for training example one, let's focus on training example one.
+5:51
+So training example one has class level zero, right? So it
+5:54
+has a one and indicator one in the column class zero, and all
+5:58
+the other columns are set to zero. So here, this is a zero,
+6:02
+zero, zero, because it's class zero. So the true class has a
+6:06
+one in its position, and the other ones are all zero. And
+6:09
+consequently, if we look at class level two here, sorry,
+6:14
+training example two, then this one has class level one, and it
+6:18
+has a one in the second column belonging to class one. And then
+6:25
+let's do one more. So training example, this is class three, it
+6:30
+has one here in the last column. So this is how the one hot
+6:33
+encoding works. You can think of it as an indicator variable. So
+6:37
+you have like a one in the right column and the other ones are
+6:40
+zero. Yeah, and here's now how the multi category cross
+Multicategory Cross Entropy
+6:44
+entropy looks like for the age different class labels. So if
+6:48
+class labels, one to H, and essentially, it's a
+6:52
+generalization of the binary cross entropy. So if you recall
+6:56
+the binary cross entropy is essentially the negative log
+6:59
+likelihood, which we discussed in the last videos about
+7:03
+logistic regression. Now, so if you recall what we had was then
+7:08
+this negative lock of the activation, that's the same
+7:12
+thing here. See, we also have a negative lock. But there's one
+7:16
+more thing. Now we have this y i y j here. And the y j is either
+7:23
+one or zero, right? According to the one hot encoding, this is
+7:27
+either a one or a zero. So this whole equation assumes a one hot
+7:31
+encoding. I will show you an concrete example in the next
+7:34
+slides to further clarify that. But yeah, just to focus in on
+7:38
+this overview here. Also, I, again, is over the training
+7:42
+examples. So let's only focus on this inner term here. So what we
+7:46
+have is we have for this y either one or zero. And then we
+7:52
+are summing over these negative locks for these different
+7:57
+activations. So the activations each activation is a value
+8:02
+between zero and one. So we apply, so it should be actually
+8:06
+larger than zero. So we apply minus lock of this term between
+8:15
+zero and one. And then we sum over all of these for the for
+8:21
+the output node. So we have h output nodes, and we sum over
+8:24
+those. So if we use the one hot encoding, we have h classes, but
+8:30
+only one class, the true label for one class is only one right,
+8:34
+according to the one hot encoding, all the other ones are
+8:36
+zero. And I will clarify this with a concrete example, because
+8:40
+I think it's hard to visualize if you don't have a concrete
+8:43
+example in mind. But yeah, one more thing than here, this first
+8:47
+sum is then summing over the training examples. Alright, so
+8:52
+let's take a look at a more concrete example. Okay, I have
+8:55
+one more slide in between, and then I will show you the concrete
+8:58
+example. So here's just the analogy to the binary cross
+9:01
+entropy at the top. So at the top, you have the binary cross
+9:04
+entropy. So here you have also the negative term, so bring it
+9:08
+inside if you like. So you have this negative term, negative
+9:11
+cross entropy, negative log likelihood. And this term is
+9:15
+essentially the same as this term, if the class label is one.
+9:19
+Right. So this is the one, this is the one that's the same. And
+9:23
+this one is when we had a class label zero. So if we have a
+9:28
+class label zero, then we have one minus zero, then this is a
+9:31
+one. So essentially, we have also this term here, one minus a,
+9:36
+we don't have that here, here, we have minus log for all these
+9:41
+classes. But essentially, it's the same thing. It's just a
+9:45
+generalization, because if we have a point eight here, for the
+9:50
+activation, then we would have a point two here for one minus the
+9:54
+activation, right, because they have to sum up to one, we set
+9:58
+with a softmax function, it's the same thing, all the
+10:00
+activations sum up to one. So if we have two class labels, zero
+10:05
+and one, if our class labels are either zero and one, these
+10:12
+these equations are identical. Because it's just a different way
+10:19
+of writing this here, we write this as the sum, but the sum is
+10:22
+for binary classification, basically the sum between those
+10:26
+two terms. So it's essentially exactly the same thing. But now
+10:30
+with writing it like this, using the one hot encoding, we can
+10:32
+generalize this to more than two classes. So here's a concrete
+Example
+10:37
+example. So let's consider this example where we have four
+10:45
+training examples. Each row here represents one training
+10:52
+example. Number one, number two, three, and number four. And the
+11:01
+column index represents which class label it is. So we have
+11:05
+three possible classes. So the first column is class one, then
+11:12
+this is class two, and this is class three. So we can see class
+11:16
+one, the true label is class. Sorry, training example one, the
+11:20
+true label is class one. Because the one is in the first column,
+11:26
+this one has the one in the second column. So it's class
+11:30
+two, this should be class three, because the one is in the third
+11:34
+column. And this is also class three. Here on the right hand
+11:38
+side, I generated some arbitrary softmax outputs. So notice that
+11:44
+all the columns should sum up to one. So the sum of the columns
+11:49
+should be one in each case.
+11:56
+Can double check this with a calculator if you like, they
+11:59
+should all sum up to one because we have mutually exclusive
+12:03
+classes. This is what we get when we apply the softmax
+12:06
+outputs. I will also show you a code example how we can actually
+12:10
+compute that in pytorch. But let's continue with this example.
+12:15
+So now let's compute the loss. So here at the bottom, so we are
+12:20
+focusing on let's say we are focusing on the first training
+12:23
+example, training example one. So this corresponds to this
+12:28
+first row in the activation matrix. And now what we are
+12:34
+computing is we are computing the negative lock of the
+12:39
+activation. So let me use, let me use blue here. So we compute
+12:47
+one times the lock of point three, seven, and then zero
+12:54
+times the lock of point three, one, and zero times point three,
+13:01
+one. So this is what I'm what I've written down here. So minus
+13:07
+one times lock three, seven, and then the other terms here. So
+13:14
+this is this is this one here that we are computing when we
+13:18
+are summing. So for the first training example, we get a loss
+13:23
+of point 96.969692. So this is our loss for the first training
+13:30
+example.
+13:32
+Okay, I hope that makes sense. So we can then do the same thing
+13:36
+for the other training examples. So here I use a color, a
+13:40
+different color for each training example. So here, this
+13:45
+one is computed here, then we have the red ones, or that we
+13:52
+have this box here. And then lastly, for this row, we have
+13:56
+this box here, I don't have to go over the computation again,
+13:59
+I think, because it's the same as for the first training
+14:03
+example. Yeah, and then one more step, we can put everything
+14:07
+together. So now the outer sum. So we are summing over all these
+14:12
+losses here. And the sum of these is sorry, it should be
+14:17
+actually the mean, right? One over. And so the mean is point
+14:27
+nine, three. Otherwise, the sum would be four times that. Okay,
+14:33
+so usually, like I said, it's more stable in a deep learning
+14:37
+context. In practice, if we compute the mean instead of the
+14:42
+sum for the mini batch, because then it's easier to find a good
+14:46
+learning rate, because let's say you find a good learning rate
+14:48
+for a given mini batch, and then you make the mini batch larger,
+14:52
+the loss will then be also if you make mini batch 10 times
+14:57
+larger, the loss will also be 10 times larger. So you have to
+15:00
+decrease the learning rate by a factor of 10 to get
+15:02
+approximately the same performance. So it's usually I
+15:05
+find it easier to deal with the mean instead of the sum. Okay.
+15:11
+And yeah, I will show you now a code example, how we can do this
+15:15
+in pytorch. But this will be more like exactly what we have
+15:18
+done in the slides. In practice, there are a few more tricks that
+15:22
+will be the nature shown when we talk about the softmax
+15:24
+implementation. But let me make a pause now. And let me record
+15:29
+this code example in a separate video, because I think this
+15:31
+video is probably already pretty long.
+
+##v58:
+
+0:00
+Yeah, as promised, let me now show you a brief code example
+0:03
+illustrating the concept of the cross entropy in code using
+0:08
+pytorch. So I have prepared a notebook I will share it with
+0:13
+you, you can find the link as usual on canvas, or here just
+0:17
+on GitHub. So we execute this just regular boilerplate. So
+0:23
+here I have a function for implementing the one hot
+0:26
+encoding in pytorch. It looks a little bit arbitrary with this
+0:30
+scatter function. I don't really need to get go over this because
+0:35
+I think there's no other context where I think this scatter
+0:38
+function is really that useful. So you don't have to really
+0:41
+memorize how this works. If you ever need a one hot encoding
+0:45
+yourself, you can just copy and paste this function, it will do
+0:48
+it for you. And also, um, when we do train a softmax
+0:53
+regression model later, I will show you also code example for
+0:56
+that. And the same for multi layer perceptrons, and so
+0:58
+forth. On the loss functions in pytorch, they already do the one
+1:03
+hot encoding for you. So you actually never have to worry
+1:06
+about it yourself. But if you ever have to do it yourself,
+1:10
+you can just copy and paste this function. So this is just how it
+1:14
+works. This is exactly the same example that I showed you on the
+1:16
+slides where we have the class labels 0122. And I have a total
+1:23
+number of class labels here, this is the highest class label,
+1:27
+or the number of classes, the same thing. So here we have
+1:30
+three possible class labels, right? 01 and two. Also note
+1:35
+that your class labels should always start with zero. So in
+1:37
+this case, yeah, what we get back is for the four training
+1:40
+examples here, four rows, and each has this indicator,
+1:44
+whether it's this class, the one is denoting the class, and zero
+1:49
+is, yeah, it's just a placeholder. So for the first
+1:52
+training example, this represents class zero, class
+1:54
+one, class two, and class two. Then here's this softmax
+1:59
+activation. Sorry, this is actually the net inputs. So this
+2:02
+is a matrix of net inputs, I created them just arbitrarily. So
+2:09
+each row is again, for each training example, we have four
+2:12
+training examples. So we have four rows, and this is how our
+2:16
+net inputs might look like. So these are if I go maybe to the
+2:20
+slides, these are the net inputs here, these. And then now we have
+2:27
+to apply this softmax here, and then we get these activations.
+2:32
+So yes, just for reference, how the softmax function looks like.
+2:35
+And he has a code implementation of the softmax function. So
+2:39
+again, there is actually a softmax in pytorch. So you
+2:42
+actually shouldn't use your own implementation, because in the
+2:45
+implementation pytorch is more efficient, faster, it's more
+2:49
+optimized, but it's here again, to just illustrate how it works.
+2:52
+So what we have is in the numerator, this exponential term,
+2:58
+so when I go here, e to the power of z, and then in the
+3:04
+numerator, we sum over these exponential terms for all the
+3:08
+activations, if we have three classes, it will be a sum over
+3:12
+three. So that's what we have here. Now let's do that. So we
+3:22
+have our Z here, we have three classes 123. And for training
+3:27
+examples 1234. So these are then the softmax activations that
+3:33
+yeah, that we get back, notice that the columns should sum to
+3:37
+one, can just double check that. So you can see they all sum to
+3:48
+one, no columns. Looking good. All right, now, just to
+3:55
+illustrate how we get the class table. So if we look at this one
+3:59
+again, I mentioned we have an arc max here, arc max is, you
+4:03
+can think of it, maybe I should demonstrate this. It's giving
+4:06
+you the position of the highest value. So if I have an example,
+4:14
+say torch 10, so 1234, the arc max would be the highest value.
+4:22
+So in this way, the arc max should give me 0123, the value
+4:26
+three. Um, that's weird here. Okay, what's going on? Oh, okay.
+4:33
+Sorry, I think I should for here. So yeah, I was just not
+4:39
+paying attention. All right. So this gives me the value three as
+4:41
+expected. So if I put a five here, this would return zero
+4:46
+now, because now the zero position has the highest value.
+4:50
+If you have a tie, I honestly don't know what happens when we
+4:53
+have a tie, but I suspect is it will pick the first value, the
+4:57
+lower value. Yep, that's exactly the case. So if we have a tie,
+5:03
+tie, it will always pick the lowest value. Okay. So, but in
+5:12
+practice, it will be very unlikely that you have a tie
+5:13
+here. I mean, might happen. But I mean, that could be something
+5:18
+like this for the other classes where we have a tie. But
+5:20
+usually, it's it's rare. All right. And this is also only a
+5:26
+tie, because I put this as a tie. Usually, it's very rare
+5:30
+that you have exactly the same values, because that means that
+5:33
+the feature vectors look exactly the same. And the weight vectors
+5:37
+are exactly sorry that the weight vectors are exactly the
+5:39
+same. All right. Yeah, let's convert this to class labels.
+5:44
+This is just to double check. So this these were all true
+5:51
+labels. From the one that encoding is just to double
+5:53
+check that we that this one indeed converts back to this
+5:58
+one. And here, these are our predictions. So we use the arc
+6:03
+max to get the column with the highest probability. So we get
+6:05
+this one, this one, this one, and this one. And you can see,
+6:13
+there's one wrong prediction, if we would compare those right,
+6:17
+zero and zero, this is correct. One and one is correct.
+6:22
+predicted class able zero, the true labels to this is
+6:25
+incorrect. This one is correct. So we make one mistake,
+6:28
+actually. So it's also, I mean, I did this on purpose to show
+6:32
+you how this whole thing works. Because if we wouldn't make a
+6:36
+mistake, we would get a loss of zero, which would be kind of
+6:39
+boring, I think. Alright, so yes, again, the cross entropy,
+6:42
+again, recall that there are two sums. So if I go back here, so
+6:48
+we have these two sums here, I kind of entangled them a little
+6:51
+bit. So we have, this is a sum over the training examples. And
+6:57
+this one is the cross entropy for the 100 encoding. So this
+7:01
+one is the inner, the inner one here. So let's compute first the
+7:07
+cross entropy for each training example. So what I'm doing here
+7:12
+is I'm computing these terms. I actually said that this loss
+7:22
+will be zero. But that, I don't know why I said that the loss,
+7:27
+even though you match the right class labels shouldn't be
+7:32
+necessarily be zero, except if your activations match exactly
+7:37
+here, one hot encoding matrix. Because remember, from the
+7:42
+logistic regression lecture, we want to maximize the probability
+7:46
+for the correct class. But it's only maximized if the
+7:49
+probability is 100%. Right? So here, even this is correct, even
+7:53
+if zero is the right class, this is not 100% probability. So
+7:58
+here, we still have a loss, right? Because it's minus lock
+8:02
+lock point 37. Just want to clarify, sorry. Where were we?
+8:08
+Yeah, so here for the training examples, the losses we get is
+8:12
+point 96.88 1.05 and point eight three. So this is computing
+8:20
+this one, really the inner loop. So these correspond to these
+8:25
+computations here. Alright, so that is how we would implement
+8:32
+this. Now, maybe I can just briefly show you also how that
+8:36
+looks like we are just taking the lock of the softmax
+8:39
+activations, and then multiply it by the target. And remember,
+8:42
+the targets are just zeros and ones, right?
+8:47
+Define it, that's interesting. Oh, it's in, sorry, it's should
+8:52
+be, I'm calling it as y ang, which gets passed to y targets.
+8:55
+So let me print like this. So it says zeros and ones. So I can
+9:02
+maybe also print it if you're curious. So this would be one
+9:07
+value and the other ones should be zeros. So one value, and the
+9:13
+other ones zeros in each row, there's only one value that is
+9:18
+not zero in each row. And then we are summing, we're just
+9:21
+summing over these, this is the auto sum here. So the first row
+9:26
+would be on point 68. So and so second row would be point eight,
+9:31
+eight, then 1.05. This is actually what we see here,
+9:34
+right? So the summing is actually just selecting, it's
+9:37
+just selecting the value here. Okay. Yeah, I'm cleaning this up
+9:48
+here. Because when I upload this, so you have the clean
+9:51
+version without my weird interjections here. Alright, so
+9:55
+in pytorch, there is a function called NLL loss, which takes the
+10:03
+lock softmax as input. So this function, the negative lock
+10:08
+likelihood loss expects the lock of the softmax values. I'm just
+10:15
+saying that we will use them in practice, we will actually use
+10:17
+the cross entropy in practice. But I'm trying to explain how
+10:20
+these functions and pytorch work. So you can see this
+10:23
+negative lock likelihood loss is the same as our cross entropy
+10:28
+here. Like I explained in when we go up, I think I had a video
+10:34
+on that in logits and cross entropy. So where I mentioned
+10:40
+that the negative lock likelihood and binary cross
+10:42
+entropy equivalent in pytorch, it's actually the negative lock
+10:46
+likelihood and the multi category cross entropy
+10:49
+equivalent. I mean, in a way, you can also think of it as a
+10:54
+multi category one, the multinomial logistic regression,
+10:57
+then this would be still true. So they are equivalent. But
+11:03
+notice, it's really important to pay attention to this is that it
+11:07
+takes the lock softmax as input. So this might be counter
+11:13
+intuitive, because there's already a lock inside, right. But
+11:21
+the pytorch version does not perform this lock here, it
+11:25
+expects that you perform it for pytorch. So pytorch really
+11:34
+thinks you provide the serious input instead of the
+11:37
+activations. Just want to clarify this, it's important to
+11:40
+note because here we give the softmax as input. Here, we give
+11:44
+the lock softmax as input. Right? Because when I just give
+11:49
+the softmax input, I will get wrong results, I will get some
+11:55
+just luckily, my glass was empty. Alright, sorry. Um, so
+11:59
+you notice that now we have negative values here, right? So
+12:02
+this is not what we want. So you have to pay attention that this
+12:07
+is actually the lock. It's I'm just emphasizing this because
+12:10
+it's a common mistake in practice when people implement
+12:13
+deep neural networks, they accidentally sometimes provide
+12:17
+the wrong inputs and then get weird results. And then the
+12:19
+networks are not training. In practice, actually, I recommend
+12:25
+using this cross entropy function over the negative log
+12:29
+likelihood function. This is numerically more stable. So if
+12:34
+you train a deep neural networks, the gradients and
+12:36
+everything will be more stable. If you use that one,
+12:40
+mathematically, everything would be equivalent. If we use negative
+12:45
+log likelihood loss or cross entropy in pytorch. But
+12:49
+numerically, like stability wise on the computer, the cross
+12:52
+entropy one is more stable. So and also for this one, really pay
+12:58
+attention to this one, it's taking the logits as input. So
+13:02
+it's taking our net inputs as input. So here, again, this is
+13:07
+our net input matrix. When we compute the cross entropy,
+13:12
+because we use the mathematical formulas, we compute first the
+13:15
+softmax. And then from the softmax, we compute the cross
+13:19
+entropy in pytorch, they do all that work for us inside this
+13:24
+function, they do it for us. So here, we give it the net inputs.
+13:29
+And you can see, our function takes the softmax, it gets the
+13:35
+same results as these other functions, right? So they should
+13:40
+be all identical. But in practice, this is more stable, I
+13:43
+recommend using this one. And notice that I said, redact
+13:49
+reduction to none, which means it does not apply the sum or the
+13:54
+average, which is this outer one here. So by default, when you
+13:59
+use this cross entropy, it will perform the average, you can
+14:03
+test it like this, see, it's the same same value. If you wanted
+14:08
+to, you can also say reduction to consider reduction to some.
+14:15
+Sorry, should be like this. So you can see, you can also do the
+14:21
+can also do the sum, it's equivalent. But in practice, I
+14:25
+recommend using the mean because I like I said, it's more stable
+14:29
+in terms of choosing a good learning rate, it's easier to
+14:31
+find a good learning rate if you use the mean compared to the
+14:34
+sum. Right. So this is like a code example of how all these
+14:38
+types of loss losses in pytorch work. I recommend you just to
+14:43
+play around with that. When we implement the softmax regression
+14:47
+in a later video, I will use this function. And also when we
+14:51
+use later on, multi layer perceptrons and convolutional
+14:54
+networks, we will be using this function. Alright, so and then
+14:58
+in the next video, I will go over how we compute the
+15:02
+gradients for softmax regression.
+
+##v59:
+
+0:01
+Alright, for the remaining two parts of this lecture, let's now
+0:04
+talk about the softmax regression learning rule. With
+0:07
+that, I mean, computing the gradient of the loss with
+0:10
+respect to the weights and the bias unit, so that we can then
+0:13
+use gradient descent or stochastic gradient descent to
+0:17
+train a softmax regression classifier. And once we cover
+0:20
+the big picture of how that works, we will then implement
+0:24
+that in code and see how it works, actually. So the concept
+Concept
+0:29
+is actually the same as with Adeline and the logistic
+0:32
+regression classifier that we talked about before, because
+0:34
+they are also softmax regression is still a single layer neural
+0:38
+network. So what we have is or what we want first, what we
+0:41
+want is the partial derivative of the loss with respect to a
+0:46
+weight wi, or essentially, also, we can talk about the gradient
+0:50
+of the loss with respect to the weight vector, that's what we
+0:53
+ultimately want. But here, it's just easier to write it as a
+0:57
+partial derivative. And then here, we will also want to
+1:00
+compute the partial derivative of the loss with respect to the
+1:04
+bias unit. So when we have these partial derivatives, we can then
+1:08
+use stochastic gradient descent to update the weights. And it's
+1:11
+the same as we've done it with Adeline, linear regression and
+1:15
+logistic regression. So the same setup here, like I said applies,
+1:21
+we can use the chain rule to decompose this derivative into
+1:29
+individual terms. So we can compute the partial derivative
+1:32
+of the loss with respect to the activation, and then the partial
+1:36
+derivative of the activation with respect to the net input,
+1:39
+and then the partial derivative of the net input with respect to
+1:42
+weight wi. The only difference here is compared to the regular
+1:49
+logistic regression is that we now have the softmax activation.
+2:00
+And just for reference in Adeline, we had an identity
+2:08
+function as activation. And in the regular logistic regression,
+2:16
+what we had was the sigmoid, or let's say the logistic sigmoid
+2:27
+as activation. So the only thing that really changes is that we
+2:30
+have now a different activation function in softmax compared to
+2:34
+what we've done before. And then yeah, also equivalently, we can
+2:37
+compute the partial derivative of the loss with respect to the
+2:41
+bias, it's the same concept, really. So here's a sketch of
+Computation Graph
+2:46
+the computation graph of softmax regression. I always personally
+2:50
+find it easy to think of a model. If I look at the
+2:53
+computation graph, I mean, if you have a very large, big
+2:56
+model, of course, you don't want to write all the down all the
+2:59
+units. But a simplified version of the model, actually, I find
+3:04
+usually helps in practice. So here, notice that this is not a
+3:10
+multi layer neural network yet, we will talk about the multi
+3:14
+layer neural network in the next lecture. So it's still one layer,
+3:19
+and there is no hidden layer, it may look like it, because what I
+3:23
+did is I was drawing the net inputs as a intermediate step.
+3:28
+Usually, when you later look at drawings of multi layer neural
+3:34
+networks, the net input and activation function are combined
+3:37
+into one function or one node, actually. So in that way, I was
+3:42
+just writing those explicitly, if I wanted to illustrate a
+3:47
+multi layer neural network, for example, a multi layer perceptron
+3:50
+with one hidden layer, then I would have to add another, let's
+3:55
+say z two, and a two in between. So before the loss, basically,
+4:03
+there would be another layer. So yeah, so what I wanted to say is
+4:08
+here, we still only have one weight layer. So this is this
+4:12
+one here, there's no additional weight layer. In a multi layer
+4:17
+case, we will talk about that in the next lecture, we will have
+4:19
+another weight layer. So in here, this would be where we
+4:24
+apply the softmax activation. But notice that we don't have any
+4:27
+weights here, I was just drawing how it conceptually works. So
+4:31
+remember, from the softmax activation, what happens is that
+4:34
+each activation that comes out of it depends on all inputs, all
+4:39
+net inputs, because we have this normalization going on in softmax.
+Multivariable Chain Rule
+4:46
+So yeah, then we can apply actually the multivariable chain
+4:51
+rule, or we have to apply the multivariable chain rule, because
+4:55
+let's consider the case where we want to compute the partial
+4:58
+derivative of the weight w one to this one here that I
+5:03
+that I highlighted. So if you look at it, so what's involved
+5:11
+here is x two, this one goes into z one, z one goes into a
+5:18
+one via the softmax. And then it goes to the loss, but you can
+5:23
+also see it's connected to a two because it's also involved in
+5:28
+the computing all the terms in the softmax. So there are
+5:33
+multiple things now all the blue ones that I circled that are
+5:37
+involved in the partial derivative of the loss with
+5:41
+respect to w one, two. Alright, so for that, because there are
+5:48
+no two parts, this a one and this a two, we have to use the
+5:53
+multivariable chain rule. So for this upper part here, that's
+5:57
+what I have here on the left hand side. And for this lower
+6:00
+part, this is what I have here on the right hand side. It's
+6:03
+essentially the same concept, we compute the partial derivative
+6:06
+of the loss with respect to the weight. For the left part, it's
+6:10
+we can decompose it into the partial derivative of the loss
+6:13
+with respect to a one, a one with respect to z one and z one
+6:17
+with respect to w one, two, on the right hand side, the only
+6:20
+difference is here that instead of a one, I have a two now,
+6:25
+right, because that's what it's this path. So on the right hand
+6:28
+side, I'm we are looking really at this path. And on the left
+6:34
+hand side, we look at this path. Alright, so the derivatives, I
+6:41
+was just writing them out here, I can actually walk you through
+6:43
+this, I sketched it out in the next couple of slides, it
+6:47
+actually took some time to type this in LaTeX, but then we will
+6:51
+then we will have it for reference. So here, we have
+6:55
+these three terms, the partial derivative of the loss with
+7:00
+respect to the activation, notice, it's essentially the
+7:02
+same, except that we have here, index one, and here, index two.
+7:07
+And here, this is the partial derivative of the softmax
+7:10
+function with respect to the net input z one. And this is the
+7:15
+partial derivative of the softmax function with respect
+7:17
+to also z one, but now we have the unit a two here and here,
+7:22
+then unit a one. Right, so maybe let's go through this in the
+7:27
+next couple of slides, I've sketched this out. Yeah, let's
+Partial Derivative
+7:31
+start from the left hand side. So what we have is the partial
+7:34
+derivative of the loss with respect to a one. So the loss,
+7:39
+if you recall, that's the multi category cross entropy, yet for
+7:43
+just one training example, so I'm omitting the outer sum. So
+7:48
+we are just looking at the sum over the class labels, class
+7:53
+labels,
+7:57
+j equals one to h. And yeah, this is just the multi category
+8:03
+cross entropy loss. And notice now that, yeah, there's a sum
+8:08
+over the labels, the true labels, yj and aj. And if I just
+8:14
+look at the partial derivative of a with respect to one, all
+8:18
+these terms will be zero, right, because then these will be
+8:22
+constants, they will be all constants, except for the case,
+8:26
+of course, where we have a one. So what I can do is I can just
+8:30
+drop the sum, right. So and this can be then a one, right. And
+8:35
+yeah, what is the derivative then of, let's say, if we have
+8:38
+something like log x, the derivative of this one would be
+8:43
+one over x, right. So in the same way, if I take the partial
+8:49
+derivative of this whole term here, this one is a scaling
+8:54
+value here. And then this one, the derivative of this part is
+8:56
+one over a one. So my derivative of this term is y one over a
+9:04
+one. And similarly, I could do the same thing for this part
+9:07
+here. For this part, it would be the same thing, except that we
+9:13
+have no index two, because I mean, if you look at the left
+9:17
+hand side, this would be the same. And what remains is
+9:20
+really only the part with the index two, we can also cancel
+9:23
+the sum. So this is how we get this partial derivative. And I
+9:27
+should also say, this is the last time I will really torture
+9:31
+you with this one, because the upcoming lectures next week,
+9:35
+when we talk about the multi layer perception, we don't want
+9:38
+to walk through this every time, because it's really just the
+9:40
+same concept. So this is really the last time I'm doing it in
+9:43
+detail. Later in this course, we will move at a faster pace and
+9:49
+omit these types of details, because this is I think, really
+9:53
+good to understand once, but we don't have to do it every time
+9:56
+because there are more interesting things to cover,
+9:59
+like multi layer perception, finding good learning rates,
+10:03
+optimizers, and convolution networks and recurrent networks
+10:06
+and so forth. So yeah, so if this is boring, it will be over
+10:10
+in five minutes, and then we will move on to more exciting
+10:12
+parts.
+10:14
+Yeah, now the second part. So this is slightly more involved,
+10:19
+but also not that complicated. So let's look at the partial
+10:23
+derivative of the softmax unit a one with respect to z one. So
+10:31
+yeah, just spelling it out. So this is again, our softmax
+10:34
+activation. So here, we are looking at the softmax
+10:38
+activation for z, z one, and remember that we are summing
+10:43
+over all the other units here for normalization. So for that,
+10:49
+we have now a quotient. So we have to use the quotient rule.
+10:55
+So I've added it here for reference. So in that way, it's
+10:59
+easy, or I find it easy to think of this as
+11:04
+fx. And this one is
+11:08
+gx. And then we can apply this rule here. So we delete this
+11:14
+again, because otherwise, it's too crowded here. Maybe it's
+11:17
+fine. It's just f and this is g. So what we have is g times f
+11:24
+prime. So essentially bringing this one here, and then f prime
+11:32
+is this part. And then on the left, on the right hand side, we
+11:37
+do f. So this part times the derivative of this part g prime,
+11:44
+and then divide it by g squared here. Alright, so if we look at
+11:50
+this, um, now we can simplify certain things, right? So if we
+11:53
+look at this, we have here the partial derivative of the
+11:58
+exponential term with respect to z one. So this just cancels
+12:04
+right, because the partial derivative of or the derivative
+12:06
+of e to the power of something is e to the power of something.
+12:09
+So this simplifies on the right hand side, same as on the
+12:13
+previous slide, we have a partial derivative with respect
+12:16
+to z one, we have this sum here, but we can cancel the sum,
+12:19
+because all the other terms will be zeros, because except for z
+12:24
+one, we can treat them as constants. So this goes away. So
+12:28
+if we cancel this sum, and we cancel this one, what remains is
+12:34
+this very simple term now. So with that, we can now factorize
+12:38
+this, because note that we have a e to the power of z one here, and here
+12:43
+too, so we can bring that outside here. So we just move
+12:48
+that outside. And then if we look at this, so we can take the
+12:54
+left part, so we can, um, can I say that, so we can take this
+13:00
+part without the square, this is actually again, this is our
+13:04
+softmax for easy one. Right, so this is what I have written here
+13:14
+on the left hand side. And then what remains on the right hand
+13:17
+side is this term. And now if I divide this term by what I have
+13:22
+here in the square brackets, if I divide it by the sum of over
+13:26
+easy j, then this one will become one, this one will become
+13:32
+one. And this has been the division by this on some term,
+13:37
+right, so which is essentially one minus the activation one. So
+13:43
+this is a one, and this will be one minus a one. And then if I
+13:47
+put them together, I end up with this term. So it's actually not
+13:49
+that complicated. We can also do the same thing then, for this
+13:54
+second term here on the right hand side. So again, the same
+14:00
+concept applies, it's still a quotient. The only difference is
+14:03
+now that we have easy one here, and easy to hear, because we are
+14:09
+looking at a two. But yeah, we can do the same thing using the
+14:12
+quotient rule. So I don't want to have to walk through this, I
+14:16
+think. But you notice here, that this term will be zero, because
+14:23
+we are looking at the partial derivative of z one with respect
+14:27
+to sorry, of the partial derivative of this term with
+14:30
+respect to z one. But since we have easy to hear, this is
+14:33
+actually a constant. So this whole thing becomes zero, and
+14:37
+zero times this one will also still be zero. So this simplifies
+14:41
+here a lot. And on the right hand side, because we are
+14:44
+looking at z one, part of derivative with respect to z
+14:48
+one, this one simplifies the partial derivative simplifies to
+14:55
+easy one. And we have easy two times easy one. So this way, we
+15:02
+have this as the second activation, and this as the first
+15:06
+activation. So in that way, we also have a very simple
+15:11
+derivative. Yeah. And so lastly, the last term is the partial
+15:14
+derivative of the net input with respect to one of the weights,
+15:18
+w one two. And yeah, I think you have seen that many, many times
+15:22
+in the context of add a line and logistic regression. So I don't
+15:25
+have to tell you how we get to the yet derivative of x two in
+15:29
+this case. Alright, so but now we have all three parts, right?
+15:33
+So we have this part, this part, and this part, and also the same
+15:39
+thing on the right hand side. So we can actually put all things
+15:42
+together. So this part, let me just show this in different
+15:48
+colors. And this part, and then the same thing on the right hand
+15:57
+side. So we can put them all together. And if you walk through
+16:01
+this little thing here, I did, you will see that this actually
+16:05
+simplifies to a very, very simple learning rule. So if we
+16:08
+put everything together, we have a very simple learning rule,
+16:12
+which is this label for class one, minus a one times x two.
+16:20
+And this is something you may, yeah, remember from end of line
+16:25
+or logistic regression, it's exactly the same learning rule,
+16:30
+except now, so the differences in logistic regression, we just
+16:34
+brought it as follows, we didn't have an index, right, because we
+16:38
+didn't have multiple units, and we didn't have a one hot
+16:41
+encoding. In this case, we have these different units. But
+16:46
+except that it's exactly the same learning rule, it's a super
+16:49
+simple learning rule. And it is also showing that softmax
+16:53
+regression, or the softmax activation works very well with
+16:57
+the cross entropy loss. Later, we will also take a look at
+17:02
+multi layer perceptrons. And you could actually combine softmax
+17:05
+regression, sorry, softmax activation with a mean squared
+17:09
+error loss. It's totally fine to do that. But the derivative will
+17:14
+not be so nice that these terms cancel. So this is actually, I
+17:17
+think a very nice combination. Because if we have such a simple
+17:22
+partial derivative term, it's easy to implement in code. And
+17:25
+it's numerically also more stable compared to longer
+17:30
+equations. Yeah, and lastly, we can also write this more
+17:34
+compactly using linear algebra. So on the left hand side is what
+17:38
+I have showed you on the previous slide. So we can
+17:41
+implement this learning rule instead of writing it as a
+17:45
+partial derivative with respect to one of the weights, we can
+17:48
+write this compactly as the gradient of the loss with
+17:51
+respect to the weight. And we can write this as shown here,
+17:56
+where this is a capital W. So this is relief with respect to
+18:02
+all the weights. And we can write this with the design
+18:05
+matrix here, the one hot encoded matrix. So the design matrix is
+18:09
+an n times m matrix. Note that we use a transpose though. So
+18:13
+it's m times n. And here this one, this would be the one hot
+18:17
+encoded matrix, which is n times h, where h is our number of
+18:22
+class labels. So in this case, h equals two, and a has the same
+18:27
+dimension as y. So it's also n times h. Um, yeah, why does this
+18:32
+true? It's a little bit maybe not so obvious to see. So I
+18:36
+recommend maybe sketching this out if this is confusing. But
+18:39
+also in practice, how I would implement something like that is
+18:42
+I would go in my code, implement this one here with very simple,
+18:47
+let's say Python for loops, make sure that it works and then
+18:51
+translate the for loops into dot products and matrix
+18:55
+multiplications. So this is really more complicated. Also, I
+18:58
+find this sometimes really hard to do in practice. And this is
+19:01
+also why I kind of admire people who did research in the 1980s
+19:06
+and 1990s before, or maybe even the 2000s before there were
+19:10
+tools like pytorch, before we could compute these gradients
+19:13
+automatically. So it's actually not so easy to do, I mean, to
+19:17
+implement this efficiently. So I have actually great respect for
+19:20
+everyone who did that by hand back in the day. But yeah,
+19:23
+nowadays, we do this all automatically. So we will
+19:27
+actually see that this what I showed you actually works if I
+19:31
+implemented in code, but then also show you that it gives the
+19:34
+same results as pytorch, autograd API.
+
+##v60:
+
+0:00
+as the last video for this lecture, let me now show you a
+0:03
+code example, implementing the softmax regression model from
+0:07
+scratch, using this vectorized form that I showed you to show
+0:12
+you that it indeed works. Actually, I have two code
+0:16
+notebooks here. One is a from scratch implementation using a
+0:19
+simpler iris data set. And then I will also because I mentioned
+0:23
+that before in the lecture, I will also show you the MNIST
+0:26
+example, because I'm sure you were all waiting for it. Alright,
+0:29
+so let's execute the boilerplate here first, just get it getting
+0:35
+it out of the way. And here, so the data loading, there's
+0:39
+nothing really new going on. It's the same code I used for
+0:42
+these toy data sets and the simpler iris data set I used
+0:45
+before. So I don't want to really spend too much time on
+0:48
+discussing this again, it's essentially the same, only that
+0:51
+this time we are using three classes instead of two. So we
+0:55
+have now these circles, upside down triangles and squares. So
+1:00
+left hand side is the training set. Yeah, and the right hand
+1:02
+side is the test set. In the other notebook, I will show you
+1:06
+also the pytorch data loader. So that is then usually how we
+1:11
+load data, because in deep learning, we usually don't use
+1:14
+CSV data sets. So we usually don't do this procedure, we
+1:17
+usually use a data loader, I will show you in the next code
+1:21
+notebook how that looks like. Yeah, so starting with our low
+1:28
+level from scratch implementation, computing the
+1:31
+gradients manually. So here, I just defined some helper
+1:34
+functions, one that converts the class label to a one hot
+1:39
+format, a softmax function and the cross entropy as the loss
+1:42
+function. Note that you don't have to implement any of that
+1:45
+when you use pytorch regularly. I mean, the regular version of
+1:49
+how people implement code in pytorch, because pytorch will
+1:55
+do the one hot encoding. Yeah, internally, kind of implicitly
+1:59
+when we compute the loss, I will show you how that would look
+2:01
+like later. And also, it has a softmax and cross entropy
+2:06
+function already implemented. So you don't have to worry about
+2:08
+this yourself. But yeah, I'm just doing it here to really
+2:12
+show you that the mathematical concepts from this lecture
+2:15
+really translate one to one into code. And it actually all works
+2:19
+works. So similar to a logistic regression, we start with
+2:24
+defining a class. So in the init constructor method, we construct
+2:28
+the weights and the bias, so we initialize them here to all
+2:32
+zeros. And notice that weights in contrast to logistic
+2:35
+regression, and this softmax regression context, it's now
+2:40
+matrix, right. So we have the matrix num classes, num
+2:43
+features. So this is what we use to age, I think, for the number
+2:48
+of classes, h times m matrix. And because we have also two net
+2:55
+inputs for the two outputs, we also have now the bias as a
+2:59
+vector, right. So this is a h dimensional vector now. So h is
+3:06
+the number of classes. And here, here's the forward method. So
+3:09
+the forward method is computing the net inputs. So I call them
+3:13
+logits. But yeah, these are you can think of them as the net
+3:16
+inputs. It's just the other multiplication between the
+3:20
+inputs and the weights plus the bias vector. So this would be an
+3:25
+h dimensional net input. So these are our z values here.
+3:32
+Then I'm applying the softmax to get the probabilities. So the
+3:36
+probabilities here with that, I mean, these units a, a one and a
+3:40
+two are activations. So we can also call them the activations.
+3:45
+And these are net inputs. And I'm returning both here. And
+3:54
+yeah, here, this is the interesting part, the backward
+3:56
+method, that is where we compute our gradients. And instead of
+3:59
+doing everything with a for loop for each weight individually,
+4:03
+we can actually use the vectorized implementation I
+4:07
+showed you. And let me move this over. I'm implementing it really
+4:11
+one two by one here, or I mean, like literally, it's not making
+4:16
+any change, we use our x transpose times. So with a
+4:21
+matrix multiplication, times y minus probability. So progress
+4:25
+is really the activations here. So this part is essentially this
+4:29
+party in the parentheses, and then also the transpose again.
+4:33
+And this is exactly the same as I'm showing you on the slide.
+4:37
+For the bias unit, it's a little bit simpler, because the
+4:41
+derivative doesn't include the x term. So we can just so this is
+4:46
+a vector, right? So we can just compute the sum. All right. Um,
+4:53
+yeah, this is it. So here in the predict labeled thing, I'm just
+4:58
+applying the arc max to get the index of the highest probability
+5:02
+in the activations. So that's also what I explained to you
+5:05
+earlier. I can actually move that back here. All right. So
+5:10
+this is all all that's new here, really, the rest here is the
+5:15
+same. So the evaluate function, that's the same as the one for
+5:19
+logistic regression. And the training is also the same.
+5:22
+Notice the only difference here for the train function, what I
+5:25
+did is train method, what I did is I added this one hot
+5:28
+encoding here to get the one hot encoded class labels. But again,
+5:32
+here, we call forward, and we call backwards to get the
+5:35
+gradients. And then we update the weights by applying the
+5:40
+negative gradient. So minus, so minus the gradients times the
+5:45
+learning rate. I'm also normalizing by the size of the
+5:49
+mini batches, because I told you that is easier to find a good
+5:52
+learning rate this way. And here, this is just for logging,
+5:56
+again, to show our accuracy and loss during training. But yeah,
+6:00
+again, this is actually not too complicated, right? I mean, if
+6:04
+we look at the backward method is really just two lines of code
+6:07
+here, if we use the linear algebra compact vectorized form,
+6:11
+I should actually mention this is not so trivial, of course, to
+6:14
+think about what should go in here. It looks very simple, but
+6:18
+it might take you hours and hours to think about it. So
+6:21
+personally, in the first pass, if I would ever implement
+6:25
+something from scratch, I would implement it in Python for loops
+6:28
+and then go to the linear algebra. Yeah, implementation. I
+6:32
+think that's maybe easier for me. Other people may find it
+6:35
+easier to think about in these matrices, matrix and matrix
+6:41
+multiplication terms. I personally, it's not my my
+6:43
+credit, my thing, I like things simpler, even they can be more
+6:48
+verbose. But I'm using this, of course, because it's more
+6:52
+compact, it's very information dense, lots of things going on
+6:55
+here. It's more compact, though, and computationally more
+6:58
+efficient. But again, also, I should say in practice, no one
+7:01
+really implements this by themselves anymore, because we
+7:04
+can use pytorch autograd, which has some computational
+7:08
+facilities to do this automatically. Alright, so let's
+7:11
+train this then.
+7:14
+Alright, so we can see after the first epoch, we already got a
+7:17
+pretty good training accuracy, it actually goes down, which is
+7:20
+interesting. But yeah, more interestingly, the cost or the
+7:26
+loss here goes also down. So I think this is really due to
+7:29
+noise that the training accuracy goes down, it's probably
+7:32
+overfitting here. But yeah, we see the loss goes down. That's
+7:37
+our result. And let's take a look at
+7:43
+what it looks like.
+7:46
+So yeah, we can see the loss goes down, maybe training it
+7:48
+more would be even better. And then let's compute the test
+7:52
+accuracy, it's 80%. Let's take a look at how it looks like. So
+7:57
+yeah, I'm using function, plot decision regions, we have seen
+8:02
+that briefly in statistics for 51, if you recall that, but you
+8:06
+don't have to know this or remember this, because in
+8:08
+practice, we will actually never really work with two dimensional
+8:12
+data sets. So we never really have the luxury of plotting it,
+8:16
+I'm just using a very simple data set, which is why it's
+8:18
+possible here. So here's how the decision regions would look like.
+8:23
+So you can see, yeah, the softmax regression classifier
+8:26
+is able to deal with the three classes by classifying them
+8:30
+relatively well. It's not great in this region here, could have
+8:35
+maybe been improved if the line would be more like this. But
+8:40
+yeah, it's hard to tell. It's actually not a trivial problem
+8:43
+for a linear classifier. A nonlinear classifier may have a
+8:47
+easier time here with in this region. Now, but this is also
+8:52
+not the point. Now, let's take a look at how we would implement
+8:56
+it using pytorch module API. So the module API makes many things
+9:01
+easier, like I said before, so we can use this linear layer,
+9:05
+which is our net input computation here. So actually, we
+9:10
+don't need all of this part in a real application. I'm just
+9:14
+doing this part so that we can compare this implementation to
+9:17
+our from scratch implementation, because above, I also used
+9:21
+zeros. So if I go up, I initialize the weights to zeros.
+9:27
+So otherwise, if I don't do that, here at the bottom, it
+9:33
+will have small random numbers, the smaller random numbers are
+9:36
+good for multi layer networks. But yeah, it would make it hard
+9:39
+to of course, compare than this implementation with our above if
+9:43
+we have different starting weights. So yeah, we just add
+9:49
+this, but in a real case, you would just run it like this.
+9:52
+Alright, but we will also talk more about weight initialization
+9:55
+and later lecture, I think, like, I would say maybe in two
+9:58
+weeks, I will have a lecture on how we can initialize weights
+10:01
+and what these random weights are. And there's also, there are
+10:05
+some computational tricks to choosing good weights. Alright.
+10:09
+Um, yeah, the forward method is now very simple, we can use the
+10:14
+oops, the net input computation here via the linear layer, which
+10:18
+we defined here. And then here, this softmax is our softmax
+10:21
+activation function, we use that from pytorch now. So F is from
+10:26
+pytorch, I think I imported it at the very top. Let me see.
+10:32
+Yeah, so here, this is the torch functional API. So and n stands
+10:36
+for neural network, and since the functional API, instead of
+10:39
+typing it all the time, instead of writing, let's say this dot
+10:45
+softmax, and do the same for other functions, people usually
+10:50
+implement the function API SF, just to make it shorter. So you
+10:54
+only have to type F softmax, basically. So that's just a
+10:59
+convention when you work with pytorch code. Okay. So yeah, and
+11:06
+that is basically it, we are using the stochastic gradient
+11:10
+descent optimizer here, optimizing the parameters of
+11:13
+that model. And yeah, this is all all there is to it really.
+11:19
+When we use pytorch and training it now, you can see test accuracy
+11:25
+is also 80%. And actually, if you would scroll up, you look at
+11:30
+this decision region plot. And this one, it looks almost
+11:35
+identical, there's some slight numerical difference, if I think
+11:38
+if you look at these values, your point 558, and minus point
+11:43
+12. Let me just copy them. Maybe
+11:49
+there's some slight, maybe not really even. Yeah, this is one
+11:54
+is a little bit different, you can see, but it's only like three
+11:57
+digits after the decimal point, this is just an numerical
+12:00
+rounding error, I would say, because we implemented lots of
+12:03
+things from scratch, like softmax, and the cross entropy
+12:07
+function, and things like that. And we have the vanilla
+12:10
+implementations, there are also some numerically more stable
+12:14
+implementations of softmax by adding or multiplying the
+12:18
+nominator denominator and numerator by C. So adding lock,
+12:23
+C lock constant to the exponent that would make it more stable,
+12:28
+but then it would change the numbers slightly think these
+12:30
+differences are because of that. Yeah, of course, in practice,
+12:34
+you don't want to implement softmax and cross entropy
+12:38
+yourself, because it's numerically not as stable as not
+12:41
+as fast as the implementations that are already provided. But
+12:44
+yeah, overall, we get exactly the same results. I mean, the
+12:47
+small rounding differences. Now, this is how we do softmax
+12:53
+regression in pytorch. Let's now take a look at the same thing
+12:56
+for the MNIST data set. Because I already showed you the MNIST
+12:59
+data set in the lecture. And so just for completeness, we will
+13:02
+actually be working with this more when we talk about
+13:05
+multilayer perceptrons in the next lecture. So what's new now
+13:09
+is I'm using a data loader. And this is usually how we load
+13:13
+images in pytorch on other types of data. So here are just
+13:16
+some settings for my model. And here, the MNIST data set is
+13:22
+already provided in a library, let me scroll up again, the
+13:26
+library called torch vision, it comes with a number of data
+13:30
+sets. So if you install pytorch, it will also if you use the
+13:33
+installer via the website, it will automatically install torch
+13:36
+vision. So you don't have to install it separately, it
+13:38
+usually is included in the command that you executed when
+13:41
+you install pytorch. So we use this MNIST data set from torch
+13:47
+vision from the data sets sub module. This is just specifying
+13:52
+where to store the data. So it will create, if I go here, it
+13:56
+will create a data folder in next to my notebook here,
+14:00
+because I called it data, but you can actually change this to
+14:04
+whatever you can change it to desktop data or something like
+14:08
+that really doesn't matter, just where it keeps the data so
+14:12
+temporarily. So if you go here inside, you will see it will
+14:15
+it will keep a copy of that data. All right. Then it has a
+14:25
+trust test and a training set. So train true test. This is for
+14:30
+testing. If you say train faults, I will actually show you
+14:34
+it's a little bit unfortunate that MNIST doesn't have a
+14:37
+validation split. But I will show you in the multi layer
+14:39
+perceptron lectures how we also can create a validation split
+14:42
+for that one. This one is kind of required. It's because MNIST
+14:48
+is images and they come in, I think it's a PIL Python imaging
+14:54
+library format. And you want to convert them to pytorch tensors.
+14:58
+So this one is converting the image representation in Python
+15:03
+to a pytorch tensor representation. But we will also
+15:07
+see later, we can use other data augmentation here like
+15:11
+on randomly flipping or cropping images. So we will talk about
+15:16
+this also more when we talk about convolutional networks.
+15:20
+Also, I should say that to tensor normalizes, it normalizes
+15:26
+the pixels to zero one range. So it's dividing them by 255. So I
+15:36
+should mention that so we don't have to do our data normalization
+15:39
+ourselves. Of course, we could actually do something better. We
+15:42
+could standardize them for color images. Sometimes people
+15:46
+standardized using on the mean, and the standard deviations from
+15:51
+image net. We could technically also do that for color images
+15:56
+for here, something like MNIST, it doesn't matter at all. To be
+15:59
+honest, there's probably no difference in the performance of
+16:02
+the model, because it's a very simple optimization task here
+16:05
+with stochastic gradient descent. Alright, so this is
+16:10
+defining the training data set. This is defining the test data
+16:13
+set, the differences really that we set train false and here to
+16:16
+true, we only need to download it once, right? So we don't have
+16:19
+a download here. Then we using the data set, we define data
+16:23
+loaders. So here, I'm defining a data loader for the training
+16:27
+set, I can set my batch size, I set it here above, that's my
+16:31
+mini batch size, I set it to 256. And then whether we want to
+16:36
+shuffle or not. So this is shuffling before each epoch,
+16:39
+shuffling the data set. Notice that here, I'm not shuffling the
+16:46
+test set, because it doesn't really matter. I'm loading the
+16:50
+test set in batches, it's also not really necessary, because we
+16:53
+don't do any training and stochastic gradient descent on
+16:55
+the test set. But in let's say, if we work with real image data
+17:00
+sets, like image net, the test set can be quite large, and it
+17:04
+might not fit into memory. So we can also load it one by one,
+17:08
+basically, that's what I'm doing here. Here, just for completeness,
+17:12
+I'm this is more like for verifying that everything looks
+17:16
+good. So here, I'm just having a for loop over the images and
+17:22
+labels in the training order, just to make sure everything
+17:24
+looks okay. And you can see it's loading the images in this n h
+17:32
+or n c h w format, the batch size, the number of color
+17:37
+channels, we only have one color channel, because m is this black
+17:40
+and white. And then we have the height and the width here. And
+17:44
+the labels, of course, are a vector, because that's just the
+17:48
+numbers. And I should also tell you, okay, um, these labels are
+17:54
+not one hot encoded. So you can see that they're just the
+17:58
+numbers of the class labels, the 10 class labels. It's not
+18:02
+necessary to one hot encode them, because pytorch does it
+18:04
+automatically, when we call the cross entropy loss. Alright, so
+18:10
+here is now my implementation. This is the same as in this from
+18:14
+scratch here. So there's nothing really different. Same thing.
+18:18
+Um, yeah, so also notice, so yeah, the accuracy, I'm
+18:22
+computing it using a for loop over the data loader. I don't
+18:28
+have to go through this. I think this is something you could
+18:31
+copy and paste if you need it. Um, yeah, so the interesting
+18:37
+part, what I wanted to show you is, because I don't want to
+18:39
+make this video too long. I mean, I could discuss everything.
+18:42
+But if you have questions, maybe ask on Piazza, we can discuss
+18:45
+this more. I don't want to spend too much time on things that are
+18:48
+not that important right now. Um, yeah, so the important parts
+18:53
+are here that we are concatenating. So that goes back
+18:57
+to what I've showed you here. So this would be how our image looks
+19:04
+like it's 3d tensor, one image is a 3d tensor 28 by 28. And
+19:09
+then the color dimension. So if you don't think of the color
+19:12
+dimension, it would be a matrix, a 28 by 28 matrix, but we need a
+19:17
+feature vector as input. So we would concatenate it to a very
+19:20
+long vector, 28 times 28. So 784 dimensional vector. So that's
+19:26
+what I'm doing here. So I'm concatenating it to a vector, I
+19:30
+can maybe show you how that would look like for one given.
+19:35
+Let's say we take one image. So this would be the one color
+19:42
+channel and 28 by 28. Actually, you can also I mean, okay, it's
+19:47
+fine, I think. So you minus one and 28. So you can see now it's
+19:55
+a one long vector, basically. So in this case, I think it's a
+20:01
+matrix because we have the first dimension, but yeah, so but the
+20:08
+same thing applies. So here. Yeah, we do that for the. So
+20:17
+actually, this would be for the batch dimension one more time,
+20:21
+sorry, on images. So this should be a 25, a 1250. So this should
+20:30
+be five at 256 times 784 dimensional matrix. So this is
+20:41
+for the is obviously this is like how our design matrix looks
+20:44
+like it's then an n times m dimensional matrix now where m
+20:50
+is the features and is the batches. It got rid of notice
+20:54
+that got rid of the color channel here. There's no color
+20:57
+channel because we only define two axes. If we do it like this,
+21:01
+it would have a color channel. But yeah, we don't want to color
+21:03
+channel here. All right. Um, yeah, and then we call our model
+21:12
+notice when we use pytorch, we don't use dot forward, because
+21:17
+that it's actually better to just call it like, like this, it
+21:21
+will internally call forward, but it will do some extra checks
+21:24
+before it calls forward, as I explained in an earlier lecture.
+21:28
+And now the interesting part is, yeah, we compute the cross
+21:31
+entropy cost or lost here. And notice that is important that it
+21:37
+uses the logits as input. So it's not using the probabilities,
+21:42
+it's using the logits. This was what I explained in the previous
+21:46
+video. This is like the slightly confusing part is explained in
+21:51
+this other previous video. So we have to pay attention that we
+21:56
+provide the logits and not the probabilities here. Yeah, and
+22:01
+then we zero the gradients to the backward. Or we are just
+22:07
+averaging the costs here. Don't know why I did that. Don't need
+22:13
+that. Oh, I Okay, I see. I have I compute the average cost over
+22:20
+the epoch. I see. Yeah, so then I'm plotting it. Okay, need to
+22:28
+execute this part.
+22:39
+So this cost is the average cost per epoch. I could technically
+22:44
+compute the cost by calling forward on doing this one for
+22:56
+the whole data set. But it would be more work, right. So you
+23:00
+would have to load the whole data set. So I'm just computing
+23:02
+the average. Okay, might take a while. It's not too bad, though.
+23:13
+It's like, um, point, point, four minute point, oh, four
+23:20
+minutes per epoch. So even I don't know if these numbers make
+23:27
+sense. One minute makes maybe sense. Alright, so now, yeah,
+23:33
+this is how the loss looks like you can see it goes down as
+23:36
+expected. Let's take a quick look at test accuracy. 92.16 is
+23:42
+actually pretty good, right? I mean, given that this is an
+23:44
+image data set, and we only have a linear classifier, we don't
+23:48
+even use a neural network, I mean, a multi layer network, we
+23:51
+already get a pretty good performance. And personally, I
+23:55
+also recommend you when you work on classification tasks, always
+23:58
+to run also logistic regression classifier, or softmax
+24:02
+regression classifier as a baseline, just to get a feeling
+24:05
+of how difficult the classification problem is,
+24:07
+right. So if you train, let's say convolutional network, and
+24:10
+you've got only 94% with a convolutional network, you would
+24:15
+say, Okay, this is such a complicated convolutional
+24:17
+network model, why does it only get 94% when I get already 92%
+24:21
+with logistic regression, maybe my model with 94% isn't that
+24:26
+good after all. So it's always a good thing to run also logistic
+24:30
+regression as a baseline. Here's just an example, learning three
+24:35
+random images from the data set, seven to one and zero. And then
+24:40
+here, I'm doing my predictions. So calling this one on the
+24:45
+feature vectors, and then the arcmax max to get the class
+24:49
+labels, right, because this one would give us just the
+24:53
+probabilities, you can see, so we are taking the arcmax. So for
+24:58
+the first one, let's take a look. Should be this one should
+25:05
+be the highest 01234567. This is the highest is actually should
+25:14
+be the highest one. So in this way, we compute the class
+25:18
+labels here just to show that these are indeed correct.
+25:22
+Alright, so with that, um, yeah, this is all I think I have for
+25:29
+this from scratch implementation. And then in the
+25:32
+next lecture, I will talk about multilayer perceptrons.
+
+##v61:
+
+0:02
+Yeah, hi, everyone, I hope you had a nice week. So last week, we discussed a lot of topics related to computational
+0:10
+challenges with deep learning. So what do we do if we have these larger models, we both require more data and more GPUs,
+0:18
+and also more time to train these models. So coincidentally, this week, I found a lot of news related to the topic of making
+0:26
+the training of deep learning models more efficient. So that is by spreading out the computation across multiple
+0:32
+devices in a process called federated learning. But then this also brings your privacy concerns. So there was also some
+0:39
+interesting news related to your privacy protection. And lastly, I find personally, the most exciting topic is how we
+0:48
+can train these deep neural networks still on a single GPU. Because the truth is, most of us only have access to one or few
+0:56
+GPUs. So wouldn't it be nice if we could train just simply things on multiple GPUs, like hundreds of them. But yeah, in
+1:03
+real life, it's not so easy. So luckily, there are still a bunch of techniques that allow us to train deep neural networks, even
+1:10
+the large ones on single GPUs. So I will also discuss this topic at the end of today's news session. But yeah, because there
+1:18
+are so many topics I wanted to cover today. Let me just dive in and get started. Yeah, let's start with federated learning. So last week, I
+Federated Learning
+1:26
+explained federated learning is, yeah, learning on using multiple
+1:31
+devices like splitting up a computation across multiple devices. So here was an interesting paper by researchers
+1:38
+from Apple. So this paper was entitled federated evaluation and tuning for on device personalization, system design
+1:47
+and applications. So this is essentially an example of how it works. So this is essentially Apple's on device machine
+1:54
+learning system for federated evaluation and tuning. So federated learning is not new. I mean, a lot of people and
+2:02
+companies use federated learning that is using multiple machines to achieve something. So but usually what other companies do
+2:11
+is they use federated learning to tune a global neural network. So imagine, for example, you have a server with
+2:19
+a neural network model, and this is, let's say, an image classifier or something like that. So then this global model
+2:26
+can learn from individual people. So if you have a cell phone, or smartphone, it can access this model on the
+2:35
+server. And by if you label your data, you can provide training data for this model. So there's usually one global model. I
+2:44
+mean, not everyone is using that approach. But many people are used this approach where you essentially have or keep one
+2:51
+global model. In contrast, here in this paper, Apple describes a system where there are global parameters, but the model is
+3:01
+trained locally. So all the user data remains inaccessible to the
+3:06
+server side. So that means here, they focus on protecting your privacy, so not sending any user data to a server. So all the
+3:15
+training happens locally. So you may get some parameters from the global model, but essentially, you will get a
+3:21
+personalized model on your phone, for example, without sharing your personal data with a server, which I find actually
+3:27
+pretty cool. So here's just a sketch of how this works, where
+3:34
+three types of information being shared, the red arrow is the task configuration and attachments information, then in
+3:41
+green, the task results and telemetry, and then on blue, these on device records. And here, this one, the left box
+3:49
+represents the end user device. And you can see, for the blue ones, the blue ones are the user data, the on device records,
+3:57
+they never really leave the device. So on the right hand side is the developer interface. So what the developer interface
+4:06
+has access to is the task configuration and the task results. Because you as a developer, you still want to see
+4:12
+whether the yeah, the more the learning model learns well, however, you don't want to see any user data, because that
+4:19
+would be out in the privacy implication or problem. So here's an example of that where they show how this can be used for
+4:27
+tuning for news personalization. So they have, for example, different models. Let's call them run one and run
+4:34
+two. And yeah, so here, they involve different parameters and and different metrics from an AB experimentation results. So for
+4:44
+example, which model should be used on a local system. And they only have access to information such as how much things
+4:53
+improved, for example. So here, they have a delta percent. So they can see basically, that run to improved the percent, the
+5:04
+daily article views, increase it by 1.87. And if your metric is to maximize the number of article views, that's your
+5:12
+metric, then you can measure this by just looking at the results, you don't have to have access to what types of articles
+5:20
+the user reads. Yes, on the previous slide, I highlighted these fundamentally different approaches to federated
+Differentiable Privacy
+5:28
+learning. One is keeping one global model on the server and then sending user data to that server, which sounds from a
+5:36
+privacy perspective, a little bit, I would say questionable. The second approach sounded a little bit more privacy friendly
+5:42
+where you do the training on the device and your user data never leaves the server. However, the first approach with a global
+5:50
+model is actually not that bad if you take some precautions. So there's one area of research called differentiable privacy,
+5:59
+let me write this down, differentiable privacy. So this
+6:05
+deals with this field develops methods for adding some noise to
+6:11
+a data set such that you can't identify people from this data set. So there was one interesting article by
+6:18
+Microsoft. But of course, this is a broad field, many people are working on this, I just highlight this article because
+6:25
+it was just in the news. So but be aware that it's not the only approach to this. But again, just to highlight the
+6:32
+problem. So if you share data with a server, or with anyone, essentially, even if you don't, let's say have the names of the
+6:40
+persons in that data set, it may be possible to identify users or
+6:46
+people from this data. So there was this $1 million Netflix price has been quite some year ago, I think a decade ago, even
+6:54
+earlier. It was this $1 million price, when Netflix had a data
+7:00
+set that they shared on Kaggle. And they asked people to develop recommendation systems. And the best recommendation system, the
+7:08
+best movie recommender, or the person who developed this or the team would gain $1 million. So in order to facilitate this
+7:16
+competition, they shared a data set, it had the title, the title
+7:22
+is the user ID, the date of the rating and the rating itself. So the user ID, you can think of it. Here, it is not identifying
+7:31
+a particular person is just for helping to make sure if two movies are rated, whether they are rated by the same person or
+7:37
+not, but you still don't know who the person is. Actually, I never really had Netflix, but I think they don't have these
+7:46
+five star ratings anymore. I think it's working differently. I'm honestly not sure, but I think they don't do ratings
+7:53
+anymore. But probably back in the day, they did. Anyways, so the thing here, what happened is that people use the IMDB movie
+8:03
+review database. And using this IMDB movie database and looking
+8:09
+at this Netflix data set here on the left hand side, they were able to identify people in this data set. So how that worked was
+8:17
+by IMDB, by I think by email or username, they could identify the person. And then they were just matching the date of the
+8:25
+rating and the rating itself to the records in IMDB. And by that, they could identify the user ID here to whom it belongs
+8:36
+by just matching the date of rating and rating. If you do that, for a couple of movies, it becomes very easy to identify
+8:43
+certain users by user ID. And then you could, yeah, you can see basically all the movies that the person watched and how
+8:49
+they rated that movie. And that is, I think, a big privacy violation. If you haven't agreed to if you're a Netflix user, and
+8:55
+you haven't agreed to share that information of all the movies you watched, then yeah, that might be a privacy violation.
+9:02
+Maybe you only have a subset on IMDB, but you don't want certain people to see what other movies you watch, then this would be
+9:08
+problematic. So differentiable privacy deals with this problem
+9:14
+how you can kind of keep the utility of a data set. So making the data set still usable, but avoiding the identification of
+9:23
+individuals. So it's essentially the broad, yeah, the broad approach is essentially adding or synthesizing noise and
+9:31
+adding noise to this data set, so that the data set has broadly the same characteristics. So if you
+9:37
+would, for example, compute the average rating, the average rating may not change. But there's some noise that for a
+9:46
+user for a given user, some of the ratings a little bit higher and lower than they were in real. So in that way, it's not
+9:53
+so easy to go to IMDB and unambiguously identify these users. Yeah, and what's new here is that Microsoft released a
+10:05
+tool set called smart noise. So in this smart noise, yeah, contains some Python API and other things to make this more
+10:14
+easy to use in practice. So there's also a sample GitHub
+10:20
+repository where you can take a look at some examples. And I want to talk too much about the individual techniques. So they
+10:26
+it's basically a framework for implementing different techniques. But what I found interesting is, from this list
+10:32
+here of the techniques they implement that many of these techniques they involve GANs. So GANs are generative adversarial
+10:40
+networks, we will cover them later in this class. And they are used essentially to learn the training data set
+10:47
+distribution and then generating samples, new samples from that
+10:52
+training set distribution. So we will cover that later in this class, I just found it interesting that most techniques
+10:57
+for differentiable privacy seem to employ generative adversarial
+11:02
+networks nowadays, or at least the techniques they implemented in this smart noise approach. Yeah, related to the topic of
+Data Set Augmentation
+11:10
+data set augmentation, I've seen this article this week, entitled humans are trying to take bias out of facial recognition
+11:18
+programs. It's not working yet. So here in this article, the
+11:23
+authors mentioned that one likely reason for this bias in face recognition is the lack of diversity in the data sets. And
+11:32
+they say that one common mitigation approach is to provide algorithms with data sets that represent all groups
+11:38
+equally and fairly. So there was a paper called one label 1 billion faces usage and consistency of racial categories
+11:46
+in computer vision by Zaid Khan and Yun Fu, who looked at this problem. So they looked at the problem, whether diverse data
+11:54
+sets can really help. And they say, yeah, it only it can work, but only for a very stereotypical sense of fairness.
+12:01
+So essentially, it doesn't really work. So here's a quote, what they say is, the people in the images appear to fit racial
+12:08
+stereotypes. For example, an algorithm was more likely to label an individual in an image as white, if that person had
+12:15
+blonde hair. So yeah, using even a more diverse data set doesn't really help with this bias problem. So it's still like,
+12:24
+yeah, having these stereotype steps and stuff like that. So there needs to be more work done on developing systems that are
+12:31
+more fair. So it's not as easy as making a data set more diverse. Yeah, an interesting yet unrelated topic is auto ML,
+AutoML
+12:40
+which stands for automatic machine learning. What is automatic machine learning, automatic machine learning is
+12:47
+about finding good machine learning algorithms and hyper
+12:52
+parameter settings and sometimes also pre processing steps, given a certain problem. So traditionally, we humans, we try
+13:00
+out different algorithms and hyper parameter settings and data normalization steps and so forth, to see what works well on
+13:07
+a given data set. Auto ML is type is a type of approach of automating this process. So it's less workforce humans, it's some
+13:15
+system on top of machine learning that learns this how to do well, basically. So it's basically automating machine
+13:22
+learning in a way. A specific flavor of auto ML is neural
+13:27
+architecture search. This is specific to neural networks where auto ML can be broader, it can also involve yet traditional
+13:35
+machine learning algorithms. And neural architecture search is a specific subfield of auto ML for neural networks, sometimes also
+13:43
+it's abbreviated as NAS for neural architecture search. So
+13:48
+here in this article, the article is entitled introducing model search and open source platform for finding optimal
+13:54
+machine learning models. There are a couple of other open source platforms for auto ML. And I had a like a little bit of
+14:01
+a hard time seeing what's new here. But what I think what's new is really that they get approached this problem a little
+14:09
+bit differently. I mean, the method is slightly different than other methods. So methods I've seen before, they're usually
+14:14
+based on reinforcement learning, evolutionary algorithms, or, and or combinatorial search. And here, it's also looking like a
+14:21
+combination of those, where they have multiple trainers are trained asynchronously. And then there's some beam search going
+14:30
+on, looking at the results. And then considering the best models, they mutate them. So making small changes to the best
+14:38
+performing ones, which is kind of reminding me of how evolutionary algorithms work. And they also talk about
+14:45
+knowledge distillation and having some transfer learning here, or not literally transfer learning more, sorry, more like
+14:52
+a weight transfer. So here, when I recall correctly, what they do is they transfer the weights from well performing models to
+15:00
+new models they want to explore. So instead of starting from scratch. Yeah, so the results looked actually pretty good. So
+15:09
+compared to previous methods. So here, the dotted lines are the previous methods, they found that their methods here, they
+15:17
+perform the new method performs better the model search method. So yeah, my thought is really that this is fundamentally the
+15:24
+building blocks are not that novel, but in the way they are put together, this is a system that performs really well. So I
+15:31
+think that's the takeaway that this is really, if you want to use it in practice, if you want to use something that performs
+15:36
+really well, this might be a good approach. Yeah, what I
+15:42
+found interesting though, when I read this, they said in a recent paper, we demonstrated the capabilities of model
+15:48
+search in speech domain, by discovering something, I think I cut it off. But um, yeah, so this is from this 2021 article.
+15:57
+And I said in a recent paper, I looked it up. I looked at the paper, it's from 2019. So it's actually not that recent
+16:04
+anymore. I still think this is an interesting approach. So if you ever want to attempt neural architecture search, this might
+16:13
+be one of the approaches to try. I should warn you though, neural architecture search is of course, very, very expensive
+16:20
+because yeah, I mean, training a single neural network is already expensive. And here in this approach, imagine you have
+16:27
+to train multiple ones asynchronously. And yeah, this is yet another computational challenge, I would say for
+16:34
+people who don't have access to hundreds of 1000s of GPUs. Yes,
+16:40
+speaking of computational scaling or training large scale models on multiple GPUs. So I saw this paper here, terabyte
+16:49
+token level pipeline parallelism for training large scale language models, which is kind of interesting. So it's related
+16:58
+to the GPT three language model, which has 175 billion parameters.
+17:03
+And they found a way that they can train it five times more efficiently on 48 large GPUs. So there are these transformer
+17:13
+models, and there are different ways you can make them more efficient. So one is partitioning the operations here
+17:22
+that's in subfigure B, where I think this means that they just
+17:27
+split the computation, let's say the left and the right hand side, and pass it on to multiple devices. So here device one and
+17:36
+two, I think there's actually a label problem in that figure when I understand correctly, this should be actually part two
+17:42
+here, everywhere. Yeah, but here it's splitting up the computation across multiple devices by splitting it,
+17:49
+splitting the layer basically. Another approach is this micro batched parallelism or micro batched, micro batch based
+17:59
+pipeline, where they split up the batches, the mini batches into micro batches, if I understand it this correctly
+18:05
+here. So they split it up into also multiple devices this way. And here the novelty is essentially that they have
+18:12
+another method for parallelism where they split up the input the sequence input into tokens. I mean, this is what you would
+18:20
+do always, you would always split it up into token, but then they distribute these tokens onto across different devices. So
+18:27
+each device may have a small number of tokens only to consider. So you have parallelism across these tokens,
+18:33
+which is, I think the new approach here. Yeah, but now let's get to the real interesting part because this
+Training on a single GPU
+18:40
+concerns training large scale models on a single GPU. So I saw
+18:45
+this tweet here, a screenshot of a talk by Sylvain Gugger, who worked at fast API. Yeah, now let's get to the real
+18:56
+real interesting part training large scale models on a single GPU. So I saw this tweet here from a talk by Sylvain Gugger,
+19:05
+who works at fast AI, which is a company focusing on education
+19:11
+around deep learning and developing also friendly API's for pytorch. So here in this talk, Sylvain Gugger summarized
+19:21
+the main steps or main approaches for making large model training possible on a single GPU. One obvious one that
+19:29
+is the easiest also is to reduce the batch size. So the input batch size, because then if you reduce the batch size, you have
+19:36
+smaller matrix multiplication. So that helps with memory constraints, because usually the other problem with GPUs is that
+19:44
+you have a fixed size memory. So usually common, I mean, not all of them, but common cards are between, let's say 12 and 20
+19:53
+gigabytes of RAM. And this can be quite limiting, especially for
+20:00
+these big models. And yeah, bottleneck is usually matrix multiplication, especially if you have fully connected layers
+20:07
+like the linear layers in pytorch. So reducing the batch size can help. Another approach is gradient accumulation, it's
+20:17
+kind of related to the batch size. So if you have very small batches, what will happen is that your updates will be very
+20:24
+noisy. So remember, when we talked about online learning and stochastic gradient descent, we will also talk more about that
+20:30
+when we talk about choosing learning rates and things like batch normalization. In any case, gradient accumulation is an
+20:38
+approach where you essentially run backward in pytorch twice.
+20:44
+So you accumulate the gradients from multiple mini batches before you do the update, basically. So in that way, it
+20:50
+allows you to use smaller mini batches. Another approach is
+20:56
+gradient checkpointing, actually made a brief figure about that. I will explain it to you in the next slide. And then there are
+21:05
+also these approaches like zero, which has something to do with the optimizer, and then also sharded data distributed data
+21:13
+parallel. I will also explain to you how that works in a separate slide. And there's also model parallelism and pipeline
+21:20
+parallelism. These are related approaches where you put parts of the model onto separate GPUs. So imagine you have a model with
+21:28
+a lot of parameters, and they don't fit into one GPU. In this way, you simply split the model across different GPUs. I also
+21:35
+have a small slide about that, because I found some interesting new tools that allow you to do that very conveniently. So here
+Gradient Checkpointing
+21:44
+is your visualization of gradient checkpointing. I made that for a notebook. I tried it out in practice earlier this
+21:51
+year. So here, this drawing, I should say, is inspired by another poster that I recommend you to check out to read a more
+22:00
+in detailed coverage of that if you're interested. So we talked a little bit about gradient descent. And we have only done
+22:08
+it for smaller models like softmax regression. But of course, the same concept applies if we have multi layer
+22:14
+perceptrons and convolutional networks with multiple layers. So usually, we compute first the forward pass. And then we have a
+22:23
+loss function, let's say, this is our output loss. So for that,
+22:28
+you need the forward pass, but then also the signal from the
+22:34
+class label. So let's say here, you have the class label information, and your prediction. And you use that when
+22:40
+you back propagate to compute the gradients. So traditionally,
+22:46
+what happens is that you keep all these orange nodes, the computations from these nodes in memory. So for different
+22:53
+gradients, you will need these individual steps from the forward pass. And if you just run pytorch regularly, for
+23:00
+example, it will keep all these computations in memory, because you will need them to update them. So for example, just in a
+23:08
+very broad concept wise manner. So in order to update this node during backpropagation, you need these two nodes. And then if you
+23:17
+want to update this node, you need these two orange nodes. So while you're doing that, though, you don't you don't need this
+23:26
+part, you will need it at the next step, right. But in that way, keeping it in memory is actually efficient in the given
+23:33
+moment, because you will need the values later. But if you have memory limited limitation, this might be something where
+23:40
+you want to offload this or you want to not keep it in memory. So gradient checkpointing, how it works is as follows. So you
+23:48
+will compute the forward pass, but then you delete all this
+23:54
+intermediate information, because right now you're only focusing on updating this data point. So you only use this in
+23:59
+this computation, you forget about this, because let's say you can't keep it in memory, it's too big. But then when you
+24:07
+update the second node here, for example, then in that way, you
+24:12
+recompute these nodes, for example, and you also recompute these these ones. So the blue ones are the ones that
+24:18
+are recomputed, it's wasteful to recompute them every time. So essentially, when you use gradient checkpointing, the
+24:25
+model training becomes slower, because you have to recompute things, but it still helps you dealing with the memory
+24:32
+limitations because you don't keep everything in memory. So in both slides. So here is the regular approach, everything in
+24:41
+orange is always kept in memory. So you can see with gradient checkpointing here, you keep fewer things in memory, only the
+24:47
+orange things in memory, but you need to recompute. So that's a trade off basically between memory and computational
+24:54
+efficiency. It's, it's slower, but again, it helps you with memory limitations.
+24:59
+Yeah, so the remaining things on the slide are on sharding, zero,
+Zero redundancy optimizer
+25:05
+then model parallelism and pipeline parallelism. So it sounded like based on the tweet that it was for single GPU use,
+25:14
+unfortunately, it requires multiple GPUs. But still, it's I think, cool selection of things that we can use to make the model
+25:23
+training more efficient. So I don't want to also discuss the this in nitty gritty detail, because that would be a lecture
+25:30
+in itself. But just to give you a big picture overview, so zero redundancy optimizer, that's a technique developed by, I think
+25:39
+it was developed by Microsoft, which developed this deep speed library. So there's a tutorial in this deep speed library that
+25:47
+discusses what zero does in more detail. But the broad overview is that it is essentially about memory optimization, using 16
+25:55
+bit floating point operations. And yeah, what's nice about it is
+26:01
+in contrast to some other things that make model training more efficient, zero does not require any major modification of your
+26:10
+model code. So in this way, it's more like a wrapper around your model, but it doesn't require you to modify the model
+26:17
+significantly by yourself. So yeah, what it does, it's also
+26:23
+then reducing memory consumption, one is by the 16 bit training, but it's also partitioning on the different
+26:29
+states, weights, gradients, and optimizer states across the available GPUs and CPUs. So that's why you need to also
+26:36
+multiple GPUs. However, that might be something worthwhile to consider if you have multiple GPUs and memory constraints. So
+Zero offload optimizer
+26:46
+related to that, there's also zero offload, which is kind of related to offloading models. So here, they even say that it
+26:54
+works for models up to 13 billion parameters. And they
+27:00
+basically say that one of the bottlenecks is also using optimizers like Adam. So Adam is something we will be covering
+27:08
+soon in the lectures, which is still my favorite optimizer. It's actually super nice. It's very robust to Yeah, it's very robust
+27:18
+for training deep neural networks that almost always converges compared to SGD and momentum where you need a little
+27:24
+bit more fiddling. But we'll talk more about that in class. And they say they developed this implementation, deep d speed
+27:33
+CPU Adam, which is an implementation of Adam that is five to seven times faster than the standard implementation,
+27:40
+which I also found interesting. So yeah, related to all these
+Fairscale
+27:46
+techniques also to the sharding, I also saw a tweet by the pytorch
+27:51
+developers about so involving a library called fair scale, which is developed by Facebook AI research. And this is a pytorch
+28:00
+extension for efficient large scale training. And it uses this fully sharded data data parallel approach. So sharding is
+28:10
+essentially, yeah, also a form of splitting the weights. So
+28:15
+again, he has an article if you are interested in more detail how sharding works. So this article describes sharding and
+28:23
+here on the left hand side, this is a combination between parallel
+28:28
+data training. So distributing the mini batches across GPUs, and the sharding. So it's a new thing that just got added to
+28:38
+this library. I haven't tried it yet. But it also looks like another yet. Yeah, cutting edge interesting approach. So it's
+28:45
+actually based on the deep speed Microsoft research library. But I think the goal here in fair scale is to make it a little bit
+28:52
+more easier to use within pytorch. So I looked at some things that fair scale provides. So what I also found interesting
+Pipeline Parallelization
+29:00
+was this pipeline parallelism and fair scale. I found this particularly interesting because it looks like super easy to use.
+29:09
+Super easy to use. So here's a problem where you have, for example, the model that doesn't fit into a single GPU. And let's
+29:18
+say you have a second GPU that you could use. Technically, what you could do is all the other tricks I mentioned before, like
+29:24
+reducing the batch size and so forth. Here, what you could do is you can just put also different parts of the model on
+29:31
+different GPUs simple as very similar to the model parallelism, except that we use pytorch pipeline here. So the pytorch
+29:39
+sequential pipeline, we discussed this, I think when we discussed the pytorch API in lecture five. So where I showed
+29:48
+you how you can have multiple layers in a sequential API. So here, you can also use the sequential API for the
+29:55
+distributed training. So if you have multiple layers, let's say layer A and layer B are two layers, C and D are two more layers, you can put them all into your sequential pipeline, and then it will automatically take care of it, distributing it across devices. So here, across two devices, two GPUs, and you can also say how balanced these are. So you maybe can say, if you have a stronger GPU, put more onto the first GPU than the other GPU and so forth. And then also, yeah, there's a chunk parameter. So yeah, that's
+30:29
+Yeah, that is something I will probably try out pretty soon. I haven't played around with that yet. But it looked super cool.
+30:35
+Because it's simple to use. But yeah, if you have one GPU, this would of course be a bottleneck. But so it would still be a
+30:42
+problem. So in that way, I would rather consider reducing the batch size and gradient checkpointing if you have a
+30:49
+single GPU. Alright, so it was probably a very long video. I will just stop it at this point. And I will see you back in class
+30:57
+on Monday.
+
+##v62:
+
+0:01
+Yeah, hi, everyone. I hope you had a nice weekend. I saw you
+0:04
+all submitted your project proposals as you were supposed
+0:07
+to. So this week, I will be trying to get through them and
+0:11
+give you some feedback on your projects. So like I said, the
+0:14
+grading will be rather generous for the proposals because the
+0:17
+main goal is really to have a plan and to see what you're
+0:20
+working on. So yeah, with that, lecture wise today, we are
+0:24
+finally starting to cover multi layer perceptrons, that is
+0:28
+multi layer neural networks has been quite some lectures to get
+0:32
+here. But I hope near all the previous lectures were useful
+0:36
+for providing you some foundation. And now, yeah, now
+0:40
+we are getting to the fun part where we will be working with
+0:43
+deeper and deeper neural networks. Now the multi
+0:45
+layer perceptrons, then we will look at some tricks to make the
+0:48
+learning more stable or better. And then yeah, we will move on
+0:53
+to convolutional networks, recurrent neural networks, and
+0:55
+then the generative models. All right, with that, let me get
+0:58
+started then.
+1:00
+Yeah, for today's lecture, there are two main points. First of
+1:04
+all, today, we will finally be able to solve the X or problem.
+1:09
+So the X or problem is something I introduced earlier, yeah, long
+1:13
+time ago, when we talked about the perceptron. So that is a
+1:16
+data set that looks actually very simple. It's only two
+1:19
+features. But the way these classes are arranged, the
+1:22
+perceptron, edeline and logistic regression classifiers that we
+1:26
+covered wouldn't be able to solve it. But the multi layer
+1:29
+perceptron will be able to solve it. Yeah, however, X or problems
+1:35
+are not super interesting, because, yeah, where do you
+1:38
+encounter an X or problem in real life. So in that way, we
+1:41
+will also see how we can classify cats and dogs using a
+1:46
+multi layer perceptron from image data. So the broad topics
+1:51
+I have in mind for today is introducing the multi layer
+1:54
+perceptron architecture, then talking a little bit more about
+1:57
+the different nonlinear activation functions. So one
+2:00
+nonlinear activation function you have already seen in the
+2:03
+context of logistic regression, actually, I've seen two, you
+2:06
+have seen the sigmoidal logistic logistic sigmoid, it's probably
+2:13
+more common way to say it, the logistic sigmoid function. And
+2:20
+you have seen the softmax function, the softmax function
+2:24
+is usually something that is used before the output layer.
+2:28
+But for the hidden layers in a multi layer perceptron, there
+2:31
+are different choices for nonlinear activation functions,
+2:34
+the logistic sigmoid would be one of them. But we will also
+2:37
+take a look at some other ones. Then I will show you some code
+2:41
+examples implementing a multi layer perceptron and pytorch.
+2:45
+And yeah, then we will talk a little bit about overfitting and
+2:48
+underfitting. So these are really important topics, you
+2:52
+know, underfitting and overfitting that's related to
+2:54
+how well our model fits the data, fitting the data not well
+2:59
+enough is of course bad, but also fitting the data too well
+3:02
+can also be bad. And then finally, I will show you how we
+3:06
+can apply this to a cat's versus Doc's data set. So here, I will
+3:12
+introduce how we can use custom data loaders. So that is
+3:15
+something I think you will find very useful when you will be
+3:18
+working on your own projects where you have your own data
+3:21
+sets. Of course, a multi layer perceptron is not great for
+3:26
+image data. For that there are convolutional networks. But
+3:29
+yeah, introducing one thing at a time, we will first apply our
+3:33
+multi layer perceptron to this cats and dogs problem. And then
+3:37
+later, we will use convolution networks to solve it a little
+3:40
+bit better. Alright, so that is the overview. And in the next
+3:44
+video, I will start explaining the multi layer perceptron
+3:47
+architecture.
+
+##v63:
+
+0:01
+Yeah, now it's finally time that we talk about multi layer
+0:04
+perceptrons. So what is a multi layer perceptron? So multi layer
+0:08
+perceptrons are fully connected feed forward neural networks
+0:11
+with one or more hidden layers. So what does the fully connected
+0:16
+mean here? So fully connected means that if you have a given
+0:19
+layer, each unit in that layer is connected to all the other
+0:24
+units in the next layer. So for instance, um, if you have a
+0:28
+layer, let's say like this, an input layer, and then you have
+0:32
+another layer, let's say with only one unit, then each input
+0:36
+is connected to that one. It's actually similar to logistic
+0:39
+regression in that way. So in the logistic regression context,
+0:42
+we also had everything in the input layer being connected to
+0:46
+the next layer. Or if we had multiple outputs, we had also
+0:51
+this setup. And this is actually similar to a multi layer
+0:54
+perceptron, except we're in softmax regression, we had an
+1:00
+input and an output layer. Let's make maybe one more here. Now
+1:08
+what we have is we have a hidden layer. So that means there is
+1:13
+another output layer, for example, like that. So instead
+1:17
+of being softmax regression, we have no multi layer perceptron.
+1:20
+And in the middle, minimally, in the middle here, we have a hidden
+1:23
+layer. And now this one becomes our new output layer. So again,
+1:28
+everything is connected here. So that's why it's called fully
+1:32
+connected. Yeah, and the main difference between a multi layer
+1:37
+perceptron and softmax regression is that we have this hidden
+1:41
+layer here. Also, we use a learning algorithm called back
+1:47
+propagation, which is actually just gradient descent using the
+1:50
+chain rule. It's essentially very similar to what we have
+1:53
+done in the last lecture when we talked about softmax regression,
+1:57
+except again, that we have no hidden layer. Alright, so yeah,
+2:02
+another term here is feed forward. So feed forward
+2:06
+refers to the fact that we go into one direction from left to
+2:11
+right in this particular drawing, but essentially from
+2:13
+the input to the output. So that means feed forward. Later, we
+2:17
+will see other networks that are not feed forward. For example,
+2:21
+there are recurrent networks where we have a recurrent layer
+2:27
+where you go essentially backwards as a time dimension. I
+2:31
+should also say, not all networks are fully connected. So
+2:36
+later in this course, we will also see convolutional networks
+2:39
+which are not fully connected. Alright, but yeah, I'm way ahead
+2:44
+of my slides here. I just see I explained almost everything
+2:47
+already. Because yeah, I made actually some nice figures. So
+2:50
+let's take a look at these figures. So here, I'm showing
+2:53
+you a multi layer perceptron with two hidden layers. So we
+2:58
+have on the left hand side, the input layer, then hidden layer,
+3:06
+another hidden layer, and then the output layer. And because we
+3:10
+only have one output unit, similar to logistic regression,
+3:13
+and different from softmax regression, this one would be a
+3:18
+binary classification problem. And so for the output, we can
+3:21
+actually use a sigmoid function similar to on your logistic
+3:25
+regression. Other than that, there's nothing really new
+3:29
+here. I mean, this is just like softmax regression, except that
+3:33
+we have now these hidden layers, right? So in that way, there's
+3:36
+actually not that much to explain, because yeah, we have
+3:39
+we have also the same way, these weights connecting each unit
+3:43
+between the layers. And when we then compute the partial
+3:47
+derivatives for training this network, we can also use the
+3:52
+chain rule, the multivariable chain rule. So for instance, if
+3:55
+we would want to compute the derivative, the partial
+3:58
+derivative of this loss function on the loss here, with respect
+4:01
+of with respect to one of the weights, then we would also use
+4:06
+the chain rule to go backwards, and then the multivariable chain
+4:09
+rule to combine the output from different units. So what I mean
+4:13
+is, if we have the output here, then we go backwards. So we are
+4:18
+interested, again, we are interested in this weight, w
+4:21
+11. Just as an example. So I'm just highlighting all the paths.
+4:27
+So there's one path that goes here, you can see it here,
+4:30
+right. And the other path is this one here. So in purple,
+4:36
+what I'm showing you is this one here at the top. And then in
+4:43
+here, for the multivariable general, this is this path here.
+4:50
+So there are two paths, actually. Um, yeah, and that is
+4:54
+actually it. That's how we would train or update this weight.
+4:58
+Wait, notice that there are, of course, multiple weights and
+5:02
+actually multiple weight layers. So here we have, for example,
+5:07
+the weight in the second layer, we will train those also, of
+5:11
+course. So in this case, the rule would be a little bit
+5:14
+different. So in this case, let me just take a look, we have
+5:19
+let me write this down, maybe. So we have the partial derivative
+5:23
+with respect to this one, which should be lost with respect to
+5:30
+the output, and then the output with respect to a one, two,
+5:38
+right, and then a one, two with respect to we were saying one,
+5:49
+one, two. So in this way, you can see this path here is
+5:54
+actually, let's see, um, this, this part here is actually
+6:03
+shared with this path here, right. So actually, you can
+6:08
+reuse if you compute this one, first, you can reuse this part,
+6:13
+in order to compute this part for back propagating further. So
+6:18
+also, when you implement this in practice, yeah, there are some
+6:22
+tricks to avoid recomputing things or gradients here. But
+6:27
+fundamentally, that's the same concept that applied to softmax
+6:29
+regression. So here, really, what I wanted to say, there's
+6:32
+nothing new really. Yeah, here's a figure we looked at earlier in
+6:37
+this course, these different types of learning algorithms.
+6:41
+And this algorithm that we use for training the weights and
+6:45
+the molecular perceptron that I just showed you, based on the
+6:48
+partial derivatives on gradients, that's called back
+6:52
+propagation, that's one type of learning. And yet remains still
+6:55
+to as the most precise learning algorithm. So there was this
+7:00
+paper in 2020, where the authors proposed an alternative algorithm
+7:06
+that may be more similar to what's going on in the brain, but
+7:10
+the back propagation algorithm is still the most efficient one
+7:13
+for training neural networks. So now let's talk a little bit
+7:17
+about the nomenclature. So here, that's the same figure as
+7:21
+before. And notice that I'm using these round brackets or
+7:27
+parentheses here. So before, when we had something like this,
+7:32
+with a square brackets, this was usually referring to the first
+7:38
+activation for the ice training. Example, here, the round
+7:48
+parentheses, they don't or this doesn't mean this is the first
+7:52
+training example. This really means here the first hidden
+7:55
+layer. So the round braces here are sorry, the parentheses
+7:59
+refer to the hidden layer index. So here we have two hidden
+8:08
+layers. So you can see this is the first hidden layer. And then
+8:11
+here we have the second hidden layer. And I could also, instead
+8:14
+of writing output here, I could also write activation with a
+8:19
+parentheses here three, because the way the output is computed,
+8:23
+if we use the sigmoid function is the same way as these
+8:25
+activations are computed. So for example, if you have one
+8:29
+activation here, let's say the one in the first hidden layer,
+8:34
+this is really computed as the activation based on, let's say
+8:38
+some net input z where z is computed as the net input here.
+8:47
+So I'm not showing I should say I'm not showing the biases. So
+8:50
+there should also be a bias for each activation. So I was not
+9:04
+drawing it because the figure was already so crowded. See,
+9:07
+it's a bit messy. So let me remove this again. But there
+9:10
+should be a bias also for each activation. Okay. And this is for
+9:21
+this unit here. But now if we take a look at this one, so for
+9:24
+this one, we would compute it the same way. Except now that we
+9:31
+instead of so we still have z. So let's just use the same
+9:34
+meta z. But z is now not of course involving the access
+9:38
+directly. It's based on the previous layer activations. So
+9:43
+in this case, you can think of it as the previous layer
+9:47
+activations. So w transpose plus b, I'm not using indices here
+9:56
+for the weights. But this would be of course, these would be the
+9:59
+weights from the previous layers respectively. So here was just
+10:04
+focusing on what the inputs are for this on second one here, we
+10:11
+have the activations of the previous layer, which act as the
+10:14
+inputs to that layer, if that makes sense. So for this layer,
+10:18
+we have the access input. And for this layer, we have the
+10:22
+activations from the previous layers input. Actually, the
+10:26
+main point here also wanted to make is how we count the layers.
+10:30
+So it's quite common, I've seen that couple of times, referring
+10:34
+to the input layer as the first layer in the network, then the
+10:38
+first hidden layer is the layer number two, the second hidden
+10:42
+layer is the layer number three. And the output layer would be
+10:45
+layer number four, we could do that. But then, yeah, it would
+10:48
+be a little bit weird when we talk about logistic regression,
+10:51
+because then logistic regression is a two layer network, which
+10:56
+is kind of weird, because usually you think or we think
+10:59
+of logistic regression as a single layer neural network. So
+11:04
+what I mean is, yeah, if we count like that, if we then
+11:09
+remove these hidden layers, we have an input layer and an
+11:13
+output layer, like in logistic regression, this would be a two
+11:16
+layer network. And that is a little bit weird. So in this
+11:18
+way, we usually use the indices a little bit differently. So
+11:23
+this is like the input layer sometimes also called the zero
+11:26
+layer, or just input layer. And the first hidden layer is the
+11:31
+first layer, the second hidden layer is the second layer, and
+11:34
+the output layer in this case would be the third layer. So
+11:36
+that's a little bit more intuitive if we think of
+11:39
+logistic regression as single layer neural networks. So yeah,
+11:45
+like I said, we can use the sigmoid the logistic sigmoid
+11:49
+function here everywhere as activation function. So then it
+11:53
+would be really like logistic regression, except that we have
+11:56
+these hidden layers in between. But the loss function could also
+12:01
+be the negative log likelihood that we talked about, or we can
+12:06
+also call it binary cross entropy, which is here
+12:11
+equivalent to the negative log likelihood. Actually, for
+12:20
+classification in neural networks, that's also the most
+12:24
+common loss function. And that is again, why we spend so much
+12:28
+time on logistic regression and softmax regression, because
+12:31
+fundamentally, things are very similar. Yeah, and also like in
+12:38
+softmax regression, if we have multiple output units, instead
+12:42
+of using sigmoid functions here, we can use the softmax function.
+12:47
+But yeah, I don't have to explain how softmax works. Again,
+12:50
+if you forgot how softmax work, then yeah, we have lecture eight.
+12:54
+So you the nice thing about lecture recordings is that you
+12:57
+can revisit lecture eight. Yeah, now an interesting question is,
+13:04
+is this really deep learning? I mean, multi layer perceptrons
+13:08
+have been around maybe for 50 years already. So is this really
+13:13
+deep learning? If we have the same multi layer perceptron that
+13:16
+has been around for such a long time? And how is it different
+13:20
+from a neural network? What's the difference? Yeah, now the
+13:28
+interesting question is, is this really deep learning? I mean,
+13:32
+multi layer perceptrons have been around, I would say for 50
+13:35
+years, approximately. So yeah, can we really call that multi
+13:40
+layer perceptron, we just saw deep learning. So according to
+13:44
+the recent trends, when I look at recent papers, it's more and
+13:49
+more common to call these multi layer perceptron steep
+13:52
+learning. So here's just a figure I saw recently in a paper,
+13:57
+I don't want to reference this paper in this case, because I
+14:00
+think, I don't know, I don't want to blame anyone for calling
+14:04
+this deep learning. So I don't want to call out certain people
+14:07
+here. But here in this paper, I read, for example, there was this
+14:11
+figure of a multi layer perceptron, where there were only
+14:14
+10 inputs, very small numbers of hidden units, and then one
+14:19
+output. So output unit. So here, they call it yet deep learning
+14:25
+and essentially proposed this deep survival model. So yeah,
+14:31
+like I said, it's more and more common to call these multi layer
+14:34
+perceptrons deep learning. Traditionally, when the term
+14:37
+deep learning was coined, like I mentioned in the introductory
+14:41
+lectures, it usually referred to the feature learning by using
+14:46
+certain tricks that are a little bit about beyond the regular
+14:50
+multi layer perceptrons, where we had certain algorithmic
+14:52
+improvements of neural networks that make the learning more
+14:55
+efficient. But yeah, nowadays, multi layer perceptron, I would
+15:00
+say is already deep learning in a sense. Yeah, another very
+15:07
+important point is that now, in a multi layer perceptron, the
+15:11
+loss is not convex anymore. So linear regression, Adeline
+15:15
+logistic regression, and softmax regression, we had convex loss
+15:20
+function. So for example, for linear regression, if we recap
+15:25
+how the loss looked like, let's say with respect to one weight,
+15:28
+because it's easier to draw, it would be something like this
+15:31
+bowl shape here, where let's say we start with an arbitrary
+15:36
+weight value here, let's say we start with weight zero here. So
+15:39
+the loss would be very high when we start. And then we go down
+15:46
+with gradient descent till we reach this global minimum. Yeah,
+15:51
+now, in the case of multi layer perceptrons, it's not that
+15:54
+simple anymore. We don't have such a nice convex loss function
+15:58
+where there's only a path downward to the global minimum.
+16:02
+So in fact, these are highly non convex loss surfaces now. So I
+16:07
+found a nice paper that is about visualizing the loss landscapes
+16:12
+of neural networks. So here, this is for if you have or
+16:16
+consider two weights in a neural network. So if we have, let's
+16:20
+say, w one and w two, let's say w one, one, w two, one, and let's
+16:29
+say in the first hidden layer, because there are many, many
+16:32
+weights in the neural network, but you can see that this loss
+16:36
+is highly complex, there are many, many local minima going on
+16:40
+here. And here, I think that should be the global minimum. So
+16:46
+if we find the values of the weights that we are here at this
+16:50
+point for this loss, so here, the loss value, let's say, the
+16:55
+higher, this is the maximum, the higher, the larger, the loss, and
+17:01
+the lower, the lower the loss. So if we add this global minimum
+17:05
+here, then we would have minimized the loss function with
+17:07
+respect to the weights. However, depending on what our starting
+17:12
+weights are, so technique, typically in the context of
+17:16
+neural network training, we start with small random weights.
+17:20
+So one reason is why we start with small random weights is
+17:25
+that we want to try different configurations. So for example,
+17:29
+if we have a configuration of weights, we may start here, we
+17:34
+could start here, or here, depending on what our initial
+17:37
+weights are. And it's not uncommon that we get stuck in a
+17:40
+local minimum. So we reach one of these local minima, and then
+17:44
+the algorithm gets stuck. In practice, it's actually, almost,
+17:49
+I would say impossible to find the global minimum. So you never
+17:51
+know whether you reach the global minimum. Usually, common
+17:55
+knowledge is that you will end up in some of the local minima.
+17:59
+And it's not uncommon that because of that to start the
+18:03
+net neural network training multiple times worth different
+18:06
+random seats. So sometimes you have a better random seed for a
+18:09
+given network than other times. So sometimes you will notice
+18:13
+that you will have a better performance just by changing the
+18:16
+random seed. So in papers, it's does also not uncommon to let's
+18:20
+say run a network training five or 10 times, then take maybe the
+18:25
+best three runs and then average over them and report the
+18:28
+standard deviation and things like that. Yeah, so we deal now
+18:33
+with this highly non convex loss surface. And in the next couple
+18:38
+of lectures, we will also talk about tricks for learning rate,
+18:42
+choosing learning rates, choosing initial weights and
+18:45
+choosing optimization algorithms that can help jumping out of
+18:49
+these local minima once we get stuck. So there are certain
+18:54
+tricks and improvements to make the learning more efficient
+18:57
+compared to the traditional stochastic gradient descent
+19:01
+version. Yeah, beyond choosing good starting weights, and good
+19:06
+learning rates and good optimizers. It's also very
+19:09
+important to choose good activation functions and
+19:12
+combinations of activation and loss functions. So here, I'm
+19:17
+just want to illustrate a problem with certain activation
+19:20
+and loss functions. And in the next videos, we will talk about,
+19:25
+let's say alternative activation functions, which are nowadays a
+19:28
+little bit better for training multi layer perceptrons. So here
+19:31
+for this example, consider we have a logistic sigmat
+19:35
+activation, and the mean squared error function, loss function.
+19:39
+So one problem we may encounter is that we may end up with very
+19:44
+flat gradients. And especially then if the output is very
+19:48
+wrong. But if you think about it, if we make a very wrong
+19:52
+prediction, we want to actually have a large gradients, because
+19:54
+then we can update the weights more if the grains are very
+19:59
+flat, then there's almost zero weight update, and then we can't
+20:03
+fix our problem of the wrong prediction. So recall how the
+20:08
+logistic sigmoid function looks like. So if we have a logistic
+20:13
+sigmoid function like this with a net input, then recall it was
+20:18
+like this s shaped function. And let's say the true class label
+20:26
+is one, but we return a very low probability like let's say oops,
+20:32
+the probability class membership probability is 0.001 or something
+20:37
+like that. Right? So if you look at this, a low, very negative
+20:42
+net input in a low probability will result, of course, in these
+20:45
+very flat gradients. So if you then look at the derivative of
+20:51
+the loss function with respect to the weights, so here we have
+20:55
+the derivative of the mean squared error loss, with respect,
+21:00
+let's say to the activation, let's call it just sigma, just
+21:04
+sigma here. And then this is partial derivative of sigma with
+21:12
+respect to the net input. And then the last term, remember is
+21:18
+the derivative of the net input with respect to the weight. So
+21:23
+here, we are again using the chain rule. But if we have
+21:27
+these, the derivative of the sigmoid here, and now see,
+21:33
+combined with the MSE doesn't cancel so nicely. So when we
+21:36
+had the binary cross entropy, and the sigmoid activation,
+21:40
+things canceled nicely, that we ended up with this nice learning
+21:45
+rule, right. So with this nice learning rule, we didn't have
+21:50
+this problem. But if we use, for example, a mean squared error
+21:53
+function, combined with the sigmoid activations, we end up
+21:56
+with this derivative here that has the problem that it has this
+22:02
+term itself. Now, if this term is very small, so if we make a
+22:07
+we make a very wrong prediction, let's say 0.001, maybe even
+22:11
+smaller, let's say 0.00001, then we multiply this very small
+22:17
+value with all the other values here. So the whole derivative
+22:21
+will become very low or very small. And then we will almost
+22:24
+update our weights by nothing. So in that way, we can't fix
+22:28
+this wrong prediction. So it's kind of also important to think
+22:31
+a little bit about what types of activation functions we combine
+22:36
+with which types of loss functions. Here's another point
+22:41
+I made. But here, this point is really, I was just saying, if
+22:44
+you have a multi layer network, of course, you would use a soft
+22:49
+max activation if you have mutually exclusive classes
+22:51
+instead of sigmoid activations in the last layer, but the same
+22:55
+problem would still exist. So that doesn't really solve all
+22:58
+problem, I just wanted to add this as a small note. Alright,
+23:01
+so the next video, I will show you then different types of
+23:05
+types of activation functions that are a little bit better
+23:09
+than logistic sigmoid functions in the multi layer perceptron.
+23:12
+But yes, an ungraded homework exercise or Piazza discussion
+23:17
+point, I wanted to, I wanted you to think about a little aspect
+23:23
+about multi layer networks. So I have a question here for you.
+23:27
+What happens if we initialize the multi layer perceptron to all
+23:31
+zero weights. So before I mentioned, we use different
+23:35
+small random weights to escape these local minima or just to
+23:41
+have different starting points. So we may end up finding better
+23:45
+local minima if we run this multiple times with different
+23:48
+random starting weights. But now consider the case where we set
+23:54
+all the weights to zero, it's just unrelated to these local
+23:58
+minima. I just wonder if you can think of what happens if we
+24:02
+choose all the same values for the weights, because you may
+24:05
+think, okay, why do we use small random values? Why don't we use
+24:08
+just small numbers and have the same number for each weight or
+24:12
+have all the weights at zero. So that's maybe something to think
+24:16
+about. And then in the next video, we will talk about non
+24:21
+linear activation functions.
+
+##v64:
+
+0:00
+Yeah, let us now get to these nonlinear activation functions.
+0:04
+So why are we interested in these nonlinear activation
+0:07
+functions? Yeah, together with the hidden layers, they allow
+0:10
+us to model complex nonlinear decision boundaries. So with
+0:14
+that, we can solve complicated problems, complicated
+0:18
+classification problems, for instance. So but before we take
+0:22
+a look at these nonlinear activation functions more
+0:25
+closely, let us briefly recap the pytorch API. So this is
+0:31
+something I just copy and paste it from lecture five, where we
+0:34
+already had a multi multi layer perceptron, just to illustrate
+0:38
+how the pytorch API works. So on the left hand side, yeah, this
+0:42
+is like the regular approach. So where we have in it,
+0:48
+constructor, and here, this is a multi layer perceptron with two
+0:52
+hidden layers, I called them linear one and linear two,
+0:56
+because linear because the layer is called linear, it's computing
+0:59
+the net input, right? So these are our layers that we use and
+1:04
+one output layer. So this is essentially the setup that I
+1:08
+showed you earlier on in the slides, if I can just go back.
+1:13
+So this is essentially this setup where we have one hidden
+1:17
+layer, second hidden layer, and an output layer. Alright, so
+1:24
+this is how it looks like. And in the forward method, we use
+1:28
+these actual layers. So we apply the first hidden layer, then we
+1:33
+have our nonlinear activation here, it's a relu function, we
+1:40
+will revisit this in a few slides, then another net input
+1:46
+and another activation function, another net input. And then
+1:51
+usually, we would compute the softmax in pytorch. Recall, we
+1:56
+use this cross entropy loss, which already computes the soft
+2:00
+max for us, so we don't have to do it ourselves. So here, we
+2:04
+apply this lock softmax function on the logits. So there's also a
+2:10
+softmax function. But here, we compute this based on the we use
+2:15
+the lock softmax, because it's numerically more stable, if we
+2:18
+were to use the negative log likelihood loss. This is really
+2:25
+the only if we want to use the negative log likelihood loss.
+2:29
+Otherwise, we would just use softmax if we are interested in
+2:32
+the probabilities. To be honest, now looking at this, I don't
+2:35
+know why I used lock softmax, I think, in the big code example,
+2:40
+when I created lecture five, I had the negative log likelihood
+2:44
+here. So also, technically, you don't have to compute the
+2:49
+probabilities within this class, you can do this separately, if
+2:53
+you care about because technically, you never have to
+2:55
+use the probability if you use the cross entropy function in
+2:59
+pytorch for optimization. But again, this will become more
+3:02
+clear when we look at the concrete code example in the
+3:05
+next video. On the right hand side, the main difference is
+3:09
+that I'm using the sequential API, which can be a little bit
+3:13
+more, I would say, easier to read more compact. So that's
+3:18
+exactly the same network, except that here, we define it and
+3:24
+sequential can actually also run it. So we don't have to put it
+3:28
+explicitly in the forward method, it will already do it
+3:33
+for us if we call here my network, I just called it my
+3:36
+network. So it is, in a way a little bit more convenient.
+3:39
+What's more convenient in particular is that we don't have
+3:41
+to define these steps in the order these are used ourselves.
+3:47
+And we can also just read right now from here, how these layers
+3:52
+executed, they are executed from top to bottom. This is also the
+3:54
+case here. But for example, if I want to know what the linear one
+3:58
+is, I have to go up and look it up here. So it's a little bit
+4:01
+more, I would say error prone, whereas on the right hand side,
+4:04
+we define it. And we also directly use it in that order.
+4:07
+So it's a little bit more, it's a bit safer, I would say. So
+4:11
+yeah, so the flow is we apply a linear layer, a nonlinear
+4:14
+activation, a linear layer, nonlinear activation, and a
+4:18
+linear layer. And that will produce our logits. And then if
+4:21
+we're interested in that the probabilities, but again, pytorch
+4:25
+and cross entropy already applies the softmax for us, so
+4:27
+we don't have to do it ourselves. So technically, we
+4:31
+can skip this softmax step and don't have to use that. It's
+4:36
+just like, I usually like to include the probabilities
+4:39
+because I sometimes also print out the results from a model
+4:43
+and analyze it with plots and probability plots and stuff like
+4:47
+that. So in that way, I sometimes find it helpful to
+4:50
+have the probabilities available. So I usually save my
+4:52
+results, but you don't have to worry about this really. Alright,
+4:57
+so with that, we can then solve the XR problem using these
+5:01
+nonlinear activation functions. So the nonlinear activation
+5:04
+functions, let us make complex decision boundaries, like I
+5:07
+just said, so here, this is like a toy data set, I made just two
+5:13
+features, x one and x two, just for simplicity, two classes,
+5:18
+these orange ones, and these blue dots. So the orange squares
+5:24
+and the blue dots on the left hand side here, just for fun, I
+5:28
+was applying a multi layer perceptron with one hidden layer
+5:33
+and a linear activation function. So recall the linear
+5:35
+activation function looks like that. So you can see that on the
+5:41
+left hand side, that it's a linear decision boundary, even
+5:45
+though we have a hidden layer, by the way, I don't want to open
+5:49
+the code notebook right now, because then I have to switch
+5:52
+the screen again. But if you're interested, after watching this
+5:56
+video, you can double check here under this link, that this is
+5:59
+indeed the code is indeed correct. So you can reproduce
+6:03
+these results, if you don't believe me. But in any case, so
+6:06
+you can see, on the left hand side, this is a linear decision
+6:09
+boundary, even though we have a hidden layer. So what happened
+6:13
+here? So because in logistic regression, we had a nonlinear
+6:17
+activation function, and no hidden layer, it was a linear
+6:21
+decision boundary. Now we have a hidden layer. And no nonlinear
+6:26
+activation, we also have a decision boundary that is
+6:29
+linear. So let's recap logistic regression. No hidden layer.
+6:36
+Plus, nonlinear activation gives us a linear boundary MLP with
+6:56
+with linear activation plus hidden layer, also linear
+7:10
+boundary. So from that, we can deduce neither the hidden layer,
+7:23
+which we have in the multi layer perceptron, nor the nonlinear
+7:28
+activation function alone are sufficient for making a nonlinear
+7:34
+decision boundary, they are necessary, but they are not
+7:36
+sufficient for making a nonlinear decision boundary. In
+7:39
+fact, we need both, we need both the hidden layers, and the
+7:43
+nonlinear activation functions to make a nonlinear decision
+7:46
+boundary. So on the right hand side, I have now the same
+7:53
+multi layer perceptron with one hidden layer, the same number of
+7:57
+weights, the only difference is that I'm now using a nonlinear
+8:01
+activation function, here, I'm using the relu function. And you
+8:05
+remember, this is very simple, it's actually just thresholded
+8:10
+at zero. So if the input is negative, the output is zero,
+8:13
+otherwise, it's an identity function. So it's almost an
+8:16
+identity function, but not quite. And this is sufficient
+8:20
+together with the hidden layers to make a nonlinear decision
+8:23
+border, you can see, this decision border is no nonlinear,
+8:26
+you can see it's solving this x or problem. So it can now
+8:31
+classify these data points correctly. So why is this working?
+8:36
+And why is this not working? So why is the linear decision?
+8:40
+Linear activation function, not sufficient and produces a linear
+8:46
+decision region. That's because if you think about it, even
+8:51
+though we have a hidden layer, if we have a linear activation
+8:55
+function, what happens is that we have essentially a
+8:58
+combination of multiple linear functions. And the combination
+9:03
+of multiple linear functions is still a linear function. So if
+9:08
+we don't use nonlinear activation functions, then we
+9:10
+don't really gain anything by using a hidden layer. So we need
+9:13
+actually both hidden layers and nonlinear activation functions
+9:16
+to produce these complex decision boundaries. Actually,
+9:22
+they are way more than just relu functions, really just happens
+9:26
+to be popular because it's, it's quite simple and quite fast to
+9:29
+compute and has also some other nice properties, which I will
+9:32
+also briefly talk about in a few minutes. So but yeah,
+9:36
+traditionally, these are also one of the most popular
+9:40
+activation functions in multi layer perceptrons. With that, I
+9:43
+mean, the logistic sigmoid that we already encountered in the
+9:46
+context of logistic regression. So back in the day, I would say
+9:50
+even the sigmoid was maybe the most popular activation function
+9:53
+in multi layer perceptrons. But again, it has this problem that
+9:57
+these gradients saturate here. Another very popular activation
+10:02
+function for a while was the 10 h function, it's also a sick
+10:05
+model. So both are sick model functions. It's also sick model
+10:10
+function. So as shaped by this hyperbolic tangent function looks
+10:16
+a little bit different. So you can see this one, the logistic
+10:20
+sigmoid function is centered around zero, and the output is
+10:24
+point five. Whereas this one is centered at zero. And the output
+10:30
+at zero is also zero. So it's producing positive and negative
+10:35
+values, which can be an advantage. There's also a hard
+10:38
+tension, which is essentially very similar to 10 h, except
+10:43
+that it's thresholded here, similar to relu. So what is the
+10:49
+advantage of let's say the 10 h over the sigmoid activation. So
+10:54
+the event of 10 h is really like that we have this centering at
+10:59
+zero. So that we have positive and negative values. And you can
+11:04
+also see it's steeper. So here, the it's steeper than this one.
+11:11
+So we have larger gradients. It has also a very simple
+11:15
+derivative, one minus 10 h, recall for the logistic
+11:18
+sigmoid, the derivative was like this. So itself times one minus
+11:26
+itself, so the derivative is slightly smaller, because it's
+11:32
+you're multiplying two numbers smaller than one with each
+11:38
+other. So whereas here, you have one minus this one. But then you
+11:44
+have also the squared here. So it's actually not that
+11:46
+different. Okay, um, yes. So but both have the problem that if
+11:53
+you make a wrong prediction, it's both if you make a right or
+11:56
+wrong prediction, but in both cases, you hear and hear, so you
+12:01
+saturate it. So that that can be a problem. If you make a wrong
+12:04
+prediction, you end up with a very small partial derivative
+12:09
+with with respect to its derivative with respect to its
+12:11
+input. And then when you compute the partial derivatives in the
+12:15
+chain rule, then yeah, you will get very small gradients and the
+12:18
+learning will be very slow, which can be a disadvantage. Or
+12:22
+maybe one more thing about why it's good to have negative and
+12:27
+positive values, that just gives you more combinations. So
+12:31
+imagine you initialize your weights from let's say a small
+12:35
+from a random normal distribution, standard normal
+12:38
+distribution, let's say, or a scale to standard normal
+12:41
+distribution. So you initialize your weights such that they are
+12:44
+centered at zero. So you can have positive and negative
+12:47
+starting weights. And if you also use this 10h, which can
+12:51
+have positive and negative values, you get just more
+12:54
+combinations of possible values, whether you combine a positive
+12:58
+with a negative number and negative with a positive number
+13:00
+to negative numbers or to positive numbers, you have four
+13:03
+different ways you can combine these signs. Whereas if you have
+13:06
+a activation function that can only produce positive numbers,
+13:09
+you're a little bit more limited. So I would say that
+13:12
+10h is a little bit more expressive, it allows you a
+13:15
+little bit more explicit expressivity, if that's the
+13:18
+word. But yeah, I think also in practice, when I use them, and I
+13:22
+recall, I only saw a minor difference using one over the
+13:26
+other, really, if you use a redo function that gives you a better
+13:29
+bang for the buck, usually. So here are some more nonlinear
+13:35
+activation functions, including the redo function. So the redo
+13:39
+function here, that's something you've seen before, it's I would
+13:43
+say still the most widely used activation function in deep
+13:47
+learning. I think it's maybe 10 years old by now, something like
+13:51
+that. But when you look at recent papers, people still use
+13:56
+a relu a lot. It has three nice properties. It's simple to
+14:00
+compute, really. And you have always, yeah, large derivative,
+14:05
+the derivative is one. So if you use the chain rule, and your
+14:08
+derivative is one, if the inputs are positive, then yeah, you
+14:13
+don't diminish the product in the on general, okay, but it can
+14:18
+also be zero, which can be a problem. So if you have negative
+14:21
+inputs to this activation function, you are your output
+14:26
+would be zero, which will then basically cancel the weight
+14:30
+update for that corresponding weight corresponding to this
+14:33
+activation, or connected to this activation. So that can be a
+14:38
+problem if you always have very negative input. So there is a
+14:42
+problem called dying neurons or debt. Relu's that happens
+14:52
+usually when you have somehow updated the weights, such that
+14:57
+you will never come into the positive region anymore. And
+15:00
+then yeah, you will never be able to update your weights
+15:02
+again, because the derivative will always be zero, it can be a
+15:06
+problem. However, in practice, some people argue it can also be
+15:10
+an advantage because it can help with pruning, let's say,
+15:15
+unnecessary neurons, like if you have an excessive number of
+15:18
+neurons, this way, you can get rid of some of them. And it may
+15:22
+help with preventing overfitting. A version of Relu
+15:27
+that some people find to perform sometimes a little bit better is
+15:32
+the leaky relu, which doesn't have the problem of these dying
+15:36
+neurons. So here, the difference is that we have, so if we look
+15:41
+at the simplified notation, the the piecewise linear function
+15:46
+here, um, what you can see here, or the piecewise function,
+15:51
+sorry, what you can see here is that the only difference is that
+15:55
+we have now this alpha here, which is a slope, if the input
+15:59
+is smaller than zero, so for the negative region here, we have
+16:03
+now a slope, what value we can choose for the slope, it's a
+16:06
+hyper parameter, right? So hyper parameters is something that you
+16:13
+as the practitioner have has to choose. So there's no way you
+16:18
+get second know what's a good value if it's a hyper parameter.
+16:21
+It's something you have to try out in practice and change and
+16:25
+see what performs better. I have seen all kinds of values for
+16:29
+this negative slope here, or for the slope in the negative region.
+16:33
+So in Keras, that's API for TensorFlow, I believe they use
+16:38
+point three as the default value. In pytorch, I don't know
+16:42
+exactly the default. I usually specify it myself, I usually use
+16:45
+something like point one or point one. But yeah, there are
+16:50
+different values that work well for different problems. In
+16:53
+practice, you will only see a slight small difference. So it's
+16:56
+not something if your network that say doesn't perform very
+17:00
+well, then choosing different value here probably won't make a
+17:04
+big difference. So you have very bigger problems to fix. But it
+17:08
+can give you maybe 123 percentage points in terms of
+17:11
+accuracy, if you're lucky. I said hyper parameters cannot be
+17:16
+like automatically learned from gradient descent. However,
+17:18
+people designed parameterized version of the leaky relu, it's
+17:23
+called Prelude parameterized relu basically. And here, this is
+17:29
+essentially the same as buff. But here, the people made it
+17:32
+made alpha trainable parameter. So it's parameter that can be
+17:37
+also updated with gradient descent. So in practice, I
+17:42
+honestly never really have never really seen this being used. I'm
+17:46
+not sure if this is really that useful. There's also an elu an
+17:51
+exponential linear unit. So it's getting around this kink here.
+17:55
+It's like a more like a smooth version here in this kink. So
+17:58
+there are different types, really many, many different
+18:00
+types of nonlinear activation functions. There's also I
+18:03
+recall there's a cell I've seen that quite often recently, it's
+18:08
+on thing it stands for self normalizing exponential linear
+18:13
+unit. So it has some nice properties also. But yeah,
+18:16
+again, there are lots of different flavors. Usually,
+18:19
+um, people still use the relu a lot because it just performs
+18:23
+well. Yeah, related to the topic of nonlinear activation
+18:27
+functions, I saw this paper here, last year called smooth
+18:32
+adversarial training. I booked marked it because I knew it
+18:35
+would become handy when I teach a class on deep learning. So
+18:41
+adversarial training, just briefly, what is adversarial
+18:44
+training adversarial training is, yeah, on exploiting deep
+18:48
+neural networks, or more like fooling deep neural networks,
+18:51
+it's, if you have, let's say an image or some data point, and
+18:56
+your network makes a prediction, let's say you have an image of
+18:59
+a cat, it predicts cat, there's some way you can exploit the
+19:04
+network by just changing the image very slightly making like
+19:07
+a few pixel changes. But you find these pixel changes that
+19:11
+are able to fool the network to let's say now think that the
+19:15
+image is a dog instead of a cat. So it's like exploiting
+19:20
+weaknesses in the network. So like the author say it is
+19:25
+commonly believed that networks cannot be both accurate and
+19:29
+robust. So usually, if you want to make your network more robust
+19:34
+towards these adversarial examples, you usually trade it
+19:38
+off by Yeah, by suffering in terms of accuracy. So the
+19:42
+accuracy is usually lower in these more robust networks. So
+19:47
+like I say, gaining robustness means losing accuracy. However,
+19:53
+yeah, let me just read it. Our key observation is that the
+19:56
+widely used relu activation function significantly weakens
+20:00
+adversarial training due to its non smooth nature. So it sounds
+20:03
+like the relu is like a little bit of a disadvantage for
+20:07
+adversarial training. Hence, we propose smooth adversarial
+20:13
+training, in which we replace relu with its smooth
+20:16
+approximations to strengthen adversarial training. So the
+20:20
+authors argue that if you replace this revenue here in
+20:25
+red with this non smooth point here with a smooth version, for
+20:30
+example, the permit rig soft plus function, then yeah, you
+20:33
+can strengthen it because now maybe it has something to do
+20:36
+with the gradients because here you have this big difference
+20:39
+whereas here you have also something in between. So now
+20:42
+this is maybe helping with this adversarial training. So based
+20:46
+on the experiments. Yeah, and the second reason why I like
+20:50
+this paper is because they have a nice summary of the smooth
+20:55
+approximations of the non smooth relu function. So on the left
+21:00
+hand side, this is how the activation functions look like
+21:03
+they call it here the forward path. And then here are the
+21:06
+derivatives for the backward path on the right hand side. So
+21:11
+yeah, you can see these are all slightly different, but they are
+21:15
+all kind of approximating the other relu in some way. In
+21:21
+practice, um, yeah, in practice, this has a big implication
+21:26
+apparently for the adversarial robustness. But also, like I
+21:29
+said, choosing different activation functions that are
+21:33
+relatively similar, it doesn't make a big impact in practice.
+21:37
+So also what they see here, it's just one percentage point. So
+21:41
+one percentage point between relu and the others. So it helps
+21:44
+a little bit these some of these others perform actually better,
+21:47
+a little bit better. It's not huge, but it's a little bit
+21:51
+better. So it's in a way it doesn't hurt using them. But on
+21:54
+the other hand, you can see there's a huge advantage in
+21:57
+terms of adversarial robustness from 33%, up to 42%. It's almost
+22:03
+a 10% 10% difference in terms of adversarial robustness. So
+22:08
+given that, I mean, it's not much work to just replace relu
+22:13
+with one of these non other nonlinear activation functions,
+22:18
+given that it's not much work, why not doing it right? So it's
+22:21
+actually quite interesting. Yeah, and because activation
+22:26
+functions are quite boring, I have a quite fun visualization
+22:30
+here I just saw today coincidentally. So that's these
+22:33
+dance moves of deep learning activation functions. With that,
+22:37
+I want to enter this video. And then in the next video, we will
+22:41
+talk a little bit more about multilayer perceptrons and in
+22:45
+particular, coding it up in pytorch and training it.
+
+##v65:
+
+0:01
+All right, let's now take a look at some code examples. But before
+0:05
+that, I have a few slides I wanted to go through, just to
+0:09
+summarize, yeah, what we are going to take a look at in the
+0:12
+code. But then also to add a few things about multi layer
+0:17
+perceptrons that I didn't mention in the previous slides.
+0:21
+So I prepared two code notebooks, and I will also show
+0:25
+you some Python scripts as alternative. So in these code
+0:28
+notebooks, I implemented a multi layer perceptron with a
+0:31
+sigmoid activation and a mean squared error loss, and the
+0:35
+multi layer perceptron, the same one, but with softmax activation
+0:38
+and cross entropy loss. So there are, let's take a look at the
+0:43
+left hand side. There are two plots here. So one is showing
+0:48
+the loss for each mini batch. So you can see it goes down. That's
+0:52
+what you want to see the trend goes down. While we are training
+0:55
+it, it's a bit noisy, this is expected because it's on
+0:59
+stochastic gradient descent. So these updates are noisy. At the
+1:03
+bottom, I'm plotting the loss computed of like computing over
+1:09
+it over the whole training set. So after each training epoch,
+1:13
+I'm computing the loss of the whole training set. So this is
+1:16
+why it's smoother here. So you can see I'm training for 100
+1:20
+epochs. So x axis is the number of epochs. Actually, I think I
+1:27
+think I've probably wrote epoxy, I can't see always the bottom of
+1:31
+the slide, because there is like, for the pen, the color
+1:34
+bar, but I think that it says epoch. Anyways, so you can see
+1:38
+this is training nicely. But the accuracy is quite low, it only
+1:42
+reaches 90% training accuracy, 91% test accuracy. One good
+1:47
+thing about it is it's not overfitting. But if you recall
+1:50
+from the softmax regression lecture, we already achieved 92%
+1:55
+something using just softmax regression. So um, yeah, the
+1:59
+reason why I think this multi layer perceptron is not working
+2:02
+well, my suspicion is it's because the sigmoid activation
+2:05
+and the MSE loss are not a good combination. Like I outlined
+2:09
+earlier, when because the terms don't cancel so nicely compared
+2:14
+to softmax and cross entropy, or even sigmoid and cross entropy,
+2:18
+what happens is that we have the derivative of the sigmoid
+2:24
+function in the chain rule. And this will be a number smaller
+2:28
+than one, which can be a little problematic. Because yeah, you
+2:32
+may have like these small numbers multiplying things with
+2:35
+a small number, and then you have a vanishing gradient
+2:37
+problem. So you make the gradient very small, and then
+2:39
+maybe you don't update, that could be one problem, I can see
+2:42
+with that. If you use the cross entropy loss, um, it's a little
+2:47
+bit less of an issue. So cross entropy loss is usually better
+2:49
+with sigmoid activation, or can also use a softmax activation,
+2:53
+which I would recommend, because we have, yeah, a mutually
+2:56
+exclusive classes. So like we talked about, why not also using
+2:59
+softmax activation, you can play around, actually, you can take
+3:02
+this good example and change softmax to sigmoid, you will see
+3:05
+there's not a big difference, though. But on here, here on the
+3:09
+right hand side, um, you can see though, what the main takeaway
+3:12
+is, that, again, the loss goes down, that's what you want to
+3:16
+see. But what you can see is also the training accuracy is
+3:19
+99%. And the test accuracy 90, almost 98%. There's a little
+3:24
+bit of overfitting, we will talk about overfitting after the
+3:27
+Jupyter Notebook video in the next video. But yeah, what you
+3:32
+can see is the cross entropy loss actually works much better
+3:35
+here than the MSC loss. Um, yeah, a few more things I
+3:40
+already talked about dead neurons. So we can also use the
+3:44
+relu activation function, which is very popular, you can
+3:46
+actually try it on in the code notebooks. It's, like I said,
+3:51
+probably the most popular activation function, I use it
+3:54
+all the time for most of my stuff, because it works well
+3:57
+usually. However, theoretically, there's this problem that it
+4:01
+might have this dead neuron problem, like the relus might
+4:04
+die during training, that happens if the input is too
+4:07
+large or too small, so that the net input is yes, negative. So
+4:12
+if you have a large input and a negative weight, then yeah, the
+4:16
+net input will be negative. Or if you have a positive weight,
+4:21
+and are very small input, very negative input, then also the
+4:26
+net input will be negative. And if it's so negative, that it's
+4:31
+extremely negative, then maybe it will never be possible to
+4:35
+escape this problem. Because even though you have the
+4:40
+multivariable chain rule, you combine certain things, you may
+4:43
+never be able to reach this threshold have a positive
+4:47
+number. So you will never maybe update a certain weight, and
+4:49
+then you end up with this dead neuron. However, like I said,
+4:53
+it's maybe not necessarily bad, because if you have a lot of
+4:57
+neurons, your network has a tendency to overfit, then yeah,
+5:02
+removing some neurons removes some parameters, and it can
+5:05
+maybe help actually achieving a better performance because it's
+5:10
+kind of simplifying the network like pruning excessive weights.
+5:16
+Also, one advantage of value compared to let's say, the
+5:20
+sigmoid or 10 h function is that it suffers less from this
+5:23
+vanishing gradient problem that I explained on the previous
+5:26
+slide, because the gradient is either zero or one. So you
+5:29
+either have the dead neuron, in the worst case, or no gradient
+5:32
+in the worst case. But in the other case, if you have a
+5:34
+positive net input, you always have a strong gradient of one,
+5:37
+but it could technically leads to exploding gradient problems
+5:41
+if you have some values that are greater than one from other
+5:44
+parts of the network. But yeah, I will talk more about vanishing
+5:49
+and exploding gradients when we talk about that would be a good
+5:54
+point for recurrent neural networks. We will talk about
+5:56
+that when we talk about recurrent neural networks later.
+5:59
+But yeah, in general, just wanted to summarize these few
+6:02
+points.
+6:04
+Another thing is, shall we use a wide or deep multilayer
+6:10
+perceptron? So if we have to choose, which one would be
+6:13
+better. So let's say we could make a multilayer perceptron,
+6:19
+when we only have a small number of units in each layer, let's
+6:22
+say, five in each, but have a lot of layers, or we could make
+6:26
+a very wide network where we have, let's say, only one hidden
+6:30
+layer. But then let's say we have 100 units in that layer. So
+6:36
+what is preferable? I mean, theoretically, there has been
+6:40
+some work on the universal approximation theory or theorem.
+6:46
+In that case, I think it's a theorem, even I haven't actually
+6:49
+read these papers, I only know they exist. So there are
+6:53
+theorems showing that multilayer perceptron with one arbitrarily
+7:00
+large hidden layer can already approximate arbitrary functions.
+7:06
+So that case, if a multilayer perceptron with only one very,
+7:09
+very big hidden layer can already do that, why would we
+7:12
+even care about having multiple layers? I mean, the ability to
+7:18
+approximate arbitrary function doesn't mean it's practical to
+7:23
+train such a network. So first of all, there are some
+7:26
+challenges with training, also just large matrix
+7:28
+multiplications. But then also, you need more parameters really,
+7:33
+to have the same expressiveness as using more layers, with fewer
+7:39
+number of parameters, if you have fewer parameter parameters,
+7:41
+but more layers, you have more combinatorially more
+7:44
+combinations possible. So this way, you have the same
+7:47
+same expressiveness as with multilayer perceptron with only
+7:51
+few large hidden layers. But then if you have a lot of these
+7:56
+layers, then you may suffer from vanishing and exploding gradients
+8:00
+that I just mentioned on the previous slide. So usually,
+8:02
+there's a trade off in practice. For multilayer perceptrons, you
+8:08
+never really go deeper than one or two layers, because then you
+8:11
+have like these vanishing, exploding gradient problems. But
+8:15
+later, we will talk about convolutional networks, and other
+8:19
+types of networks where we can actually go deeper, without
+8:23
+having these exploding and vanishing gradient problems. So
+8:25
+there are some tricks. And this is basically what deep learning
+8:29
+is about. It is about designing things cleverly, so that we can
+8:34
+go deeper without having vanishing, exploding gradient
+8:37
+problems for multilayer perceptrons, because it's not
+8:40
+really a deep learning architecture. One or two hidden
+8:43
+layers is enough, you will notice if you try it, to
+8:45
+implement a multilayer perceptron with three or four
+8:48
+layers, you will usually notice it doesn't train so well anymore,
+8:52
+because the arrows don't back propagate so far anymore. So a
+8:55
+practical consideration is usually using one or two hidden
+8:58
+layers in a multilayer perceptron. If we talk about
+9:01
+convolutional layers, we can go up to 500 or maybe 500. But
+9:05
+let's say 150 200. That's even very common these days. But
+9:11
+convolution networks are topic for another lecture. So yeah,
+9:15
+like I said, just to summarize again, we can achieve the same
+9:19
+expressiveness with more layers, but fewer parameters compared to
+9:22
+having like one large layer with a lot of parameters. But also,
+9:28
+what's nice about having more layers than compared to one is
+9:31
+that we have some form of regularization, because later
+9:34
+layers are constrained on the behavior of earlier layers. So
+9:37
+we have also, in that way, having more layers can also,
+9:40
+sometimes in theory, at least be helpful. But then, like I said,
+9:45
+we have the vanishing exporting greater problems. And later, we
+9:48
+will talk more about that. So now it's time that I show you
+9:54
+the code example. So let me pause this video and then start
+9:57
+my Jupyter Notebook.
+
+##v66:
+
+0:00
+All right, let's now take a look at some code examples. So I
+0:04
+prepared multiple notebooks. One is a multi layer perceptron from
+0:07
+scratch implementation just to practice my calculus skills. One
+0:12
+is pytorch, sigmoid and mean squared error implementation that
+0:17
+I showed you on the slides. And this one is the pytorch with a
+0:21
+soft pytorch implementation with a softmax activation and the
+0:23
+cross entropy loss. I will only walk you through this one
+0:27
+because they are all fundamentally very similar. And
+0:29
+yeah, I don't want to make the lectures too long. So let's get
+0:33
+started. So here again, just the boilerplate stuff, all the
+0:37
+imports, here are some hyper parameter settings, I set the
+0:41
+batch size to 100, it's kind of arbitrary. Usually people like
+0:45
+to use also values like powers of two, like 32, 64, 128. I use
+0:50
+100 epochs. And yeah, here, the MNIST data set. So the MNIST
+0:55
+data set is, or how we load it is how we did it also in the
+0:59
+softmax lecture. So there's nothing new here, I will have a
+1:02
+separate video explaining how you can set up these data
+1:05
+loaders for your own data set. So now here, we are just
+1:10
+regarding it as the standard MNIST data set that is already
+1:14
+included in torch vision. So what I want to focus on is
+1:17
+really here, the multi layer perceptron implementation. So
+1:21
+here, really, what's new compared to softmax regression
+1:26
+is that we have this hidden layer. So if I remove this
+1:30
+hidden layer, for a second, and just write num features here,
+1:37
+oops, then this is the same as the softmax regression code. The
+1:42
+only maybe small difference that you might notice is that
+1:44
+okay, I would also have to remove this one, cancel this out. So
+1:51
+the only difference is that I'm using small random weights. I
+1:57
+asked you why we don't implement or why we don't initialize the
+2:01
+weights to zeros in multi layer perceptron. So that's something
+2:04
+for you to think about. But yeah, here, we use a standard
+2:08
+normal distribution, and we scale it. So the mean, so there
+2:13
+are two parameters for this, the mean and the standard deviation.
+2:17
+So usually a standard normal distribution, as you might know,
+2:20
+has mean zero and unit variance. So standard deviation of one
+2:23
+here, we use a smaller value point one, just making the
+2:27
+distribution a bit narrower, closer to zero. So that's because
+2:30
+we don't want to have too large or too extreme values, because
+2:34
+recall, sigmoid activations can saturate. So then we have very
+2:39
+small gradients. So it's actually good to have them not
+2:41
+too big. So yeah, that is what we do here. The whole point
+2:45
+really is just having small random weights centered at zero.
+2:48
+Later, in later lectures, we will also learn about other ways
+2:52
+to initialize the weights. But yeah, let me undo that.
+2:56
+Otherwise, the code won't work. So now, what's different from
+3:00
+softmax is really that we have this hidden layer here in
+3:04
+between, right between the input and output layer. Alright, so but
+3:09
+there's nothing really new. I mean, I wish I could tell you
+3:13
+something exciting here. But actually, it's very similar to
+3:16
+softmax. So it's actually a very good sign. It's not too
+3:18
+complicated, I hope. Yeah, just to use probes here, you don't
+3:25
+have to do that. So you can actually skip this step, you
+3:29
+don't need that. Because if you use the cross entropy loss,
+3:34
+pytorch will already compute that softmax implicitly
+3:37
+automatically. Yeah, and when we initialize here, the multilayer
+3:43
+perceptron, we have a number of input features is 28 by 28.
+3:48
+That's the dimension of MNIST. And I use a hidden layer with
+3:52
+100 units. That's a hyper parameter can change that
+3:58
+number and see whether it performs better or worse. We
+4:02
+use also the stochastic gradient descent optimizer. Notice now,
+4:08
+so this is so I have a separate function for computing the loss
+4:12
+that's for each epoch. So how I implement that is I'm iterating
+4:17
+over the data loader, and compute the loss and edit up. So
+4:22
+this is instead of computing it on the whole data set, because
+4:25
+the data set might be too large to load it into memory. So in
+4:28
+MNIST, for MNIST, it might work, but it's just a good practice to
+4:32
+implement a function that does it also incrementally. Notice
+4:36
+this is just a compute loss function that I use to compute
+4:39
+the loss on the training set. This is not a training function.
+4:43
+But there was a good question on Piazza, I used something similar
+4:46
+before, no grad, I before used on the manual version, like
+4:51
+enable, great, enable gradient faults. This is the same thing.
+4:56
+So here, I disable the gradient, or I'm saying we don't need a
+5:01
+gradient. So I'm saying, don't build this computation graph.
+5:08
+Why do I not have to have a computation graph? So here, I'm
+5:11
+just computing the loss. So there is no backward, so it
+5:14
+would be wasteful. Actually, this should be just that would
+5:18
+be better. Okay.
+5:20
+Okay. Yeah, I'm also how I'm computing the loss is actually I
+5:26
+can show it to you also here. So here, how I'm computing the
+5:29
+losses, I'm using the negative log likelihood loss. And then
+5:34
+I'm calling log probas. This is how we do it, let's say,
+5:38
+theoretically, mathematically. And I've done that in my from
+5:42
+scratch and the other implementation. But in practice,
+5:46
+it's actually better to use f cross entropy, a functional
+5:49
+cross entropy version. Um, so actually, let me modify this
+5:54
+code to show you the recommended way. I did that just for
+5:58
+comparison purposes. But it's actually better to have it like
+6:05
+this. Hope I don't delete it in a way that it doesn't work
+6:11
+afterwards. But we will see will be a surprise. Okay. So yeah,
+6:17
+I'll call it cost. All right, so yeah, we don't need to call
+6:25
+softmax ourselves, because yeah, pytorch is already doing it for
+6:28
+us. But except that the training is exactly the same. We have we
+6:34
+call forward here. So that gives us the outputs, the logits,
+6:38
+compute the cross entropy, where this one does the lock softmax
+6:42
+for us. And we set the gradients from the previous round to zero
+6:47
+call backwards to do the backpropagation. And this is just
+6:51
+for logging purposes. Maybe I should put it down here. It's
+6:57
+like just for keeping track. So we can make the plot. And this
+7:03
+is the model update. And here I'm computing the loss over the
+7:09
+whole training set. This is just for plotting. So this is using
+7:12
+this function here. I will actually show you another video
+7:16
+after that, where I refactor this a little bit into Python
+7:19
+scripts. All right. Yeah, I common problem. I forgot to
+7:26
+execute these things. Okay, it's training. So this is training on
+7:31
+the CPU. I compiled pytorch for the M one Mac, so it might be
+7:37
+a bit faster than on normal CPU. But yeah, it's still simple
+7:44
+enough to just run it on a CPU, you don't need a GPU for that
+7:47
+really. Right, it might take a while now, you have seen the
+7:51
+results on the slides already, right. So the loss and things
+7:55
+like that. So let me pause this video, I can show you the result
+8:00
+in the beginning of the next video. And I will show you also
+8:04
+how I would personally run code in Python scripts. So using
+8:10
+Jupyter Notebook is super nice for teaching because we have
+8:13
+everything in one notebook. But like I said, if our code becomes
+8:16
+more complicated, it might be nice to put some of the code
+8:20
+into Python scripts where it's sometimes easier to debug. And
+8:23
+also, you can then reuse some of your functions. So let me pause
+8:27
+this video, I will make another video showing you the Python
+8:29
+scripts.
+
+##v67:
+
+0:00
+Yeah, let's start by taking a look at the results from the
+0:03
+previous run. So as we can see, I would finished after
+0:08
+approximately four minutes, as we can see, yeah, the loss looks
+0:12
+nice, it goes down. So you can see, for the different epochs,
+0:16
+the loss continually goes down, maybe training a little bit
+0:22
+longer would have been nice, because we can see there's still
+0:24
+a trend here. But overall, that looks pretty good. And then also
+0:29
+when we compute the accuracy, we get a good accuracy here. Now,
+0:33
+let me show you how I would organize my code, if I work on a
+0:38
+bigger project where I do more tuning. So what I like to do is
+0:43
+I like to do, like to use Python scripts for that. So if I have a
+0:48
+folder here, I have usually multiple files, one helper dot
+0:52
+pi file, sometimes also multiple helper files, where I keep
+0:57
+functions that I want to reuse across different projects. But
+1:00
+also, if I have multiple models, I keep like general functions in
+1:04
+there. For example, computing, the accuracy would be such a
+1:07
+function. And I also have a settings file with your model
+1:11
+settings and hyper parameter settings, and so forth. And
+1:14
+then the main train model file, which is used for training the
+1:18
+model. So let's open them and take a look. So I'm opening them
+1:24
+here in Visual Studio code. What I really like about Visual
+1:27
+Studio code is that it's fast and also shows me if I make
+1:31
+errors, for example. So if I, let's say, um, I don't know,
+1:36
+let's say I make a typo here, I type FLSE set of faults, it
+1:40
+would tell me undefined name. So it's quite smart, it will find
+1:45
+out if I have something that is not defined. So that's what I
+1:49
+like about it. So it's easy to quickly find typos to debug your
+1:54
+code. So starting with, let's say starting with a train model
+1:58
+file. So the train model file here is importing from the
+2:04
+helper file. So there are general functions, like I
+2:07
+mentioned, so I'm importing the data loaders, and functions for
+2:12
+setting the random seeds and making everything deterministic.
+2:15
+I'm this is something I'm using in many different projects. So
+2:19
+I'm keeping this in my general file. And also things like
+2:22
+computing the accuracy and plotting the training loss and
+2:25
+accuracy and so forth. So that's something I like to reuse in
+2:28
+other projects. Or if I have multiple train model files,
+2:32
+let's say train model, mlp one and train model mlp two and so
+2:36
+forth, I can reuse that code, I don't have to copy and paste it
+2:40
+every time. Other things here is, I'm also setting it up such
+2:47
+that it yeah, that it can read command line arguments, I will
+2:51
+show you how to run this in a second. But here, for example,
+2:54
+I'm setting it up with this argument parser that accepts one
+2:58
+argument called settings dot path and one results dot path.
+3:03
+So here, this is where it finds the hyper parameter settings and
+3:06
+model settings. And here's where it's putting the log files and
+3:10
+results from that run. So my settings file I'm using YAML. So
+3:15
+YAML is a thing it sends for yet another markdown language, or
+3:19
+mark, markup language. So what that means, it's just a simple
+3:25
+way of writing a text file that is human readable. So here's my
+3:30
+YAML file. And there's actually a Python library called py
+3:36
+YAML, which lets you load these YAML files, I'm doing it here.
+3:40
+So if I'm loading it like this, then settings will be a Python
+3:45
+dictionary. So it's loading the YAML file into a Python
+3:48
+dictionary that I can use. So why am I doing that? It's just
+3:51
+for organizing things. So I could, for example, have
+3:54
+multiple settings files, and each one has a different hyper
+3:58
+parameter setting. And then I can keep everything organized by
+4:03
+having these files. But of course, you can always put
+4:08
+everything, I could put the settings. Also, instead of using
+4:13
+the YAML file, I could of course also write a Python dictionary
+4:17
+here. And then you would have to add the strings and then the
+4:23
+commas and so forth. So you could also of course, do that.
+4:26
+But if you have bigger projects, it might be helpful to organize
+4:30
+things this way, because then you have maybe multiple settings
+4:33
+files that you want to set up and run in parallel or something
+4:36
+like that. Here, I'm using a trick. So to, how can I say
+4:44
+that? So usually, I like to print things to the command
+4:47
+line when I run my script. But also, I want to keep a record of
+4:51
+it later on that I can take a look at. So here, this is like a
+4:55
+trick so that you can see the output on the command line. But
+5:00
+also, it will be written to a file. So everything I print,
+5:05
+this will also be written to a file called training dot log,
+5:08
+which will be in the results path. So I'm going over this
+5:12
+rather quickly. But if you have any questions, let me know. Also,
+5:16
+this is nothing you have to know for the exam or anything. I'm
+5:18
+just showing it to you and sharing it with you. Because I
+5:21
+think it could be helpful for your project. If you're using
+5:25
+Google Collab, it's maybe easier to have everything in a single
+5:28
+notebook. But I think, in general, if you are organizing
+5:32
+your projects on your computer, it might be helpful also
+5:35
+sometimes to use these scripts files before you run them on in
+5:39
+a notebook. So yeah, so going down here, just printing some
+5:46
+output for logging purposes, that I'm using my set
+5:50
+deterministic function from my helper file that I imported
+5:52
+earlier, this makes my code run deterministically. That means if
+5:56
+I run it again, I will get exactly the same results. There
+5:59
+are also the data loaders I'm loading here. So it's, I think
+6:04
+more convenient, because it's a lot of code to put this into a
+6:07
+separate file, if I go here again, so the data loader, I
+6:11
+think I'll put it on the bottom here, it's actually a pretty big
+6:14
+code chunk. So I'm just writing it here, and then reuse that in
+6:19
+my different projects when I use MNIST. So I don't have to always
+6:22
+put all the code into this file, I just have to copy and paste
+6:25
+my helper file. Alright, so here, this is now how I provide
+6:31
+the hyper parameters, because settings is a dictionary, it has
+6:35
+the dictionary entries, corresponding to these entries
+6:39
+here. So there's a batch size. So I'm passing, so I'm not
+6:43
+hard coding these values, they're all read from the
+6:46
+settings files. So if I change my settings files, I don't have
+6:49
+to, I never have to modify train model. So I never have to really
+6:53
+touch that I can do a hyper parameter tuning by just
+6:56
+changing this only this one single file. Alright, so then
+7:00
+there's my multi layer perceptron here. Just a regular
+7:04
+training using a different use Adam here, I just see could also
+7:08
+use SGD, we will be talking about Adam in a future lecture.
+7:12
+It's like a slightly improved version of SGD. Yeah, and then
+7:18
+this is just the whole code I used also in the previous
+7:22
+notebooks. And then, yeah, I have a plotting function for
+7:26
+plotting the loss and the accuracy. Again, you don't have
+7:28
+to know all these details. It's just can copy and paste that
+7:32
+from my code. It's usually just something. Yeah, it's more like
+7:37
+software engineering at that point. Um, yeah, I also, just
+7:43
+for bookkeeping, I create a results dictionary. So here, I
+7:48
+keep the training accuracies, the validation accuracies, the
+7:52
+final test set accuracy, and also the settings for also
+7:58
+bookkeeping. So if I want to look that up later, I have a
+8:01
+record of that. So for example, let's say you run your model.
+8:05
+But later on, you decide you want to make some different
+8:07
+plots. This way, you don't have to rerun your model, you have
+8:10
+all your data here. And I'm saving that to a YAML file.
+8:14
+Alright, so let's run this then and see how it works. So here,
+8:21
+I'm in this folder. And if I want to run this, I type Python
+8:25
+train model, but pi and then remember that two arguments, I
+8:28
+can maybe try to run without it should complain. Yeah, it says
+8:33
+following arguments are required settings path and results path.
+8:36
+So just to show you, let me show you the results. You can see it's
+8:40
+empty right now. Now I'm executing it Python train
+8:46
+model and giving it the settings path. Just called it settings
+8:52
+dot YAML. So this is just this file here. And then results path.
+9:04
+Just call it results. So then it's running. And you can see
+9:13
+while it is running, it's putting things here. But it's
+9:16
+already also putting a log file here. So you can either check
+9:20
+the command line here. Or you can already if you don't have,
+9:24
+let's say if you are on the server, and you don't have a
+9:27
+stable connection, and this gets interrupted, then you still have
+9:31
+this log file here. Okay, that's already finished. I was pretty
+9:34
+quick. So now everything we have seen is in this log file here as
+9:38
+well. So just for records for future record, if you close this
+9:41
+session here, you will have it still available. Then we have
+9:45
+all plots here that we generated. So this is a slightly
+9:49
+fancier version of the mini batch loss. So yeah, I'm
+9:53
+computing the running average. And yeah, this is on the left
+10:00
+hand side, the training and validation accuracy for the
+10:03
+different epochs for the 10 epochs. Yeah, and I have that
+10:08
+now for my records. And I also have this results dictionary if
+10:11
+I want to create new plots. So this is also a YAML file with a
+10:15
+settings, the final test accuracy, the training
+10:21
+accuracies, and validation accuracies. Of course, if you
+10:28
+have, let's say you have a Jupyter Notebook, you it's
+10:33
+sometimes more convenient, for example, if you want Google
+10:35
+collab, to have everything in a single file, but there's also a
+10:39
+way you can do a hybrid of that. So if I go into this directory,
+10:44
+let me just create a new Jupyter Notebook, for example, like
+10:47
+here, it's a new Jupyter Notebook, I can also maybe don't
+10:51
+have to use a YAML file. But I could also close these files on
+10:59
+second. I could also import from my helper file. So when I have,
+11:09
+for example, here, these imports from helper import, I can do
+11:13
+the same thing. Also with my Jupyter Notebooks, I can also
+11:17
+import here and see. So only the only thing I have to do is I
+11:20
+have to have the helper file in the same folder as the Jupyter
+11:23
+Notebook. But that way, you can keep your Jupyter Notebooks
+11:27
+rather small, you don't have to make them huge. So you can
+11:31
+technically you could also copy and paste this, you have to make
+11:35
+some modifications because we don't have these arguments, but
+11:39
+we could say, um, yeah, arcs result path. The problem would
+11:48
+be we had, we would have to change this one to result path,
+11:54
+we could do it like this. And then let's say results. And then
+12:01
+settings like this, and then we have to remove this arc here
+12:12
+everywhere. So I can maybe quickly do that is by making a
+12:18
+new text file. And then replace arc dot, actually don't know
+12:26
+this works here. Okay, I would maybe I can do that in quick more
+12:30
+quickly here. arcs dot, just replacing every instance of arcs
+12:43
+like this. And then copying it back here. Okay. Yeah, that
+12:57
+should technically work, it will probably complain, I've probably
+13:00
+forgot something here.
+13:05
+Well, it actually works.
+13:07
+Yeah, so we could also run the code then in the Jupyter
+13:10
+Notebook here if we wanted to. So note that we saved some space
+13:14
+by not putting these functions from the helper functions into
+13:17
+this notebook. So it's a little bit shorter. So this way, you
+13:20
+can also take advantage of that on Google Collab. Alright, so
+13:24
+this is it for the coding examples, I will upload them all
+13:28
+to GitHub. So you can take a closer look. And then we will
+13:31
+continue with some aspects about multilayer perceptrons.
+
+##v68:
+
+0:00
+Yeah, now we have seen simple models like logistic regression, and more complicated models like multi layer perceptrons. So I
+0:08
+think that's a great time now to talk about topics like over fitting and under fitting. So in particular, problems with
+0:15
+models that are too simple, like logistic regression, and problems with models that fit the data too well, maybe multi layer
+0:22
+perceptrons. So yeah, the big problem with models that are too simple is that yeah, we don't get a good performance out of
+0:29
+them. For example, when we use logistic regression, on MNIST, we got 93%. Whereas when we used on
+0:40
+Yeah, now that we have seen a selection of models like logistic regression as a simple model, and multi layer
+0:46
+perception as a, I would say more complicated model, it's I think a good time to talk about over fitting and under fitting.
+0:54
+In particular, problems that arise with models that are too simple, like logistic regression, apply to MNIST data,
+1:01
+and models that fit data data too well, for example, multi layer perceptrons with too many features. So yeah, with that,
+1:09
+let's talk about some of these topics. But I also wanted to start this video with a small, let's say on quiz. So here, I'm
+1:18
+showing you some images from the MNIST data set. And yeah, the question is, what image or what number do you think this is? So
+1:29
+yeah, the true label is actually an eight. The model predicts a
+1:35
+four, I can kind of see how it predicts a four, though. I mean, if you look at it, it could be almost like something like this,
+1:42
+right? So something like this. So it's actually an eight, but it
+1:47
+doesn't look that far away from a four, to be honest, it's actually a pretty tricky case. Or take a look at this one. What
+1:54
+would you think this image is? So yeah, as you may have thought,
+1:59
+it's a two, but also, it's actually not too far away from a seven, right? If you think of a seven, like this, it's actually
+2:06
+not too far away. And in fact, that the model predicts a seven here, or this, this one here, what would you think this number
+2:14
+here represents? So according to the labels, this is actually a five, but I also can see how this might be a three almost,
+2:23
+right? So in that way, another ambiguous case. Last one. So
+2:28
+what do you think this one represents? Yep, it's a six. But yeah, also, it could be very well be a zero. So like, like
+2:38
+this, maybe maybe someone was writing the zero like this. So you can see, it's not always very obvious on what this
+2:46
+number represents. And that way, it's probably even impossible to get a 100% prediction accuracy on that data set. Oops, I have
+2:54
+one more example here. So yeah, can you think what? Well, can you guess what these numbers here are in terms of the true
+3:02
+labels and the predicted labels? So on the left hand side, we have a true label two on the right hand side also true label
+3:08
+two. So both these numbers represent the digit two, but you can see, they look very different from each other. And also,
+3:16
+yeah, the model in the left hand side, on the left hand side predicts zero on the right hand side predictor seven. Yeah, so
+3:24
+here's an overview of some of the failure cases of a multi layer perceptron trained on MNIST. So here, I was using a
+3:33
+not so good model. It was like a logistic sigmoid activation and
+3:38
+output layer. And I use the MSE squared error loss. So I only got 93% accuracy. But that is really besides the point. So the
+3:47
+point here is really, it's useful to visualize some of the failure cases. So if you train a network on a data set, it's
+3:56
+always good to look at the wrong prediction. Because sometimes, you may also find there's just a mislabeling issue in the data
+4:03
+set that you may want to fix. So in that way, sometimes, yeah, you get additional insights about your data, like issues
+4:09
+with your data by just looking at it. So yeah, here, it's just interesting to see what the model here predicts. For
+4:16
+example, like I mentioned, in Germany, we write the seven like this. And the US it's common to write a seven like this. In
+4:24
+Germany, it's common to write the one like this. In the US, it's common to write the one like this. So I can see a model
+4:32
+may confuse American seven with a German one, for example, I
+4:40
+can't see this issue here in this data set. But what I can see is that, for example, this seven here is mistaken by a
+4:47
+three, because a three also has this thingy here in the middle, this little, yeah, I would, what would we call it? I don't know.
+4:55
+But you can see this is maybe on confusing the model thinking it's a three while in truth, it's a seven. So here, just the
+5:04
+bottom line is it's useful sometimes to take a look at your training data set and the wrong predictions. So talking now
+5:12
+about overfitting and underfitting. So overfitting refers to the issue when the model memorizes details in the
+5:21
+training set that are only very specific to the training set, but don't generalize to the test set. So here, for example, what
+5:32
+I'm showing you is a plot where I have the error on the y axis, and the model capacity on the x axis. So what do we mean by
+5:43
+model capacity? So with model capacity, I mean, in a way, the
+5:49
+number of parameters or complexity of the model, think of it for, for simple, for simplicity, as the number of
+6:00
+parameters, or the ability of the model to fit a complex
+6:08
+data set. So a model with more hidden layer compared to a model
+6:14
+with fewer layers, a model with more hidden layers, has a larger capacity, or model with wider layers also has a larger capacity
+6:22
+to a model compared to a model with fewer or smaller hidden layers. So usually, the more layers you have, or the wider
+6:30
+the layers are, the higher your model capacity. Alright, so what
+6:36
+I'm showing you here now is the training error first. So let's focus on the training error in orange. So the error usually
+6:43
+goes down as the model capacity increases. So that means if we
+6:49
+have more layers, or, I mean, this is like, of course, not generally true, because then we have issues like vanishing and
+6:57
+exploding gradient. So let's say if we have a wider layer, so if we have, let's say, multi layer perceptron, where this represents
+7:07
+our hidden layer, if we make this hidden layer wider, like
+7:15
+this doubling the size, for example, we increase the capacity of that model to fit a complex data set. So usually,
+7:24
+for the training set, the larger the capacity, the smaller the error. For the test set, though, what we usually observe is,
+7:35
+first, if we have, so let's say we start with a very simple model here on the left hand side, like only one hidden unit
+7:42
+or something in the hidden layer, then the model is too simple to capture the trends or patterns in the training data.
+7:50
+So we start with a large error. But then as we make the hidden
+7:55
+layer wider, we see that the error goes down. But then let's
+8:00
+say we make the layer too large, so too many parameters to learn.
+8:06
+What we often observe is that the test set error goes up again, because you know, the model has so many parameters
+8:15
+that it starts memorizing certain patterns in the training set that don't generalize to the training set. So for example, in
+8:23
+terms of pattern, like, let's say individual positions of pixels, that instead of more the general shape, it would pay too
+8:31
+much attention to a particular pixel or something like that. And with generalization error, this is I mean, this is like the
+8:39
+performance on new data, for example, as measured, often it's
+8:49
+measured via a test set, an independent test set. So we
+8:55
+usually we use the test set to estimate the generalization error. Yeah, one more thing under fitting. And our fitting
+9:04
+usually means if the model is not complex enough to capture
+9:10
+the trends in the data. So here, in this region, we can maybe say that this is under fitting. And here, on the right hand
+9:19
+side, this would be overfitting. So overfitting is usually if you how you would quantify this usually by looking
+9:27
+at the gap between training and test set performance. That is usually one way to assess the degree of overfitting. Yeah, in
+9:37
+practice, you will sometimes also hear people saying a model has high bias or model has high variance. So I want to briefly
+9:45
+go over the concept of the bias variance decomposition and how it relates to overfitting and under fitting. However, this is
+9:52
+just a very brief rundown. It's not, I would say the most important thing here in this course. So this course is about
+9:59
+deep learning. And because we have only so much time, we won't talk about it's a model evaluation techniques in too
+10:05
+much detail. There's a simple technique that most people use, I will talk about this a little bit after these slides. And
+10:13
+also we'll show you how that works. And yeah, in code examples. So but just let's just focus on bias variance
+10:20
+decomposition. If you're interested in more model evaluation aspects, I cover more of this in the 451
+10:27
+introduction to machine learning course, which I usually teach in fall semester. So but here, because like I said, we only
+10:34
+have so much time in deep learning. I don't want to cover this in too much detail here. But I think it's useful to have
+10:40
+a basic understanding of what bias and variance means in that context, because you will probably read about this in a
+10:47
+paper at some point in your career. So let's say, we have a
+10:54
+model for regression, because it's simpler in this context, let's say we have a regression model. And this is some value
+11:02
+for a given data point that we want to estimate, let's say, call that value on prediction, theta, let's, let's say this is
+11:09
+a the true, true value. And we want to estimate this, let's say
+11:17
+by predicting its value using a regression model. And the
+11:22
+regression model produces this theta head here. So theta head is the prediction. And now, so think of everything here in the
+11:35
+context of the squared, squared arrow. So here, we talk about the
+11:45
+bias variance decomposition of the squared error loss. And now think of having like a large number of training sets, why we
+11:53
+have this large number of training sets is a weird, interesting question. It's like a weird scenario. Usually, in practice,
+11:59
+we only have one training set. But just assume for the sake of this example, that we have a very large number of training
+12:06
+sets, let's say we have 1 million training sets. So every time we train a regression model on a training set, we get a
+12:12
+slightly different model, because the training sets are not identical. So now think of training 1 million models. And
+12:25
+each model makes the prediction on the same data point. Let's call this so the data point corresponding to the theta here,
+12:32
+let's call this data point, I was a prediction for the data point, I, and then we average over them. So we average over
+12:41
+these prediction for that data point. So here, the expectation is over the training sense. So we are predicting the data
+12:49
+point for these were using these different models. So then we
+12:55
+get this average value here, this expectation, and the difference between this expected value, or this expectation of
+13:03
+the data head here of the estimated parameter, the difference between those two, this is our bias, this is how
+13:11
+from an average, how far are we off from the true value? In contrast, so the variance, we are just two different ways of
+13:19
+writing the variance, you've probably seen that in other statistics courses. But the main point is, the variance is
+13:25
+defined a little bit differently. It's how spread out these predictions are. So if you have a prediction by a particular
+13:33
+model, and then you take the average prediction, so this is really like here, the average prediction, how far, or how
+13:46
+spread are they? How far are these apart squared? So there's no positive or negative value. So how far are they apart, and
+13:54
+then taking the expectation. So how far or how scattered our predictions on average, basically. So because this is
+14:00
+like very weird to think about, conceptually, I find it easier to have some drawings. I took this actually from 451. So
+14:09
+students will have taken 451 have seen my little drawing here. So that's a person with a bow and arrow. And let's say
+14:17
+the person wants to hit some target here. There's also usually some noise around the target. So in the data set, so
+14:25
+here for simplicity, maybe ignore the noise. And the goal is for this person here to hit the target with an arrow. If so
+14:37
+you can see all the arrows fly short here. So the difference between. So this party, let's say the average here, this would
+14:46
+be the expectation in the middle, if you take the average of all these arrows here, this would be the expectation, you
+14:54
+can see the difference between this one and this one, this would be the bias. And how scattered or how spread these
+15:03
+arrows are, that would be the variance. So why is why am I explaining this? So usually people relate bias and variance
+15:13
+to overfitting and underfitting. Personally, I find it easier to think just of overfitting and underfitting. But yes, some
+15:19
+people like to talk about models in terms of bias and variance. So model with a high variance, if you would train that model
+15:27
+with different training sets, this would mean there's a large variety of these predictions of the model. So model with high
+15:34
+variance is also more likely to overfit. And a model with high bias means that it's kind of far off from the target. So in that
+15:43
+way, a model with high bias is usually on not not complex
+15:48
+enough. So it's usually underfitting. So high bias is usually underfitting, and high variance is usually overfitting.
+15:54
+So I try to summarize that here in this plot. So again, we have our error and the model capacity. So the training error
+16:02
+and generalization error is what I've shown you before. On the left hand side, when we have a high error for both training and
+16:08
+test data, or high, let's say, high error, oops, surprisingly
+16:18
+difficult to talk and write at the same time for me, I don't know why I'm high error for both training and generalization.
+16:34
+Let's say on both training and generalization should be in
+16:40
+let's say in terms of in terms of both training and
+16:45
+generalization. So if you have a high error, this is usually this is usually underfitting. And if we have a high
+16:53
+generalization error, but a low training error, then this is usually the difference between the green one here, the orange
+17:00
+groups on the orange one, this is usually overfitting. And
+17:06
+variance and bias relates to that. So if we have a very simple model, low model capacity, usually has a low
+17:14
+variance. So even if I fit the model on different training sets, the results are usually quite stable, because it doesn't
+17:21
+memorize the data too closely. And then the variance goes up
+17:26
+as we increase the model capacity. So in that way, the variance increases, and this is usually also correlated to
+17:35
+increasing degrees of overfitting. Similarly, with a bias, so a model that is too simple has usually a high bias
+17:46
+because it can't fit the data too well. It will always let's say provide a do very simple predictions that are always very
+17:53
+similar. It's not complex enough to fit the data. And you can see though, as you increase the capacity bias goes down, so a
+18:01
+high bias model is usually rated to underfitting. So again, for more details, I covered this in 451. But yeah, I'm more more
+18:11
+detail, you don't really have to know for this course for the focus here on deep learning. So yeah, like I said, a more
+18:19
+detailed understanding is not mandatory for this class, I won't ask you make any more details, let's say in quizzes or
+18:26
+exams, and we just covered. So there's just like a briefly a brief overview. In practice, there are different ways we can
+18:33
+evaluate models. There are like in 451, there are cross validation tests, we used bootstrapping and all types of
+18:41
+different approaches. Deep learning, when we have very large data sets, we usually use the holdout method, where we
+18:49
+have three data sets, a training, a validation and a test set. That is usually sufficient because we usually
+18:56
+have very large test sets. So estimating the performance on a test set should be quite robust, given that we don't reuse our
+19:04
+test set multiple times. So the focus is here really that our test set remains independent. So by that, what I mean is, um,
+19:12
+usually we have a validation set that we look at when we tune the
+19:17
+model. So what we do is usually we fit the model on the training
+19:23
+data, then during training, we look at the validation performance. And then once we are finished, we get the final
+19:28
+performance estimate on the test set. That's the usual approach. Yeah, and that is something we will also be using in the code
+19:35
+examples. So there's nothing really, you have to pay particular attention to right now in this class. So for this
+19:43
+class, we use this threefold holdout method, which is also common in the context of deep learning, if you look at
+19:48
+literature. However, if you're interested in more details about model evaluation and best practices, well, we cover this in
+19:56
+451, which you probably either have taken or not taken, you don't have to know any of this for this class. But if you are
+20:04
+interested, I have put up an article here on archive, summarizing basically my lecture notes on this is like different
+20:13
+different techniques, statistical tests, cross validation, k fold cross validation, bootstrap estimates,
+20:21
+and so forth. So yeah, you are welcome to check out this article if you are interested. Yeah, one aspect also about deep
+20:30
+learning is that deep learning works best with large data sets.
+20:36
+So here, I have drawn another conceptual plot related to the
+20:41
+generalization error and here the training data set size. So if we have the comparison between traditional machine learning,
+20:49
+for example, decision trees, random forests, support vector machines, things like that, compared to deep learning,
+20:57
+usually, if we have a small data set, your traditional machine learning will perform better. So the generalization error for
+21:05
+traditional machine learning will be lower. However, as the data set size increases, usually, we will find that also
+21:12
+your traditional methods will perform better. But yeah, for deep learning, there's actually a really steep, steep decline of
+21:22
+the error with increasing data set sizes compared to traditional machine learning. So especially deep learning works well with
+21:29
+and really even requires large data sets to perform well, because yeah, we have large models that a lot of parameters
+21:35
+and to, you know, to fit what to characterize the model, well, we need sufficient data. Um, yeah, so this is the traditional view,
+21:45
+usually, the more data we have, the better. And also, this is something, if you find that your model doesn't perform well, you
+21:55
+may end up tuning some hyper parameters, you might may find that hyper parameter tuning helps with improving the
+22:01
+performance a little bit. But there will be probably a point where you can't even make any difference, no matter how many
+22:06
+hyper parameter values to explore. And that might be a point where more data could be helpful. So but yeah,
+22:13
+interestingly, I recently saw the paper on double descent. So
+22:19
+there was a paper on double descent that came out in December 2019. So that's an observation that is quite
+22:26
+interesting. And it's quite different from the common belief. So here, what the researchers did is they looked
+22:34
+at CNN architecture, standard and resonance. So standard CNNs and residual networks, both things we will cover later in
+22:43
+this course and transformers, which we'll also cover at the end of the course. So I'm not sure if this the insights here
+22:50
+generalized to other models, like recurrent neural networks and multilayer perceptrons, because they haven't looked at
+22:56
+those. But at least this was very interesting in the context of CNNs. So all the models were also trained with a cross
+23:04
+entropy loss here. So yeah, there is this phenomenon of the
+23:09
+double descent. So what does that mean? What does a double descent means? I mean, so here, what you can see is, like
+23:18
+expected, the training error goes down as the model complexity
+23:24
+increases. So here, you can think of x axis as model
+23:30
+capacity, which we have looked at before. So that is expected. At some point, though, if we make the model too large, we
+23:37
+will see that the arrow goes up. So here, the solid line is a test error, trained error goes still down. But the test error
+23:46
+goes up. So this is what we talked about. This is the overfitting. Now, the surprise is that it goes up, but at some
+23:56
+point, it goes down again. So what's going on here? Actually, people don't know quite know yet, why this happens. So there
+24:05
+are some theories, I will share one of them in a later slide. But yeah, so what is interesting here is this double descent that
+24:12
+it first goes down, that's the first descent, and then it goes down again, after going up, this is the double descent. So they
+24:18
+observed it with four different model capacities. So if you make the model larger, you can observe this double descent. And
+24:29
+you can also observe it if you train for more epochs. So here
+24:34
+again, is a test error, they have here on the left hand side, three models, a small model and intermediate model and a large
+24:40
+model. You can see when you train a small model for more epochs. You don't have this you go basically down, the
+24:49
+generalization error goes down. So the model is improving the more epochs we train it for the intermediate model, you can see
+24:58
+it, it goes down. But then at some point, it goes up again. So
+25:04
+here, the model performs actually worse when we train it longer. So in this case, for this intermediate model, it
+25:12
+would be good actually to stop the training early to stop and say training here. And in the next lecture, I will also talk
+25:19
+more about early stopping as a way of regularizing regularizing the model, like improving the performance, preventing
+25:26
+overfitting. And for the large model, you observe it goes down,
+25:32
+then it goes up, similar to the intermediate model, but then it goes down again. So that's also this double descent here. So
+25:39
+it's quite interesting. So yeah, on the right hand side is the same visualizing or the same thing just visualized
+25:47
+differently for the model parameter size here on the x axis and the number of epochs on the y axis. So there are a
+25:54
+couple of thoughts about that from the paper or theories. So
+25:59
+at that critical region, so with critical region, they mean this
+26:05
+region here in the red region. The reason why we might may find that it goes up here is that they think it's only one of
+26:16
+the models fits the data well and is very sensitive to noise. So with one model, imagine you have a residual neural network
+26:24
+and when you train in there are many, many different hyper parameter control model weights that you can define to fit the
+26:31
+data well. So there are multiple possibilities. And there's only one that fits the data well, there's a particular combination
+26:38
+of weights that fits the data well. But it's very sensitive to
+26:43
+noise. So if you have small perturbations in a training set as you train, it's very sensitive, it's not guaranteed to
+26:51
+find it. And also, it's really sensitive to the inputs. So if
+26:56
+there's a slight perturbation in the inputs, the model may make the right prediction or wrong prediction. And that way, it's
+27:03
+not so good in terms of generalizing. But if you have an overpermeable model, if a model is very large, there are many
+27:11
+ways you can fit the data well. So you have a lot of weights and you only let's say maybe need a subset of those to perform well.
+27:19
+And there are many different ways you can find a good subset of the weights. And so they theorize that sarcastic gradient
+27:27
+descent finds one of these weight combinations that fits that training set well, but also performs well on the test set.
+27:36
+So in that way, if I go back, so the claim is basically that
+27:43
+here, the model that is learned is very sensitive to noise,
+27:48
+whereas in this region here, yeah, we found a model that
+27:55
+performs well on the training set, but also on the test set. There are more experiments in that paper also experimenting
+28:03
+with different degrees of noise. So if you are interested in that, yeah, I recommend reading the paper here, I only took a
+28:10
+very small number of figures to just illustrate this double descent phenomenon. So there's also it's the same as I show
+28:19
+you, this is also an interesting figure, it shows both the number of epochs and the width. So there's essentially a model wise
+28:27
+double descent and epoch wise double descent. So there are these double descent curves for both different sizes of the
+28:35
+model. So if you have more parameters, and also for longer training. Lastly, there's also, yeah, something they observed
+28:44
+with the number of training examples. So if you increase the
+28:49
+data set size, there are also some little surprises, but I wouldn't say so they describe them in the paper as surprises,
+28:57
+but I wouldn't say it's a big surprise, the general trend is. So if you have here the error from lowest to highest, so you
+29:05
+have the lowest error in this region here, where you have a large model and a lot of data, or a small model and a large of
+29:13
+amount of data, data. But what is weird is here in between, if you have an intermediate model, more training set site or larger
+29:21
+training sets are actually worse compared or these models are worse compared to the small models and big models. And also
+29:29
+when you look at this closely, let's say here, for example, you
+29:34
+can see that increasing the number of training examples from
+29:40
+here to here, improves the generalization error. But then from here to here, it becomes worse again, and then it becomes
+29:47
+better again. So if you would plot that you have, let's say high generalization, or it drops, and then it becomes worse
+29:55
+again. So that is also a little bit weird here. That's some surprise. But in general, you can see more training data helps
+30:04
+and also more larger models perform better. So a good combination is large training set and a large model. So yeah,
+30:11
+again, so this is just interesting. If you're interested, you can read about this more, why this doubly sent
+30:18
+phenomena happens, I think that is not quite clear. Some people that say I saw some forums, even debate that this might be just
+30:26
+some buck in the code or things like that. So many people, though, I can say have observed this independently. So it's
+30:34
+probably a real thing. But why this happens there, that's not quite clear yet. So but yeah, moving on. So this was just a
+30:42
+very brief video, actually, it was longer than I expected, but still a very brief video in the grand scheme of things like on
+30:49
+overfitting and underfitting. And in the next video, I will show you how we can use multi layer perceptrons with custom
+30:56
+data sets, because so far, we only have worked with MNIST. But yeah, chances are for your class project, you will want to work
+31:03
+with your own data set. So that in the next video, I will show you how we can do that.
+
+
+##v69:
+
+0:02
+Yeah, let's talk about cats and dogs and custom data loaders. I
+0:08
+should say I just added cats and dogs to make this a bit more
+0:12
+interesting because I can imagine if you just read data
+0:15
+loaders or custom data loaders, it doesn't sound so exciting by
+0:19
+itself. So I was like using that just to get your attention. But
+0:25
+in any case, so here what I'm showing you is indeed cats and
+0:29
+dogs classifier I trained from Kaggle data set. So he had
+0:33
+trained a VGG 16 convolutional network that we will be
+0:37
+discussing later in the convolutional network section or
+0:41
+lecture. So here, this is, yeah, think of it as just a neural
+0:44
+network for the sake of having a model here that performs, yeah,
+0:48
+reasonably reasonably well on a more complicated data set. And
+0:53
+in order to fit this model, I downloaded this data set from
+0:57
+Kaggle, containing cats and dogs images, but I needed to create
+1:01
+a custom data loader for that. And in this video, I will show
+1:04
+you how you can create a custom data loader, I will be using a
+1:08
+simpler data set, though, because then you don't have to
+1:10
+download such a large cats and dogs data set, you will be or
+1:15
+you can actually get this though and download it. So I have the
+1:19
+code link here. If you're interested, you can download it
+1:22
+from here. Or here, at least have the instructions how to
+1:25
+download it. And I also have this model there. But I wanted
+1:29
+to before I show you the custom data loader, I wanted to make a
+1:32
+few more points. So here, I'm showing you the training loss
+1:38
+and accuracy. So actually, this should be the accuracy here on
+1:42
+this axis. Don't want to hide the 90 here. And let's focus on
+1:48
+the left hand side first on the cross entropy. So you can see
+1:51
+during training that the training loss goes down as
+1:55
+expected, this is something you want to see. But you can see,
+1:59
+I'm using a validation set. And for the validation set, for each
+2:03
+epoch, I evaluate on the validation set. And you can see
+2:07
+that here, the yeah, the loss does not go down. So at first,
+2:11
+it goes down, but then it stagnates. So in this case, we
+2:15
+don't make any further improvement on the validation
+2:17
+set while it continues to improve on the training set. So
+2:22
+here, we can see there is overfitting going on. So even if
+2:28
+I train longer, I may still not be able to improve the model. On
+2:34
+the right hand side, that's the same for accuracy. But yeah, the
+2:37
+accuracy is usually so you can think of it as the cross
+2:41
+entropy as our inverse surrogate for the accuracy. So it
+2:46
+behaves similarly here. So you can see the accuracy goes up,
+2:51
+continues to go up. That's maybe even Yeah, I would say maybe,
+2:55
+let's say 97%, even what you can see for the validation set, it
+3:01
+goes up and then it tends to stagnate. Maybe you're at just
+3:06
+say somewhere here. Let's say maybe 88%, something like that. I
+3:12
+then also evaluated the performance on a independent
+3:15
+independent test set after the training has completed on that
+3:19
+training test set, I also get 88%. So maybe approximately like
+3:22
+the validation set, which is kind of expected. So yeah, what
+3:29
+we can see here is extensive overfitting. And here, the
+3:35
+validation set gives us or an indicator of that. So we don't
+3:38
+have to use our final test set necessarily, we can already see
+3:41
+based on the validation set that there's overfitting. So the test
+3:44
+set should only be used ideally one time in the end, it should
+3:48
+be kept independent. So if you want to tune your model, you can
+3:53
+do this entirely on the training validation set. If you tune your
+3:56
+model a lot, if you change a lot of hyper parameters and do a
+4:01
+lot of tweaking, you may find that the validation set
+4:04
+performance is actually a little bit better on the training set.
+4:10
+And sorry, during training, so when you evaluate it, but then it's
+4:15
+not as good, it's better, actually, sorry, it's better than
+4:18
+the test set, because you will see that if you tune your model
+4:22
+a lot, you will also slightly overfit to this validation set.
+4:26
+Of course, you don't use your validation set for model
+4:30
+training, right? So you don't fit the model on that data, you
+4:33
+only use it to evaluate it during model training. However,
+4:37
+just by chance, you may end up picking a model that just
+4:40
+performs well on the validation set due to chance and then you
+4:43
+have this effect of overfitting. So in any case, the procedure I
+4:49
+outlined using training set validation set and test set for
+4:52
+the final evaluation is near the common approach in deep learning.
+4:57
+In regular machine learning, we tend to use k fold cross
+5:00
+validation, but it's a little bit too expensive for deep neural
+5:02
+networks. And also, because we have large data set sizes, like
+5:07
+usually large validation, and test sets, that's also usually
+5:11
+okay. Yeah, what is a good ratio when we use a training validation
+5:16
+and test set? I think, I mean, it's relatively important to
+5:22
+have a relatively large test set to get a reliable performance
+5:26
+estimate. Also, it's useful to have a lot of data, because we
+5:32
+have seen in the previous video, the more data usually the
+5:35
+better. So in that way, I would say, make the validation set the
+5:39
+smallest, it's still important, because it gives you an idea of
+5:43
+the model performance during training. But it's not as
+5:46
+important as let's say, the test set or the training set. So
+5:49
+personally, for example, I would do something like 80% training
+5:52
+data, 5% validation data and 15% test data. But you can of course
+5:58
+also change it, you can make it 85, five, and 10, or something
+6:02
+like that. So it really kind of depends. Also, there's no real
+6:08
+correct way of doing that. It's usually something approximately
+6:12
+around these values. So yeah, just to summarize, the training
+6:16
+set is used for training, and it is not necessary to plot the
+6:19
+training accuracy during training, but it can be useful.
+6:21
+So you don't have to do the plots during training, right.
+6:24
+But I find it useful to look at it. Because then I can see based
+6:29
+on the validation and training accuracy curves, how much I'm
+6:33
+overfitting. So the validation set here provides a rough
+6:37
+estimate of the generalization performance. It's kind of like
+6:40
+the test set. But because we use the validation set a lot, and we
+6:44
+choose hyper parameters such that the model performs well on
+6:47
+validation set, it's, it's not truly independent anymore. And
+6:51
+we have an optimistic bias here. So from the validation set, the
+6:56
+validation set would usually report a model performance that
+7:00
+is slightly better than the model would perform on truly
+7:05
+unseen data. Yeah, and like I said, the test that should only
+7:11
+be used once to get an unbiased estimate of the generalization
+7:15
+performance. So this is like really in model evaluation in a
+7:19
+nutshell in like a minute. So like I recommended in the
+7:22
+previous video, if you want to know more details, I recommend
+7:25
+the article I linked there, I will also link it again on
+7:28
+canvas. So here's how it looks like you don't have to make
+7:34
+plots. Also, usually when I train a model, especially if I
+7:38
+do that on a server, I just print these values like the
+7:43
+training accuracy and validation accuracy, and let it train and
+7:47
+then after training, I would print the test accuracy. There
+7:52
+are multiple tools that can help you to monitor model training
+7:58
+during, during training. So to take a look at these curves in
+8:03
+real time, it's yeah, it requires some setup. Because
+8:07
+yeah, we have so many important topics to cover in this class,
+8:10
+I won't go into too much detail. Because it's like, I would say
+8:14
+more like an engineering thing, like after like a software
+8:18
+engineering thing. So after you understood the basics of deep
+8:22
+learning and are familiar with pytorch, you can add more tools
+8:26
+to your tool belt and explore additional tools. I don't want
+8:30
+to cram too many tools into your tool belt right now you can. But
+8:35
+if you're interested, you can explore them on your own, like
+8:38
+after class or for your projects. So some tools are, for
+8:42
+example, that are nice ML flow. And there are others. And these
+8:48
+allow you also to plot on your performance values during
+8:52
+training in a plot interactively. There's also
+8:57
+tensorboard. And tensorboard is originally for TensorFlow, but
+9:03
+it's also compatible now with pytorch. And also a lot of
+9:06
+people use tensorboard. So you can maybe look at these two
+9:09
+tools. But of course, there are more. These are really only the
+9:12
+two that spontaneously come to mind. But if you are interested,
+9:17
+I can also share a list of more of those tools. In any case, so
+9:23
+now just before we get to the code in the next video, just a
+9:27
+few more things to mention there are parameters and hyper
+9:32
+parameters. So just to recap, parameters are parameters like
+9:37
+the weights and the biases in the model that are trained or
+9:40
+learned from the training data. So that's what the model learns
+9:44
+via backpropagation. However, there are hyper parameters, and
+9:48
+I haven't used this word yet. So I have to use this word, but I
+9:51
+haven't explained it yet. I think so hyper parameters are
+9:55
+you can think of them as tuning parameters. So students who have
+10:03
+taken 451 have encountered this in the context of k nearest
+10:09
+neighbors as the number of neighbors and so forth. Here we
+10:11
+have different hyper parameters. So here, these tuning parameters
+10:16
+are, for example, the mini batch size, the way we normalize the
+10:19
+data, for example, min max scaling standardization, just
+10:23
+dividing it by a constant, there are many different ways we can
+10:26
+normalize data. And hyper parameters are really parameters
+10:30
+you as the person who sets up the model, you have to choose
+10:34
+them yourself. And you have to try them out in practice and see
+10:37
+what performs better. There's no way let's say we can use
+10:41
+backpropagation to learn these. I mean, there are maybe some
+10:44
+tricks or something. But usually, this is something that
+10:47
+is set up by the person who implements the neural networks.
+10:53
+For example, the number of epochs can also be considered
+10:55
+as a hyper parameter or the number of hidden layers, the
+10:58
+morphin units, everything really that affects the performance of
+11:02
+the final model, the learning rate, to some extent, also the
+11:06
+random seed. So the random seed is something you probably
+11:09
+shouldn't tune. But there are sometimes random seeds that
+11:13
+don't produce good models, because the initial starting
+11:16
+weights are really bad. So sometimes, so usually, I
+11:19
+recommend, if, if you want to report the final performance of
+11:23
+a model, you present a model, I would recommend to run your
+11:26
+model at least three or five times with different random
+11:29
+seeds, and then average over the results. And then you can also
+11:33
+show the standard deviation or even confidence intervals. And
+11:37
+we have the loss function as a hyper parameter. And here,
+11:40
+various weights in terms of weighting terms, you can weight
+11:43
+certain examples more heavily than others in the loss
+11:46
+function, the activation function like sigmoid, a
+11:49
+logistic sigmoid, 10h, or relu, and so forth, regularization
+11:55
+schemes, we will talk about that in the next lecture, weight
+11:59
+initialization schemes and optimization algorithms. These
+12:02
+are all things we will cover in the next three lectures. So
+12:07
+yeah, there are really no good ways to choose these, I would
+12:12
+say. Maybe there are some ways now, but I would so based on
+12:17
+meta learning, you can train your model on different data
+12:20
+sets. And you can see what performs well over how how you
+12:24
+set up your model so that it performs well on different data
+12:26
+sets. But in the grand scheme of things, it's something you
+12:30
+still have to experiment with. So I'm saying it's there's no
+12:34
+kind of scientific explanation for why. Okay, no, no theory,
+12:39
+theorem, why certain parameters, hyper parameters should work
+12:42
+better than others. So what we have to do is we have to try
+12:46
+many things. And there's this joke, probably like, because of
+12:51
+gradient descent, people call this graduate student descent,
+12:55
+because graduate students usually, unfortunately have to
+12:58
+spend a lot of time tweaking these things. These hyper
+13:02
+parameters. Alright, so he has actually a nice visualization of
+13:07
+pytorch data loader, how it works conceptually, I just saw
+13:10
+it the other day. And I thought it might be fun to include it in
+13:13
+the video, because it's really nice summary of how things work.
+13:17
+So I saw this here on Twitter, the original link. But yeah,
+13:20
+let's just play the video here. So you can see. Sorry, let me
+13:26
+stop it first. Let me explain first. And then I start the
+13:29
+video. So on the left hand side, you are shown the inputs and the
+13:32
+labels in the data set. So this is your data set. Then there
+13:36
+are certain transformation methods, we will cover this in
+13:38
+detail when I show you the data loader in action. And there's a
+13:42
+sampler and a batch sampler. So the sampler samples one pair of
+13:47
+inputs and labels at a time, the batch sampler, yeah, samples them
+13:53
+for a batch, and then the collate function combines them to a
+13:56
+mini batch that we can use in the model. So let's play this
+14:00
+again. So you can see on the inputs enabled, go through the
+14:04
+transform and through the sampler and get collected in
+14:07
+this batch sampler. Once we have a batch ready, it goes to the
+14:10
+collate function, and it produces the batch of inputs
+14:13
+and batch of labels. And then it does the next batch. And you can
+14:17
+see here, it's sampled without repetition. So each sample is
+14:24
+used exactly once or so each pair of inputs and labels. And
+14:29
+then once we're finished, we finish the epoch, and then there
+14:32
+will be another epoch. So you can see they also chosen
+14:35
+randomly here. So it's basically equivalent to shuffling. So then
+14:42
+the last batch here. Alright, yes. So and then you would do
+14:51
+the whole thing again. But of course, you would choose them in
+14:53
+a different order. If you have, there's a parameter, it's called
+14:57
+shuffle. If you have shuffle enabled, it will choose them in a
+14:59
+different order then. Yeah, this is conceptually how the pytorch
+15:04
+loader works. So here's how it looks like in code. And yeah, I
+15:09
+actually, I think I should make a separate video and walk you
+15:12
+through this in the Jupyter Notebook. It will be a little
+15:15
+bit better to explain compared to walking you through it here
+15:18
+on the screenshot. So just to wrap up the slides before we go
+15:24
+to the last video of this lecture to the code example. So
+15:28
+we have now the good news that we can solve nonlinear problems.
+15:32
+That's great, right? However, now we have the bad news that is
+15:37
+that our multi layer neural networks now have a lot of
+15:40
+parameters. And yeah, it's easy to overfit the data. So in the
+15:44
+next lecture, we will talk about techniques like regularization
+15:49
+techniques to help prevent overfitting. So here's a
+15:53
+simplified example of how that might look like. So if we have,
+15:56
+for example, a model in the center here, that is maybe too
+16:00
+complicated and doesn't generalize well to new data, then
+16:05
+here on the right hand side, there is a model that is
+16:08
+slightly simpler, we can make it even more simple, like just as
+16:11
+linear decision boundary, but this is not sufficient here to
+16:14
+distinguish between these crosses and circles. So there's
+16:18
+usually a good compromise between model that is, let's say
+16:24
+overfitting, it has high variance or model that is
+16:27
+underfitting that has high bias. So regularization helps to
+16:31
+simplify decision boundaries in a certain way, if you think of
+16:35
+it as if you think about it visually. But yeah, we will talk
+16:39
+more about that in the next lecture. So in the last video,
+16:42
+also the next video, I will show you the custom data loader in
+16:45
+practice.
+
+##v70:
+
+0:00
+Yeah, let's not talk about pytorch custom data load. So
+0:05
+the data loader is a class in pytorch that lets us Yeah, a
+0:09
+lot data more conveniently compared to doing it manually. I
+0:13
+will show you two notebooks. One is just the data loader itself
+0:18
+with a simple example. And then I will show you how we can use
+0:22
+it in a model training context. So yeah, what I should say is
+0:29
+I'm actually using MNIST here. And you may wonder why MNIST
+0:32
+because there's already MNIST data set and data loader
+0:36
+implemented in torch vision, which we could technically
+0:39
+import, which is what we have done. And yeah, last couple of
+0:43
+videos. So the reason is, MNIST is relatively small. And yeah,
+0:48
+in this way, I can upload it to GitHub. So I can upload this
+0:52
+without, let's say, taking too much space in that repository.
+0:56
+And it's also for you faster to download. And it was just convenient
+1:01
+because you are already familiar with it. But of course, here
+1:03
+MNIST this represents a more general data set. So think of
+1:08
+it as an arbitrary data set consisting of PNG files. So what
+1:13
+I've done is I divided MNIST into three parts, a training set,
+1:18
+a validation set, and a test set. So I put them here into
+1:23
+um, PNG files, just in each folder, there's a set of PNG
+1:28
+files, as you can see here. And I have also a corresponding CSV
+1:36
+file. So here in the CSV file, I have the class labels and the
+1:42
+file name. Of course, you can also if you like, you can have
+1:47
+only one folder with PNG files and then have a column with
+1:52
+validation train and test index. So you can also specify it like
+1:57
+this. I mean, how you set it up is up to you. I sometimes find
+2:01
+it convenient to do it like this. Sometimes I only have one
+2:04
+gigantic PNG file folder and keep track of what is training
+2:08
+what is validation with this test, I keep track of it with
+2:11
+columns in the CSV file. But this is really optional. I mean,
+2:15
+like how you want to set up is up to you. You can set it up
+2:18
+however you like. And I will show you how we can then handle
+2:21
+handle that with pytorch data set class. So back to this
+2:26
+notebook, so I showed you now, I have these files. So focus now
+2:30
+on the on these three folders. And these CSV files, the helper
+2:33
+function, I will use them later in this train model notebook.
+2:37
+So yeah, let's get started. So usually, when I have a new
+2:41
+data set, what I do first is I inspect this data set. So I
+2:46
+sometimes use I use image IO, sometimes I just use the Python
+2:50
+image library. I'm not very consistent, it doesn't really
+2:55
+matter. There are multiple libraries in Python that lets
+2:58
+you open a PNG file or JPEG file in Python itself. And then you
+3:03
+can take a look at it. So here, I'm using PIL, it's the Python
+3:07
+imaging library. If you have to install it, I think you have to
+3:10
+do kind of install pillow. Why pillow and not why pill or PIL,
+3:19
+that is because on the Python imaging library, I think it got
+3:23
+abandoned at some point. And then some people forked it on
+3:27
+GitHub to further maintain it. And this fork is called pillow.
+3:32
+But even if you install it as pillow, the import is identical,
+3:36
+you use this one to import it. Or in particular, we are only
+3:40
+implementing the importing this image class. So here, I'm just
+3:45
+looking at the image. So here, I'm loading one data point or
+3:50
+one image from this MNIST train folder. Why C map binary? Yeah,
+3:55
+because color maps by default is this the readers color map,
+3:58
+which is kind of useful for heat maps. But yeah, here, maybe it
+4:02
+looks a bit goofy if we have these colors for MNIST. So here
+4:06
+we use just this version. All right. Yeah, also, I find it
+4:11
+helpful to just take a look at the image dimensions. So here,
+4:14
+here, it's 28 by 28. There is no color channel. And you can see
+4:18
+the values, the pixel values are between zero and 255. Could be
+4:26
+254. I'm not actually not quite sure. He actually I see the
+4:29
+the highest one is 253.
+4:34
+Alright, so then looks okay. So we know, know what we are
+4:40
+working with. Let's now load the CSV files, pandas and CSV files.
+4:49
+So these are only the first five rows with this head command.
+4:56
+Yeah, and I can also show you Oh, you can see it right here.
+5:01
+The data set is yeah, only I made it artificially small,
+5:06
+there are only 256 images in each data set. And this is of
+5:09
+course, much bigger. It's usually, I think 50,000 in the
+5:13
+training set and 10,000 a test set. Here, I just made it
+5:16
+smaller, because I'm going to upload this to GitHub. So you
+5:20
+can download it in this way. It's not like too much taking up
+5:24
+too much space there. Otherwise, I don't want to upload 50,000
+5:28
+small files and stuff, you know. Alright, so here,
+5:32
+um, here's our interesting part. Now, that's the data set class
+5:38
+and pytorch. And so in order to do to use the data loader, we
+5:42
+need a data set. So there are two parts, one is the data set,
+5:45
+and one is the data loader. So let's talk about the data set
+5:48
+first, because that's what we need for making the data loader.
+5:52
+So here, the data set is really how we read the data. So this is
+5:58
+something you have to set up yourself for a new data set. So
+6:03
+here, this is from pytorch torch utils data, this is something a
+6:10
+class from pytorch. And here, this is called class inheritance
+6:13
+in Python. So we are inheriting certain features from data set,
+6:17
+so that they are available in our data sets, it's called class
+6:21
+inheritance, it's like a, not a pytorch, but a Python concept.
+6:25
+So and then we're defining our own data set, I'm just calling
+6:28
+it my data set, but you can call it whatever you like. And then,
+6:33
+like in every class, we have an init method. And here in this
+6:36
+constructor, and this init method, I'm specifying certain
+6:39
+things. It's basically, by the way, arbitrary, what I put here,
+6:43
+it's not required to put anything here. But what we need
+6:47
+here, because we have CSV files, and we have folders, I put both
+6:50
+the CSV path, path, the path to the CSV file, let's say the
+6:54
+training CSV, and the image directory, for example, here,
+6:58
+this directory. And there's also a transform for doing a custom
+7:03
+image transformation, I will show you just a very basic
+7:07
+transformation, actually, we're not doing any transformation. I
+7:10
+will talk about this in the next lecture. Yeah, so what's going on
+7:15
+here is in the init, in the end, we are loading the CSV file and
+7:19
+keep it attached to the data loader. Not now, we don't need
+7:23
+it attached, we one second. So we load CSV file, we save the
+7:31
+image directory to the self dot image dear attribute, so we can
+7:34
+use it later. And then we save the image names as self dot image
+7:40
+names. And this comes from the CSV file from the file name
+7:43
+column. So if I scroll up again, this is this column, we just
+7:47
+save this column here. And then we also save the class label
+7:51
+column as self dot y, these are our class labels. And then we
+7:55
+just store whatever we provide us transform here. So this is a
+8:00
+setup for the data set when it's created. And here, this is how a
+8:05
+data point gets loaded a single data point, remember that this
+8:08
+one that was in short unit animation, loading a pair of data
+8:15
+point with its training label, basically, so one image and one
+8:18
+label. So that's what we are, what's loaded with this get item
+8:22
+here. Here, you have to have this index here. I mean, there are
+8:27
+other ways, but I find it convenient with the index. And
+8:32
+then we have to specify. So what we do is here, we specify how we
+8:37
+obtain one image and one corresponding label. So how do
+8:42
+we open the image? So image dot open, so this is similar to what
+8:46
+I used up here, image dot open. And then I'm giving it the path.
+8:55
+So the path is based on the image directory that I provide
+9:01
+here. And then the image name. So the image name is in this
+9:07
+column, right? So here, what IMG is, it will be, for example,
+9:13
+something like MNIST train, let's say one dot png. So here,
+9:23
+index will select a random one, so it could be the one or three
+9:26
+or five, one, two, 123, whatever. So this is chosen
+9:34
+randomly. So this is how this data set is basically shuffled
+9:37
+by always picking the indices in random order. And then there's
+9:41
+an optional transformation that we can apply to the images, for
+9:44
+example, normalization, rotation, and things like that.
+9:48
+And I will show you how that works in the next lecture. And
+9:52
+then we also obtain the corresponding class label. So if
+9:57
+index is, let's say one, then we will let's say, index is here
+10:02
+one, then we would obtain image 513 dot png and the
+10:06
+corresponding label zero. And then it returns both the image
+10:10
+and the label. And that's essentially it, there's one more
+10:13
+method here, that's the len. And this one is the length of the
+10:17
+data set. So that is how this data set knows when one epoch is
+10:22
+finished. So here, we can simply compute the length by getting
+10:27
+the shape of this y, which is the class label column. So
+10:32
+essentially, I have not imported anything here. I actually should
+10:45
+have def is not defined, huh? Oh, I sorry, I called it the
+10:50
+gift train. Alright. Okay. So this is our data set. So this is
+11:02
+really specifying how we lot a data set or images from the
+11:07
+data set. And now this is the data loader that is also
+11:12
+loading data points. But this is really for making our mini
+11:15
+batches. So for doing that, we need the data set. So here, what
+11:26
+I'm doing is I'm setting up the training data set. So the
+11:29
+training data set has the CSV file, men, mnist, underscore
+11:34
+train dot CSV, and the folder mnist train. This is this folder
+11:38
+here. And this CSV file. Let me before I explain this in more
+11:44
+detail, also show you the validation data set. So here's
+11:47
+the same thing for the validation set. But notice that
+11:49
+the folders names are different, and the CSV file names are
+11:52
+different. And here is the same for the test set. Now, see,
+11:59
+there's another thing going on transform. And this is our
+12:03
+custom transformation. We don't do anything here, except
+12:08
+converting the image to a pytorch tensor. So there's the
+12:12
+torch vision library, which has this transforms package or sub
+12:17
+library. And there are different methods for augmenting and
+12:23
+transforming images here, I'm using something called to
+12:26
+tensor. And this one will convert an image to pytorch
+12:30
+tensor. But it will also normalize the images by dividing
+12:34
+them by 255 automatically. I actually find this, I don't know,
+12:40
+I would like if it wouldn't do this automatically, because
+12:43
+it's maybe something we don't want to do. But in any case, it
+12:48
+does. So what I mean is, it would be cool to have the
+12:51
+choice, whether we do it or not, maybe there's a new function
+12:54
+that has or give you gives you the choice. But it's actually
+12:57
+not a bad idea to normalize images. So in a way, it's maybe
+12:59
+good. So people avoid making mistakes, because you're
+13:02
+training a network on unnormalized images is usually a
+13:05
+bad idea. Okay. Um, yeah, so this is how we then set up our
+13:13
+training data set. Now we have created a data set of training
+13:16
+data set using our my data set class that we defined here. So
+13:20
+here, this is just defining the class. And here, we are actually
+13:22
+using it. And now we are setting up the data loader. So that's
+13:26
+the main part, which takes in this training data set. And
+13:31
+here, we also specify the batch size. We specify whether we
+13:36
+shuffle or not, after each epoch. So this is shuffling,
+13:40
+essentially before each epoch. And there is also a parameter
+13:45
+num workers. So it would be great to have a whiteboard here
+13:51
+or something. I don't have one. But think about it as this. So
+13:59
+if we Python is single threaded, usually, so there's one main
+14:03
+Python Python process, one process running. So there's
+14:08
+usually let's say, data processing. And then there's our
+14:12
+model. And this, let's say, we give our data to the GPU. And
+14:18
+then on the GPU, that happens to model training. And then it then
+14:25
+then it goes back to data processing again. And then it's
+14:34
+basically a repeating loop. So we're going from data processing
+14:37
+to the GPU, where we do the model training and then data
+14:40
+processing GPU model training. And this would also be true for
+14:43
+CPU. The main point is that this is sequential because Python is
+14:48
+usually one single process, one main process. However, data
+14:53
+processing can be slow. I mean, it can take, let's say 10
+14:58
+seconds or five seconds to load the images. So it would be more
+15:04
+efficient if we have the data processing decoupled from giving
+15:11
+the data to the GPU and the model training if those happen
+15:14
+like in parallel, right, so we could have actually multiple
+15:17
+CPUs via multiple CPUs, we can do the data processing and then
+15:23
+the data is already ready in the memory. And the GPU just has to
+15:27
+read it and do the model training and it has never, never
+15:29
+has to wait until the next batch is processed. So in that sense,
+15:36
+we can use multi processing of our CPU to prepare the next
+15:41
+batch of images for the GPU so that GPU doesn't have to wait.
+15:44
+For that, we can use the number of workers greater than zero. If
+15:48
+we have zero, then only one main Python processes used for both
+15:54
+for everything for the whole pipeline. If we set it to one,
+15:58
+then it will create one sub process to load the data, which
+16:00
+is makes it more efficient. And two is even better. I noticed
+16:05
+when I run it here, actually, I get problems recently with
+16:07
+recent versions. I think this is because m this is so fast to
+16:11
+load, that it will just load too many things at once. And then it
+16:16
+has too many open files waiting for the GPU to be processed. So
+16:20
+I get some nowadays an error when I run it on mnist. But if I
+16:23
+have any other data set other than mnist, that is usually not
+16:26
+a problem, because mnist is really just too simple. I think
+16:28
+that's the problem. So I set it to zero. But in your projects,
+16:32
+you may want to set it to a higher number. And for example,
+16:34
+in my research projects, I usually use two or three without
+16:38
+two or three without problems. Yeah. Well, I should also
+16:44
+explain what drop last means. So if you have a number that is,
+16:50
+let's say, not divisible by 32, then there will be a last batch
+16:54
+that is smaller than 32, right. And if drop last is true, it
+16:58
+will be dropped. You don't have to do this. I mean, like, you
+17:03
+don't have to drop this. But I noticed sometimes in my research
+17:05
+code that if I have, let's say, batch sizes of 512, and then the
+17:09
+last batch is only 11 examples, this last batch can be extremely
+17:13
+noisy, and sometimes harm the model performance as a bad
+17:18
+update at the end of the epoch. So personally, in my projects,
+17:21
+I found usually dropping the last mini batch, if it's smaller
+17:25
+than the batch size is sometimes good. Alright, let's take a
+17:32
+look now. So here we are initializing all the data loaders
+17:35
+for the training set for the validation set and the test set.
+17:41
+And here, I'm just, yeah, I'm iterating through it to just
+17:45
+make sure that it works. So yeah, I'm simulating how we
+17:48
+would train a model. So we have, let's say, just two epochs. And
+17:53
+then we iterate through the batches here. For our training
+17:58
+order, this is actually what you have seen before, we have used
+18:01
+the built in MLS data set. Here, I'm transferring it to the
+18:05
+device. So the device, if you have a GPU, it will be the first
+18:08
+GPU. Otherwise, it will be the CPU. So yeah, it will just
+18:13
+iterate. See,
+18:17
+to just give the batch size, so it will create 12345678 mini
+18:23
+batches. And that is it. Let me change this to one and see what
+18:30
+happens. So I don't always get this error. But with MNIST, see,
+18:36
+I get something called like this.
+18:47
+I think this is because there are too many open files doesn't
+18:51
+say so explicitly. Because the weird thing is, I don't get this
+18:57
+error when I run this on data sets that are not MNIST. There's
+19:00
+something about MNIST. I think it's MNIST is just too simple.
+19:05
+It's a little bit weird, to be honest. Also, I can't remember
+19:09
+in the past getting this error. But anyways, could also be my
+19:12
+computer because I compiled pytorch from scratch. But I
+19:16
+also get this error on my other machine. So anyways, so let's go
+19:25
+back to this one. Yeah. And here, we can also just print the
+19:28
+shape of one of the batches here. So the shape is 32, then
+19:33
+the color channel is only one color channel. So because it's
+19:37
+back in white, and then 28 pixels high 28 pixels wide, he
+19:42
+is just printing it as a vector if we reshape it 32 times 784.
+19:48
+So this is what our multi layer perceptron needs as an input. So
+19:53
+convolutional networks can work with this input directly.
+19:57
+multi layer perceptrons cannot they can only work with this is
+20:01
+just for reference. So it looks like the torch tensor, you can
+20:04
+see it's normalized, we should be able to maybe we can't just
+20:12
+see if it because it's abbreviating it. So we can print
+20:17
+it. You can see the highest values point 999 because it's
+20:21
+253 divided by 255. Alright, so this is how the data loader
+20:28
+works. Let me now show you the model training code here using
+20:33
+the custom data loader. So here, I'm now using a hybrid of what I
+20:39
+showed you two videos ago when I use helper functions, helper
+20:43
+scripts and a notebook. So here, I've set up several helper
+20:49
+files that I may reuse in different projects. And this
+20:54
+helps me keeping the notebook kind of small. So if I make a new
+20:57
+notebook, let's say I call it notebook. To I can make some
+21:04
+changes to this notebook, for example, some settings, but I
+21:07
+don't have to copy and paste all the code. It's in that way easier
+21:10
+to read, especially if you want to let's say modify some
+21:14
+function as a bug in the accuracy function, then you
+21:17
+don't have to go back to every file here and change the code,
+21:21
+you only have to change it in one of the files and the pie
+21:23
+files. So I can just maybe open them, show you what I mean. So
+21:30
+example, helper evaluate, I have this set all seats, deterministic
+21:33
+compute accuracy. So if there's a bug, for example, I only have
+21:36
+to change it here once I don't have to go back to all my
+21:38
+notebooks. I find this very helpful if I have a project with
+21:42
+multiple model training and model notebook scripts or
+21:46
+notebooks and scripts. All right.
+21:50
+We close this again, we can take a look at individual ones. So
+21:55
+yeah, yeah, importing certain functions from this, from these
+22:00
+helper files.
+22:02
+Then here are my settings, you can also like I explained
+22:04
+before, have a separate settings file here, I have it just in a
+22:07
+notebook itself, random seed batch size, a number of epochs.
+22:10
+And then I'm using these to make that deterministic. And he has
+22:15
+just, so yeah, I have a get data loaders function that actually
+22:19
+uses the data model from the previous notebook that I showed
+22:22
+you, I just put it into this script here. Now I have my data
+22:26
+set here. And I have written a get data loader, which will set
+22:32
+it up for me automatically. So that's basically just a slightly
+22:37
+modified version of what I've showed you in the previous
+22:39
+notebook, where I just have arbitrary paths and stuff. And
+22:43
+it will return the training loader validation order and test
+22:45
+loader. And here, I'm just testing that they actually work.
+22:49
+So just getting some statistics. And you can see, so if I run
+22:54
+this again, you can see that the shuffling works, because you can
+22:57
+see that these numbers change. So these are the first 10
+23:00
+labels. So you can see, so every time it will start from scratch,
+23:05
+because I break here. So you can see these numbers change. However,
+23:11
+if I set my random seed, I always get the same order. See,
+23:16
+I can run this again, always get the same order because of the
+23:21
+random seed, the random seed. Yeah, makes the makes it
+23:27
+consistent. It's so for example, if you run this code, you will
+23:31
+get the same model and same accuracy I got, because you use
+23:35
+the same random seed. This is useful, for example, if you do
+23:39
+research, and you develop some code and want to share it with
+23:41
+someone else and other person wants to reproduce your code.
+23:49
+So yeah, here's the multi layer perceptron. I simplified this a
+23:53
+little bit. So I'm using sequential now I mean,
+23:55
+simplified compared to two videos ago. Here, I'm actually
+23:59
+using flatten, this is actually new, I like this a lot. So this
+24:02
+way, we don't have to reshape our feature vector. So it will
+24:07
+essentially reshape the 28 by 28 to 784 for us. So we don't have
+24:13
+to do it manually somewhere down here. And this is it. So here,
+24:18
+I'm using sequential, so I don't have to do anything in the
+24:20
+forward, it will automatically return the logits. So here, this
+24:24
+is a multi layer perceptron with only one hidden layer. So this
+24:28
+is the first hidden layer, then with a sigmoid activation, and
+24:31
+then we have the output layer. And then we would technically
+24:36
+have a softmax, but we don't need to have the softmax
+24:38
+because the functional cross entropy loss in pytorch computes
+24:42
+the softmax for us. Alright, so this is how it works. So don't
+24:48
+need to set another seat here, because I've done that above. So
+24:53
+here, the seat would be for for the initial random weights, we'll
+24:59
+also talk about this in two lectures. So not the next
+25:04
+lecture, but the next one. After that, we will talk about these
+25:07
+different ways we can initialize weights, use stochastic gradient
+25:11
+descent. And here, I also just brought a function for training
+25:15
+the model is essentially what you've seen before, I just put
+25:18
+it into a separate file here. So if I go to help out a train dot
+25:21
+train dot pi, I have all the code I have had previously in
+25:25
+here. Because it's essentially always the same code. So you can
+25:30
+use that in other projects as well. You can just copy and
+25:34
+paste that just keeps the notebook more readable in that
+25:36
+way. It's not such a long notebook anymore. Oops, we got
+25:41
+here. That's what I always forget defining things. Alright,
+25:45
+so trains will train very fast, actually, because we only have
+25:49
+256 data points in each data set. This training fast. Now we
+25:57
+get actually pretty high accuracy. I mean, given that we
+26:00
+only have 256 images, it's also barely overfitting. It's
+26:03
+actually not Yeah, you can see it's 91% and 73. It's actually
+26:08
+it is overfitting. But yeah, the validation accuracy and test
+26:12
+accuracy are almost identical. The difference here, why is the
+26:14
+difference? It's usually just a small random effect, right,
+26:17
+because it's a small data set 256. Yeah, and then I also have
+26:23
+functions for plotting the training loss and the accuracy
+26:26
+is also helpful. So yeah, I have the version with a running
+26:30
+average. And can see on the loss goes down. We are trained for
+26:37
+100 epochs. And here the accuracy goes up. But then at
+26:41
+some point, there's more and more overfitting. So yeah, put
+26:44
+these plotting functions in help out of plotting, if you ever
+26:48
+need them. I think I will also personally reuse them in future
+26:51
+lectures, because then I don't have to make these long
+26:53
+notebooks, because this code is really always the same. So I
+26:57
+have it sometime defined here, and then I can reuse that. You
+27:01
+don't have to honestly memorize any of that. Or it's good, maybe
+27:05
+to understand it if you want to change it, but you don't even
+27:07
+technically have to understand any of these details. So it's
+27:11
+also something I wrote one time. And if I ever need it again,
+27:15
+I'll just copy and paste it. Because there are too many other
+27:19
+things to worry about. It's rewriting, this is, it took me
+27:22
+some time, I had to, there were some bugs, and things didn't
+27:25
+work. And that way, you write it once so that it works, and then
+27:29
+you can just reuse it. Alright, so last as a show examples
+27:34
+function I wrote, so it shows some of the images. So you can
+27:37
+see, P means predicted and T means true label or target
+27:42
+label. So these are all correct. So here, this is a predicted as
+27:50
+two, but the target is six, I see, I think I made an error
+27:54
+here that can't be right. Maybe it is right. But let me double
+27:58
+check. I haven't planned this. It's very spontaneous. So good
+28:01
+that we look at it, I think is, yeah, I saw it's my mistake. I
+28:09
+just wrote this code, actually, for this lecture. So made a
+28:14
+mistake. Let's do this again.
+28:19
+Oops, should have been targets. One of the disadvantages because
+28:35
+I have the import at the top of this notebook. I have to run the
+28:39
+whole notebook. But it's faster. Alright, so that looks better
+28:53
+now predicted six, target two predicted five, well, target
+28:58
+zero. Some other mistake here, you can see the model makes some
+29:03
+mistakes. But I think these are just mistakes, because the model
+29:06
+hasn't haven't hasn't seen enough numbers, because these are
+29:09
+should be easy to distinguish them. I think they are clearly
+29:11
+number twos. Okay, so yeah, this is the custom data loader. So
+29:16
+that's it then for this lecture. Next week, we will talk about
+29:22
+regularization like preventing overfitting. All right, have a
+29:27
+good weekend.
+
+##v71:
+
+0:01
+Yeah, hi everyone. So this week I have a bunch of hands-on stuff related to neural network training.
+0:07
+So first of all, there was the new PyTorch release which I want to briefly talk about. And also I saw a really cool article
+0:14
+regarding tips for training neural networks. And since I'm currently grading your class projects,
+0:20
+I thought it might be a good opportunity to go through some of these tips and tricks for helping with neural network training.
+0:26
+So with that, let me get started with our stuff in the news for this week.
+0:31
+Yeah, probably the coolest thing that happened in the context of deep learning this week was that there was a new PyTorch release this week.
+0:39
+So I usually, yeah, I really like that if there's a new version that comes out, it's maybe every half a year or so,
+0:44
+because yeah, there are usually a lot of cool new features and improvements that are useful in practice.
+0:51
+And since this class is also focused on PyTorch, I thought it might be worthwhile
+0:56
+mentioning some of these new additions. So there's an article that they put together
+1:02
+with the highlights in this new 1.8 release. So if you're interested,
+1:07
+this one summarizes most of the relevant changes. A more detailed list listing all the changes
+1:14
+and additions is on GitHub. So you can go here if you want the more detailed list,
+1:19
+but it's a long list. I think there were about 700 commits like feature changes or feature additions
+1:27
+and things like that. If I were to highlight a few, I have these three as I would say my personal highlights.
+1:34
+So one is that they now make it easier to use AMD GPUs.
+1:41
+So competition is always good for business, right? So it's good that also other cards other than Nvidia are supported,
+1:47
+which I think is nice for those people who have, let's say a gaming PC or something like that
+1:52
+with an AMD graphics card. So now you can also use those graphics cards.
+1:58
+So this is supported by a library called Rockum. It's like CUDA, but for AMD GPUs.
+2:05
+There was support for AMD GPUs before, but it was like a little bit of a hassle. You had to compile PyTorch yourself and was not so easy.
+2:13
+And now what's new is that they are making the binaries directly available from the installer menu.
+2:19
+So you can now also set it up more conveniently. Now it's also possible to fit larger models onto GPUs
+2:27
+without any external libraries. So recall last week, we talked about fair scale
+2:33
+and Microsoft deep speed, which were two libraries you're providing functions to distribute a model
+2:41
+across multiple GPUs. So there were already something like a data parallel in PyTorch, so one is data parallel,
+2:51
+and one is distributed data parallel. Let's just call it TP.
+2:57
+And these were methods for splitting many batches across multiple GPUs and then training in parallel.
+3:04
+But this wouldn't help with a problem where a model is too big for a given GPU. One method that we discussed was this checkpointing,
+3:12
+but the checkpointing would be using a single GPU. Now there's a way that you can conveniently put
+3:18
+a single model onto multiple GPUs and then run it in parallel. I will show you an example.
+3:24
+So that's actually pretty cool. So you don't need any external libraries for that. There are now some features that yeah,
+3:30
+support it directly in PyTorch. And then also what's kind of nice or what will be nice
+3:36
+in practice is that the torch lin-alc module got extended.
+3:41
+I think in this release, it was even created. I was using a pre-release version. So I'm not sure if it was actually created here
+3:47
+or just modified, but in any case, so there are no additional linear algebra functions
+3:54
+that are usually only NumPy. So now we don't have to switch so often between NumPy and PyTorch when we train our neural networks
+4:02
+if you need something like determinants or eigenvalues and so forth. So that's also making life more convenient.
+4:08
+So regarding the PyTorch binaries for AMD GPU support,
+4:14
+I checked actually the installer menu. So good news is like I said, it's available now.
+4:19
+It does not seem to be available yet though for Mac and Windows only for Linux right now. But I think still this is pretty exciting
+4:27
+because I'm pretty sure these will be also added over time. So it's probably just a matter of time.
+4:32
+So things are developing in a nice direction where you can now directly install the wheel
+4:39
+via PIP for RockM or AMD support if you are on Linux,
+4:44
+at least, and I'm pretty sure Mac and Windows will probably also follow sometime.
+4:50
+By the way, I updated one of my computers with PyTorch 1.8 the other day.
+4:56
+And yeah, I was just looking at this. I was really surprised about the size.
+5:01
+It's now 2.48 gigabytes. So it's kind of impressive what's all in that library.
+5:07
+So one thing, I'm not sure if I mentioned that in class, but so when you install PyTorch, the GPU or CUDA version,
+5:13
+it will bring its own CUDA, which is done to make things more convenient.
+5:18
+So before that, when I used, I mean like it was like 2015 and things like that,
+5:24
+when I used TensorFlow before CUDA was bundled, you had to install CUDA on your graphics card
+5:30
+and then link it when you install it. And that was usually very flaky. It took a lot of effort to somehow make sure
+5:36
+that the library is using the right CUDA version on your computer. So this way, bundling the installer here
+5:44
+with the CUDA version, the CUDA toolkit here, makes it a little bit more convenient to install that.
+5:51
+So you don't have to manually link the PyTorch library with CUDA and cuDNN,
+5:56
+but that also has the downside that this is rather large. I was just noticing it.
+6:02
+Anyways, so regarding the distributed training that I mentioned where you can run multiple
+6:09
+or one model on multiple GPUs. So there are some additions that are listed here.
+6:15
+There were a few more. So they have the pipeline parallelism
+6:20
+that I mentioned last week, where you just put a model on different,
+6:25
+you use a sequential model and then you put different parts of that model on different GPUs. And there's a utility to make that more convenient.
+6:33
+I will show you in the next slide how that looks like. We already saw here last week a version using this fair scale.
+6:39
+Then there are also for distributed data parallel, there are also some additions
+6:46
+and also this zero redundancy optimizer, making the optimizers more efficient.
+6:52
+So last week, we also mentioned briefly these types of things and they also got added directly
+6:57
+to PyTorch, the main library.
+7:04
+So here's just a brief overview of this model parallelism using multiple GPUs. It's kind of related to the other pipeline version.
+7:12
+So how that works is that you put different parts of the model. So if you split your model into four parts,
+7:18
+let's say you have four layers. So here, the F represents the forward pass.
+7:23
+So let's say you run the first layer on GPU
+7:29
+or you keep it on GPU zero, this one on GPU one, GPU two and GPU three.
+7:35
+So this way, you avoid exceeding the memory of GPU zero because you have each layer on a different GPU.
+7:42
+I mean, for a single or simple multi-layer perceptron, that's probably not necessary,
+7:47
+but if you later have larger networks, I will show you an example that might make sense.
+7:55
+Yeah, and so here we have then one layer per GPU and then F I think is supposed to stand for forward pass
+8:03
+and then you have the backward pass similarly. But one downside of this approach is that you can see,
+8:10
+so this one runs, so the second GPU needs the results from this GPU, right?
+8:16
+So then it's kind of GPU zero is keeping or staying idle
+8:21
+while GPU one runs and so forth. So in that way, where everything here under the area
+8:28
+under the curve here, this is like idle time for some of the GPUs.
+8:34
+So in this way, you don't utilize three out of the four GPUs and that is basically kind of inefficient
+8:40
+because things are sitting there. So one improved version is to use these types of micro batches.
+8:45
+So this is like illustrated here. So this already starts running while these finish up
+8:52
+basically on different micro batches and then they are passed to the other GPU. So in that way, you kind of run certain things
+9:00
+somewhat in parallel. Of course, there's still this bubble here but they call bubble where there is inefficiency,
+9:05
+but this is at least small improvement over the regular model parallelism. So this is kind of called pipelined execution.
+9:14
+I don't know why the word pipeline is used but it might be because the tool,
+9:19
+I think the original one was called a G pipe, but yeah. In any case, if you want to learn more about this
+9:25
+you can visit this link here and that will bring you directly to this website where I got this from.
+9:32
+Actually, I was kind of curious and wanted to try it in practice yesterday.
+9:37
+So I implemented a VGG 16 network. It would actually fit onto a single GPU
+9:44
+but just for the sake of the example, I just chose that model because it had different blocks or I coded it up in different blocks.
+9:51
+And then I was putting it into this pipeline here.
+9:56
+So what I did is I was writing up these blocks. So this is one block in my model.
+10:02
+I have five of these blocks and one block is one convolutional layer,
+10:09
+then a ReLU, another convolutional layer, another ReLU and the max pooling layer. We will talk more about that
+10:15
+in the convolutional network section. But the main takeaways you can see here is that there are multiple things in one block.
+10:22
+It can be pretty large if you have maybe even more channels. This would be, I mean, not really large
+10:29
+or too large for a single GPU, but again, it's just for the sake of this example. So at the bottom now I'm showing you
+10:35
+how I use this new pipe in Torch distributed pipeline sync.
+10:40
+There are actually a few more setup steps that I'm skipping here because they didn't fit on the slide.
+10:46
+But if you're interested in checking out this code that I was playing around with,
+10:51
+I put it here up on GitHub. So you can actually check that out and see the full code and how it looks like.
+10:57
+So what I'm doing here is I'm putting the first block on the first GPU.
+11:03
+So CUDA zero is the first GPU. I was actually running something else on GPU one. So I was skipping it and I was putting things on GPU two here,
+11:11
+GPU three, and then the classifier back on to GPU zero. Why did I do that?
+11:17
+So one of the reasons is that you have to have the data
+11:23
+and the code that you're running on the same GPU. So if you have your input data on GPU zero,
+11:29
+you should also have your first block on GPU zero. And then if you have your class labels for computing the accuracy on GPU zero,
+11:38
+then you also want to have the output of the model on GPU zero. That is what I was doing here.
+11:43
+So I didn't have to rewrite any of my other code. I could just plug that in into my existing code.
+11:49
+So then, yeah, I'm using, so I'm having these blocks now on different GPUs.
+11:55
+It has nothing to do with the pipe yet. And what I'm doing is I'm using the sequential and torch to merge these blocks into one model.
+12:02
+And then I'm using just this model inside the pipeline here with eight micro batches.
+12:08
+And then I'm providing it here for Adam or to Adam as the parameters.
+12:13
+And this is essentially it. And then this one would actually then run the pipeline mechanism,
+12:20
+like putting everything together and work kind of smoothly. And yeah, it worked well in practice.
+12:27
+I must say the training time in this case was about half as slow compared to running everything
+12:35
+on a single GPU. But again, speed is not the goal here. So we are not using this pipeline mechanism
+12:42
+to speed up the model. We are using it because we assume that this single model
+12:47
+would not fit onto a single GPU. So this way we make possible a training of models
+12:52
+that are exceeding a regular GPU memory. So I think this is actually pretty cool
+12:58
+and I will pretty surely use that in one of my research projects.
+13:03
+Yeah, okay, there was one more modification I had to make to the code. So the modification is in these two lines.
+13:10
+So this whole thing is my training follow over the epochs and over the mini batches. And here I had to add just this line
+13:16
+because now the model is not returning the logits, it's returning our reference object to this RPC thingy.
+13:24
+RPC thingy, and you just had to get the local value
+13:30
+and then everything else should work. Again, the full code example is here if you're interested to check it out.
+13:37
+All right, so this was just a few highlights from this PyTorch 1.8 release.
+13:43
+Some other topics, I saw this paper on archive this week, virus amnesty.
+13:48
+So I just thought it might be a cool, new, fun, simple data set for benchmarking, yeah, deep learning models.
+13:55
+So if you are just interesting in developing a new model and you want to see how well it performs on different data sets, amnest is one, cipher is one.
+14:04
+Nowadays also ImageNet and things like that. But I thought this is here an interesting approach
+14:10
+because I haven't seen anything like that before. So this is an amnest like data set.
+14:16
+So if people say something amnest, they usually mean a data set with approximately 10 classes and 50,000
+14:22
+or 60,000 training images. And here, what they have is a data set
+14:28
+concerning virus data or malware. So there are 10 classes here.
+14:35
+So class level zero and nine. There's only one class that is not malware.
+14:41
+It's called binware. It's like the good stuff here. It's just like a regular Excel file, I guess.
+14:47
+Putty, I think it's a terminal program for Windows, but I'm not sure.
+14:53
+Anyways, and then there are some other viruses here. I think X is Windows.
+14:59
+And instead, so they had like a CSV file and some information about that. And instead of putting that up as a CSV file,
+15:08
+what they did is they, I mean, it's at least what I understood is they
+15:15
+converted it to grayscale images using the intermediate net BPM text format. And then they created ASCII raw images
+15:22
+and did something else to make it or to create JPEG files. So how it looks like is this one.
+15:30
+So you can see basically, these are JPEG images of these files.
+15:36
+And this one would be, for example, the good one. And all the other ones are examples of malware.
+15:43
+I haven't seen like an approach like this where people kind of convert text.
+15:49
+I mean, code is essentially text. Or here, I think they used the checksums of the files.
+15:56
+But yeah, there was an interesting idea like converting, let's say, text or a string into an image
+16:03
+so that they can use convolutional networks. I'm actually not sure if that makes it better.
+16:08
+So if you have a text file or some weird input format that doesn't look like a tabular data set,
+16:14
+but also not like anything else, I'm not sure whether converting into a JPEG really is meaningful.
+16:20
+But I thought that was interesting. They actually got pretty good performance or accuracies on that data set. So I think it's probably working.
+16:29
+Yeah, I also saw this cool article this week called Simple Considerations for Simple People,
+16:35
+Building Fancy Neural Networks. So this is an article highlighting some of the things
+16:41
+you should think about when building a model or also when debugging a model. And since you are now working on your class projects,
+16:48
+I thought it was a nice summary, really, that I wanted to share with you, like explaining, going over some tips in practice.
+16:55
+So the first step would be putting aside machine learning and simply focusing on your data.
+17:01
+So before you start applying a model to your data, just take a look at your data and get a feeling for it.
+17:07
+For example, looking at whether the labels are balanced, like getting a feeling for that, whether they're balanced or not, like on the same ratio
+17:15
+for the class labels, same proportions. So are there gold labels that you don't agree with?
+17:23
+So gold labels here, they mean ground truth. So are the test set or training set labels
+17:29
+that are provided making sense? There are some maybe that are wrong. Do you agree with them?
+17:35
+Then also, it's always useful to know how the data was obtained, whether, for example, there could be possible sources of noise in this process.
+17:42
+So it can tell you an anecdote. For example, there was for, I like it was like one or two years ago,
+17:48
+there was a face image data set from IBM. I think it was called DIF or something like that.
+17:57
+It was a face data set shared by IBM. And I applied to get access to this data set
+18:03
+and I was really excited to get it. But then I read the README file
+18:09
+and was actually pretty disappointed because they shared a lot of attributes that can be used for developing machine learning systems.
+18:16
+But then all these attributes were not assigned by a human,
+18:22
+like not labeled, they were actually predicted using another machine learning model. So if you develop a machine learning model
+18:28
+based on labels predicted by another model, you would assume you can never actually do better than an existing model.
+18:34
+And that I find not very useful for the development of machine learning methods necessarily. So in a way, it's also good to think a little bit about
+18:42
+or find out how labels were obtained. And yeah, then also thinking about the pre-processing steps,
+18:49
+maybe there are some things that were not ideal, just good to think about these,
+18:55
+how diverse are the examples, and also what rule-based algorithm would perform decently on this problem.
+19:01
+So like, can you think of a rule-based algorithm in terms of simple decisions that you might think of
+19:08
+that can actually perform well? And then you can implement these simple rules
+19:13
+as a baseline, because you want to see that the model that you're training performs better than any simple baseline, for example.
+19:19
+So for example, rule-based algorithm on email spam data set could be, if the subject header is capitalized in all caps,
+19:29
+then it's spam, something like that, something simple, maybe.
+19:36
+Yeah, so while the previous slide focused on understanding the data set, so the second recommendation is about,
+19:43
+yeah, understanding how difficult the task is. So how well would standard baselines perform on that task,
+19:51
+for example, a classification task. So if you're working on a classification task, it's always a good idea to also include a simple baseline,
+19:59
+like logistic regression as a linear classifier. Because let's say you,
+20:04
+suppose you develop a fancy neural network, let's say a convolutional network, that gets 95% accuracy on MNIST.
+20:13
+By itself, 95% might sound super impressive, but then let's say you run logistic regression,
+20:19
+and usually if you do that on MNIST, you would see you will get around 93% performance already,
+20:26
+or accuracy already. So 93% accuracy and 95% accuracy, that's not very different in that way,
+20:32
+maybe the CNN is not as good as you might think. So having a baseline like logistic regression
+20:38
+is actually a good idea. Because maybe even you find if you train a CNN or multilayer perceptron, it's like only 90%.
+20:44
+And if you only know the number 90% accuracy, and you tell someone I have a model that can predict,
+20:50
+let's say 100 digits in MNIST with 90%, and the person doesn't know MNIST, just looks at some examples,
+20:55
+first might be super impressed, but then if you think about a logistic regression as a linear model,
+21:01
+already being able to do that, then it's actually not that impressive after all. Yeah, so just going through these points here,
+21:09
+how would a random predictor perform? Especially in classification problems, and the data sets can be unbalanced.
+21:16
+I'm actually a little bit confused by this point. I think the main point here is asking
+21:23
+how well a random predictor might perform, that is actually something I also always ask myself.
+21:28
+So if you have a binary classification problem, yeah, the random prediction would be 50%, right?
+21:34
+And for three classes, it's 33%. So it's always good to keep that in mind what a random prediction might look like.
+21:43
+What I'm a little bit confused about is this point if the data set is unbalanced. I mean, this shouldn't really affect
+21:48
+the random predictor, right? So because if you have, let's say, 90% spam and 20% not spam,
+22:01
+and this is your data set, binary data set, the random predictor would be 50% accurate, right?
+22:10
+Because for each email, you would either randomly predict spam or not spam, so you get a 50% accuracy.
+22:15
+And if the data set is balanced, it's also 50% for a random prediction. So it should always be 50% if you have a binary data set,
+22:23
+or around 50%, let's say. I think what the person here was more interested in,
+22:28
+in terms of data set can be unbalanced, is majority class predictor.
+22:41
+Because then it gets interesting. For example, on a balanced binary data set, the majority class predictor would get 50% accuracy.
+22:47
+But if you have a data set like that, where you have 80% spam and 20% not spam,
+22:54
+then some classifier that would always predict the majority class, if the test set has these labels,
+23:00
+you would already get 80% accuracy just by always predicting spam.
+23:05
+So in that case, if you develop a machine learning system that gets, let's say, 82% accuracy,
+23:12
+that's not very impressive, because by always predicting the majority class, you can already get 80%.
+23:17
+So that's actually also something worthwhile to think about when you develop a model.
+23:23
+So then the next thing is, what would the loss look like for a random predictor?
+23:28
+So this is also related to one of the quiz questions I had last week.
+23:34
+Recall when I asked you to compute the cross entropy for the worst case scenario, which was infinity.
+23:43
+But let's say if you have a case where you always predict randomly, so random classifier would have a loss of
+23:55
+one over the number of class labels, right? So this would be the maximum or the worst case.
+24:02
+And if you don't have an infinity, a zero in the lock, the totally random prediction would be,
+24:09
+actually it should probably be, let's say number of classes
+24:17
+times minus lock one over the number of classes. So this would be a totally random prediction.
+24:23
+I think it's, for binary, it's around, what would it be, like 2.3 something?
+24:30
+But I'm not sure I would have to double check. But it's always good to double check these numbers when you do training and you see the loss
+24:37
+gets stuck at a certain point. To see what would be the loss for random prediction
+24:42
+and this way you can find out whether the model was learning something at all or not.
+24:49
+Yeah, some other points are, what are the best metrics for measuring performance? For example, precision, recall, accuracy.
+24:58
+Yeah, and also, yeah, the last one is also interesting. Are there architectures in my neural network toolbox
+25:05
+that would be good to model the inductive bias of the data? Inductive bias, we briefly talked about this.
+25:11
+It's like one of these machine learning jargon terms. For example, yeah, that goes actually back
+25:18
+to the previous point, understanding the data set. So for instance, if you have time series data,
+25:24
+it might be better to use a recurrent neural network. Or if you have image data, it might be good to use a convolutional network and so forth.
+25:31
+So also, yeah, understanding your data set. Yeah, assume now you understand the data set and also the difficulty of the task.
+25:39
+But you find that the model is not performing well. For example, the loss that you observed during training,
+25:46
+the cross entropy loss is the one that you would expect for a random prediction. So there might be something wrong with your code
+25:52
+and that might be a good opportunity for doing some model debugging to see whether there's some error.
+25:59
+So one common thing is usually if you're doing a model usually if you have a learning rate
+26:04
+that is way too large or way too small, then you will probably see that the other model
+26:09
+is not learning well. If you personally, that's what I try first.
+26:15
+If you tweak the learning rate though, but you still find things are not performing well. What I also like to do is I try to overfit
+26:23
+a small batch of examples. That was actually really helpful in a recent research project where we had actually an issue
+26:29
+where we use this technique to diagnose it. So when you only do training on a single mini batch,
+26:37
+what you would expect is that the model should overfit to this mini batch and you should get like a small loss like around zero.
+26:44
+So how you can do that is just by adding when you do in the data loader,
+26:49
+if you do like for let's say batch and labels in the data loader, when you do that.
+27:05
+And after the first training loop, I would add a break at the end.
+27:11
+So in this way, you only do it once and then you do it for multiple epochs. And this way you can try to overfit to a single mini batch
+27:19
+and you should get around zero loss. If not, there's something weird usually. So here actually from that article,
+27:26
+few things to look into. For example, one could be, you forgot to call model evil in the valuation mode.
+27:33
+We will talk more about this actually when we talk about drop out this week. But yeah, that would be one case or when you have, well, you forgot to model zero grad.
+27:43
+So you will otherwise accumulate. If you don't do that, you will accumulate the gradients
+27:48
+from the previous rounds. And then if you update that could also be some issues because you don't do gradient descent,
+27:54
+you do something with accumulated gradients. Or there's maybe something wrong
+28:00
+with the pre-processing of the inputs. Maybe you forgot to normalize them. Another common one is using the wrong arguments in the loss.
+28:07
+So recall when we said that the cross entropy loss in pytorch works with the logits.
+28:14
+So if you provide it with a softmax probabilities, it will give you very weird results.
+28:19
+So that's also one thing to check for. Well, here initialization doesn't break symmetry.
+28:25
+That is related to the question I asked you when I said, why don't we initialize all the weights
+28:31
+in a neural network to zero? That's because we have symmetry. That was actually a nice Piazza post
+28:37
+by one of the students who answered this question. So I recommend you to check out this post because yeah, it was very well written
+28:43
+and essentially explaining the problem very well. So there's actually a symmetry. If we initialize the network with all zeros,
+28:49
+or all small numbers that are the same. So what we want is we want to have small, randomly different numbers to initialize the network
+28:57
+to break the symmetry. Or here, another one is some parameters are never called during the forward pass.
+29:04
+So if you don't use them during the forward pass, they won't be updated because they are not part of the computation graph.
+29:09
+Another one that happens often to me is if I have two models in a single script,
+29:17
+actually happened to me when I was implementing this pipeline parallelism. So I had my Adam optimizer or let's say,
+29:25
+I think we haven't covered Adam. Let's say we had my SGD optimizer. We will cover Adam later.
+29:31
+And you pass it the model parameters like this.
+29:38
+And I had two models in that notebook. I had just called it model.
+29:44
+And the other one I called model parallel. But when I was training the parallel model,
+29:50
+I used still model parameters in the SGD. So it was not actually updating the right model parameters.
+29:57
+And then the training didn't work. And I was wondering, why is this model not training? And then I saw, oh, I didn't give it the right parameters.
+30:06
+Yeah, another one here is the learning rate is taking funky values like zero. So there's something called learning rate scheduler,
+30:13
+which we'll also talk about later. So lots of topics you notice that we will talk about later,
+30:18
+but yeah, deep learning is a big topic and lots of considerations in practice. And we can't cover everything in a single week, right?
+30:24
+So we will cover all these things over the semester. But we will come back to that. But there's a learning rate scheduler.
+30:30
+And if you decrease the learning rate too fast, or too aggressively, you sometimes end up
+30:35
+with a learning rate of zero very early on. And then yeah, your model is also not a training.
+30:41
+Or your inputs are truncated in a suboptimal way. What I find also useful in practice
+30:46
+is also always to plot loss curves during training. So using the mini batch loss, for example, like this,
+30:56
+it's kind of efficient because you have to compute it anyway for the model update. And then yeah, I usually plot it and see you want to see that goes down.
+31:03
+I usually also do some running average because otherwise you can see it's very noisy and hard to see. So doing a running average is also helpful.
+31:11
+You have the code for that, right? So I shared that in last week's lecture. So I always recommend doing something like that.
+31:19
+And also what I like to do is after training, I like to visualize the training and validation accuracy.
+31:25
+What I want to see is that it improves. You can see here at this point, there's maybe some overfitting starting.
+31:31
+So this is actually the point where the model performs really good.
+31:37
+So why is the training set performance worse than the validation? That can be just a random effect because the validation set was very small
+31:43
+that I chose in this data set here. You can see this all actually pretty good.
+31:49
+But yeah, I always like to look at these plots just to get a feeling of how the model behaves.
+31:56
+All right, so last point, tune but don't tune blindly. So yeah, it's very tempting to just brute force
+32:04
+set up a grid of hyperparameters to search over like brute force, trying out all possible hyperparameters
+32:11
+but this can be actually wasteful and personally, I don't have the patience to do that.
+32:17
+I usually, what I tweak extensively is the learning rate. I try different learning rates and then also other things
+32:23
+but usually the learning rate is very important but other parameters, yeah, they can also be important but usually I train or tune one parameter at a time
+32:31
+to get a feeling for it and then I try some combinations but not extensively.
+32:37
+I think it would be good if I would try more of them but I'm not a very patient person
+32:42
+and you can set it up to run it in the background but even though let's say you have access to a couple of GPUs, training a model can sometimes take
+32:51
+half a day or a day and instead of having like hundreds of parameter combinations that don't make sense,
+32:58
+training and occupying your machine for several weeks, you can maybe just select a few of them
+33:03
+and get a feeling for them and then you have a better feeling what makes most sense in this given scenario,
+33:10
+what modification would give you the best bang for the buck, for example. Here, this person also recommends random grid search.
+33:18
+That's something we talked about in 5.51 last semester briefly.
+33:24
+So it's just, yeah, picking hyper parameter values randomly in a given range. That's also one good approach actually.
+33:31
+Some people also like to use Bayesian optimization but in my experience, also in his experience,
+33:36
+this is actually not usually worthwhile.
+33:42
+All right, so now, yeah, there are four tips here. One is understanding the data set. The second was understanding like the baselines
+33:50
+and then the third one was model debugging tips and then here, fourth one, yeah, tuning is important
+33:57
+but also don't do it blindly. I mean, you can but usually the limitation
+34:03
+in practice is the computational resources. If we have infinite resources, yeah, then tuning blindly would make sense
+34:09
+but otherwise, yeah, we have to be resourceful and then it's good to tweak one thing at a time
+34:15
+and understand what it does and then, yeah, consider tweaking other things.
+34:20
+All right, the last thing for today. I think it's already a long video. So the last thing for today,
+34:25
+I don't want to go into too much detail but since I mentioned, was it two weeks ago, there's already a GAN transformer, transformer GAN.
+34:34
+I also coincidentally saw now the second transformer GAN. So it's called generative adversarial transformers
+34:41
+and in this paper, they call it the GANs former. I just want to share it because I found it's actually kind of cool,
+34:47
+like seeing the field progressing so rapidly. In the last couple of years, we had transformers,
+34:54
+we had GANs and now, while we are in this class, we saw that people developed now GANs with transformers
+35:03
+like generative adversarial transformers. Might be something interesting you could try in your class project
+35:10
+if you are considering GANs in your class project, that might be something. The code is on GitHub, so could maybe download it
+35:17
+and play around with it if you like. What I was impressive is that the performance here
+35:23
+is actually pretty good compared to GANs and I can also see based on these images, they actually look quite good.
+35:29
+So these are generated images. These are attention maps. And I don't want to go into too much detail
+35:34
+because like I said, it's a long video. FID is the Frechette Inception Distance and this is something that I will probably save
+35:41
+for another day. All right, so but in general, I thought that might be interesting, something to have on your radar
+35:47
+when you work on your class projects. Of course, it's optional, so you don't have to consider this but I just thought it's just, yeah, hot off the press
+35:57
+and that's something maybe cool to look into. All right, so with that, next week, we are going to cover regularization
+36:04
+and talking about different optimizers and learning rates and weight initialization.
+36:09
+All right, so then see you next week.
+
+##v72:
+
+0:00
+Yeah, hi, everyone. So in the last lecture, we covered
+0:03
+multilayer perceptrons. So you are hopefully now able to train
+0:07
+deep neural networks. Yeah, that brings us also to the topic of
+0:10
+how do we make neural network training better? So how do we
+0:14
+produce better models? Last lecture, I talked briefly about
+0:17
+the problem of overfitting. And now in this lecture, I want to
+0:21
+present you with some techniques to tackle overfitting. So yeah,
+0:24
+if you recall last lecture, we talked also about the custom
+0:28
+data loaders. And yeah, putting two things together. The first
+0:32
+topic I want to talk about today is yeah, augmenting training
+0:36
+data points. So in that way, we, there are some capabilities
+0:41
+that say that allow us to modify, for example, image data
+0:45
+very conveniently in the context of custom data loads. For
+0:49
+example, what we can do is we can randomly rotate the image
+0:52
+level to the left or to the right. And with that, we can
+0:54
+very cheaply reproduce new, new training examples and help the
+0:58
+model to become more robust to your small perturbations in the
+1:02
+data set. Then, after that, I want to talk about a bag of
+1:06
+techniques called regularization. So with
+1:09
+regularization, I mean, like, making us reducing overfitting,
+1:13
+making the model less sensitive to also small perturbations in
+1:17
+the data set. So one technique would be early stopping or
+1:22
+stopping the training early. However, I think this is
+1:25
+something I wouldn't maybe recommend really in practice
+1:28
+anymore, considering the double descent phenomenon that I
+1:32
+explained to you in the last lecture. So there are other
+1:35
+techniques for regularization that we can use, for example,
+1:38
+one is l two regularization. So you've probably already heard
+1:42
+about l one and l two regularization in other statistics
+1:45
+classes, it's basically shrinking the weights. So you
+1:48
+probably have heard of it in the context of lasso regression or
+1:51
+rich regression. So in this lecture, I want to show you also
+1:54
+that we can use the same concept for neural networks. And then I
+1:58
+will introduce maybe one of the most common and popular
+2:00
+techniques for regularize regularizing neural networks.
+2:04
+And that is called dropout. So in dropout, we randomly drop
+2:09
+units in a neural network. So in the hidden layers, and with
+2:13
+that we help prevent the network from becoming too reliant on
+2:18
+particular neurons. So by randomly dropping some neurons
+2:21
+during training, the network will learn to use other neurons
+2:25
+or to not rely on particular neurons so much. And that also
+2:29
+helps with helps with making the network more robust. Of course,
+2:33
+there are many other techniques to improve neural network
+2:36
+training. We will talk about this in later lectures, for
+2:38
+example, yet different weight initialization schemes, batch
+2:42
+normalization, also choosing different optimizers, and so
+2:45
+forth. So these are just techniques I'm presenting right
+2:48
+now that affect the structure of the neural network, or not the
+2:52
+structure, but let's say the the weights. But yeah, later on, we
+2:56
+will also use techniques that modify the optimizer, and also
+3:01
+affect the normalization of the input samples or hidden layer
+3:05
+activations. With that, yeah, let me not make the introduction
+3:09
+too long. And let me just get started with the lecture.
+3:11
+Now, yeah, one of the goals of this particular lecture is to
+Bias variance decomposition
+3:16
+reduce overfitting. So we haven't talked about this in
+3:21
+too much detail. But in the last lecture, I briefly mentioned the
+3:25
+bias variance decomposition. So for instance, imagine you have
+3:32
+prediction label, let's say our continuous target, why let's
+3:36
+consider a regression problem, and some input feature x. So
+3:41
+this is essentially the model prediction y. So there might be
+3:46
+some true underlying data set, though, that's our function,
+3:49
+let's say this is a true function, f of x. But in
+3:53
+practice, we only have access to a training data set that has
+3:57
+been sampled from the former distribution, for example. And
+4:02
+there's usually also some noise. So for instance, the data set
+4:05
+that we may have access to is looking like this. And we then
+4:12
+usually train a model to get a zero error or 100% accuracy on
+4:19
+the training set. But there's usually also some noise in the
+4:22
+training set, it doesn't fully represent the or capture the
+4:26
+true underlying data, because there's usually some noise. So
+4:29
+a model that we might learn could look like this. And yeah,
+4:35
+this would be a model that has maybe too much complexity. So in
+4:40
+that way, it's maybe too flexible, there's too much
+4:42
+variance, because if I would collect a slightly different
+4:45
+data set, for example, on, let's consider a data set like this,
+4:52
+from the same sample from the same true function from the
+4:56
+distribution underlying this function, but there's, let's say
+4:59
+a little bit of a different noise. I mean, the noise is the
+5:01
+same, it's constant noise. But just due to randomness, the
+5:04
+data set, the training data set may look a little bit different.
+5:07
+And now let's say the model might look like this. So you
+5:13
+can see, these are very different models. Let's say I
+5:17
+use the same exact same algorithm. If I do this many,
+5:20
+many times, I may end up with many different models. And yeah,
+5:26
+this has, we can think of it as a large variance. If I have a
+5:30
+lot of these models, though, let's say infinitely many. And I
+5:33
+average over these models, I should get though, should get
+5:38
+this function here, if I would average over infinitely many
+5:40
+models, however, each model itself has a high variance. So
+5:45
+in this lecture, we will learn about techniques that can reduce
+5:49
+this variance. So for example, instead of this red line that I
+5:53
+was showing you, that was relatively complicated, we may
+5:57
+learn a simpler model that may look like this, that has
+6:02
+smaller or lower variance. For instance, if we also consider
+6:06
+the other one, actually, I can't do this way. So also for this
+6:12
+one, we can maybe consider a simpler model that is not so
+6:17
+exaggerated, like, like this. So these techniques kind of
+6:22
+simplify the model. But of course, we want don't want to
+6:25
+simplify it too much, because then it might not even fit the
+6:29
+training data set well enough anymore. For example, if I make
+6:33
+the model too simple, if I constrain it too much, it may
+6:38
+end up looking like this. And this might be a model that is
+6:43
+too simple, but it really depends. So here, in this case,
+6:46
+I can tell it's too simple, because this is more like a
+6:49
+quadratic function, the true underlying data, whereas I now
+6:52
+have a linear model. So let's say like logistic regression. So
+6:56
+there's usually a sweet spot, we want to reduce the variance to
+7:00
+reduce overfitting. But then we also don't want to make the
+7:03
+model too simple. So there's umbrella term called
+Regularization
+7:10
+regularization. So regularization broadly means,
+7:14
+yes, the process of adding information or changing the
+7:18
+objective function to prevent overfitting. So what I mean by
+7:22
+changing the objective function, if you heard about L2
+7:25
+normalization, there's usually a constraint that we add to our
+7:29
+loss function, we will talk about this in this lecture. So
+7:33
+yeah, broadly speaking, it's making changes to the learning
+7:37
+process to prevent overfitting. So there are many different
+Common Techniques
+7:43
+techniques for that for having regular rising models or having
+7:48
+a regular adding a regular rising effect with a goal to
+7:52
+reduce overfitting. So the common techniques that are
+7:55
+commonly used as our early stopping l one and two
+8:00
+regularization, actually, one is not that common to regularization
+8:04
+is a bit more common, but also not that common anymore. In the
+8:07
+context of deep learning, because most people usually use
+8:10
+a technique called dropout, which we will also talk about
+8:13
+today. Yeah, while the traditional definition of
+Regularization in Machine Learning
+8:20
+regularization is the process of adding information in order to
+8:25
+solve an ill post problem, or to prevent overfitting, of course,
+8:30
+like with so many other things, machine learning and deep
+8:32
+learning have special, I would say altered uses of the same
+8:36
+term. So it's always interesting to see how terms get adopted in
+8:40
+the context of machine learning. So in the context of machine
+8:43
+learning, people also sometimes refer to regularization as any
+8:48
+modification one makes to a learning algorithm that is
+8:51
+intended to reduce its generalization error, but not its
+8:55
+training error. So just wanted to mention that, yeah, the term
+9:00
+is, it's kind of related, but not quite the same. So here, we
+9:04
+are basically in this lecture interested just in lowering
+9:08
+also the generalization error. So the techniques are the topics
+Lecture Overview
+9:14
+I wanted to cover here in this lecture, outlined here. So there
+9:18
+will be five main topics. One is essentially just an overview of
+9:22
+different techniques for improving generalization
+9:24
+performance. So I just had a spontaneous brainstorming
+9:28
+session and wrote on some of the methods that came to mind,
+9:31
+because we can't cover all of them in this course, because
+9:34
+there are just too many of them. But they might be useful to you
+9:38
+and you are working on your class projects. So I wanted to
+9:41
+mention them. And yeah, then we will talk about avoiding
+9:45
+overfitting with one or so the first point would be adding more
+9:48
+data. And the second point would be by modifying existing data
+9:53
+that is also usually very worthwhile. And then yeah, we
+9:58
+will talk about reducing the complexity of the model, like
+10:01
+are reducing the network capacity, and early stopping. So
+10:05
+that means stopping the training process early, when we observe
+10:09
+that we have a good validation performance, and further
+10:12
+training would make the performance worse. And we will
+10:16
+talk about a classic technique called L two regularization,
+10:21
+also a little bit about one regularization, although it's
+10:24
+less commonly used. And then these are just briefly, these
+10:28
+are methods here for modifying the loss function like adding a
+10:32
+penalty. And then finally, we will talk about the probably
+10:36
+most common method that is currently used in deep learning.
+10:41
+I mean, of course, also other methods, but dropout is still
+10:44
+one of the most common methods. It's essentially a method for
+10:47
+randomly dropping neurons. And we will see how that can help
+10:51
+network performance or the neural network training
+10:54
+performance and generalization performance.
+10:56
+Alright, so then let's get started with this overview. And
+11:00
+then we will cover these other topics.
+
+##v73:
+
+0:00
+Yeah, like I mentioned in the previous video, I wanted to
+0:03
+share some techniques with you for improving the generalization
+0:07
+performance of a model. So I did a very spontaneous brainstorming
+0:12
+session where I took a mind map software and just wrote down
+0:16
+everything I know that came to mind. This list might not be
+0:20
+very exhaustive. There might be other techniques I'm not
+0:22
+listening here. Here was really just focusing on the most
+0:26
+popular ones that came to mind that are useful in practice. And
+0:31
+yeah, of course, we can't cover all of them in detail in this
+0:34
+course, because there are so many other topics to talk about.
+0:37
+But at least you get the big picture and you may want to look
+0:40
+into some of these techniques that you could find useful for
+0:43
+your class project. So like I said, this was pretty
+0:47
+spontaneous. So there might be different ways to organize this
+0:50
+better, but I chose a few categories to have some
+0:54
+structure to this. So one category is I call it data set.
+0:58
+So here I'm referring to techniques that really modify
+1:02
+either the features or the labels in the data set, or even
+1:06
+yeah, creating new data sets or using different data sets. So I
+1:12
+would say personally, one of the best bangs for the buck, if you
+1:15
+want to improve model performance is collecting more
+1:18
+data, if you can. This is not always the case, of course, but
+1:21
+there are many scenarios where more data can generally be
+1:24
+helpful. And this will also be something I will discuss a
+1:28
+little bit more in detail in the next lecture. Sorry, not next
+1:31
+lecture. In the next video, I will show you a graphic or plot
+1:36
+that can help you finding out whether more data could be
+1:39
+useful. Another technique is data augmentation. So this is
+1:43
+for modifying the input features. So by for instance,
+1:48
+rotating an image and things like that. And that is also
+1:51
+something I will talk more about in the next video. So yeah,
+1:55
+another technique is label smoothing. Personally, I
+1:59
+haven't really worked with that extensively, I only have used
+2:03
+that in the context of generative adversarial
+2:06
+networks. But I think it can be also useful in a general
+2:10
+classification context. It's basically preventing the
+2:14
+classifier to become too confident. And that can be
+2:17
+achieved by instead of using, let's say, zero one labels by
+2:21
+having softer versions of that, for instance, set of, let's say
+2:24
+zero and one, we can use point one and point nine. And this has
+2:29
+been shown to be helpful in the context of generative adversarial
+2:33
+networks. And I can think of also classification of being
+2:37
+positively affected by that in certain cases. Then our big
+2:43
+topic is yeah, leveraging unlabeled data. We talked about
+2:47
+this a little bit in the introduction to this course. So
+2:50
+one approach is semi supervised learning, which is essentially
+2:54
+about leveraging unlabeled data by looking at how confident your
+2:59
+classifier is. So you fit your classifier on the subset of
+3:03
+labeled data, and then you apply it to unlabeled data. For
+3:07
+example, if you have a larger data set, where you have data
+3:09
+points that are not labeled yet. And if the classifier is very
+3:13
+confident for some of those, then you may consider them, or
+3:19
+you can consider the predicted labels as the true labels to
+3:22
+make your training set larger. Self supervised learning is a
+3:26
+little bit different. So self supervised learning is also
+3:30
+leveraging unlabeled data. But here, you create a so called
+3:34
+pretext task, where you make up a different classification task
+3:40
+for which you can create the data yourself. So I showed you
+3:44
+an introduction to this course, like an example of solving a
+3:48
+jigsaw puzzle where you take an image, and then you divide that
+3:52
+image into smaller sub images, and then you train a network to
+3:55
+predict the order of these images that would be, for
+3:58
+example, self supervised learning. But yeah, these are
+4:00
+topics on both semi supervised and self supervised learning that
+4:04
+go a little bit beyond the scope of this course, that might be a
+4:08
+future topic for a different course at some point for more
+4:12
+like advanced topics. Yeah, so also related to what I just said
+4:17
+there's also a set of techniques for leveraging related data. So
+4:23
+self supervised learning is really like leveraging unlabeled
+4:26
+data that could be from the same domain or the same data set that
+4:31
+you're working with for which you have labels. So let's say
+4:33
+you have a data set for which you have labels, but you can
+4:36
+design this pretext task on the same data set. So here, you may
+4:41
+also consider related different data sets. So for instance, one
+4:45
+technique is called meta learning, where you essentially
+4:48
+learn how to learn like from different data sets, let's say
+4:51
+multiple small data sets, that's actually very common in the
+4:54
+context of future learning. And another is a bit unfortunate.
+5:00
+Another definition of meta learning is also really
+5:02
+learning from metadata, that is another thing. So you have
+5:05
+multiple data sets, you can create metadata and then train a
+5:09
+classifier on that metadata. And yeah, another technique is
+5:13
+transfer learning. So actually, this came up when I was just
+5:16
+grading class projects. So some students are working on COVID
+5:21
+19 prediction from chest x ray data. So but the data sets are
+5:25
+very small. So one thing one could do is to collect a
+5:29
+different data set of lung x ray images, for instance, for
+5:32
+diagnosing a different disease. And then you train a classifier
+5:36
+on this large data set for let's say, I don't know some other
+5:39
+lung disease. And then after you train the model, you take that
+5:43
+model and fine tune it to the COVID 19 chest x ray database.
+5:48
+So we will talk about transfer learning also briefly later in
+5:51
+this course. So it's actually a very useful technique to. So
+5:55
+okay, this was all considering data sets. And so there's also
+5:59
+there are some techniques related to architecture set up
+6:02
+how you structure your architecture, the deep neural
+6:05
+network architecture. So there will be weight initialization
+6:09
+strategies, we will discuss that in this course. So I don't want
+6:13
+to talk too much about it at this point. Yeah, choosing
+6:16
+activation functions. We talked about this already on last week
+6:20
+when we talked about, for example, the relu activation
+6:23
+function, residual layers, they are so called, I consider them
+6:28
+as skip connections, I think they are sometimes called skip
+6:31
+connections. So we are skipping or we're adding a connection by
+6:34
+skipping certain layers that can also be helpful to avoid
+6:38
+vanishing and exploding gradient problems. And this is also
+6:41
+something we will talk later about this in this course. So
+6:44
+there's also a knowledge distillation. So this is beyond
+6:47
+the scope of scope of this course, but it's kind of an
+6:49
+interesting setup, where you train a large neural network,
+6:53
+and then you call it the teacher. And then you have a
+6:56
+smaller neural network, you call it the student network, and the
+6:59
+student network learns to predict based on the
+7:04
+predictions from the teacher. So you train the teacher on this
+7:07
+data set, and then you run this teacher to make or create the
+7:10
+predictions and you train the student usually a smaller
+7:13
+network on the predictions of the teacher. And what's kind of
+7:16
+interesting about that is, yeah, for the teacher, you can run it
+7:20
+infinitely on also larger data sets. So you can actually have
+7:24
+on the infinite in a way infinite predictions for the
+7:27
+student. Anyways, another set of techniques concerns
+7:33
+normalization, we talked already about input standardization, I
+7:37
+will mention it again in the next video when I show you the
+7:40
+data augmentation. There is also a set of techniques related to
+7:44
+batch normalization, this is related to input standardization,
+7:47
+but here, it's internal in the network. So instead of only
+7:52
+looking at the inputs to the network, we also look at all the
+7:55
+inputs to the hidden layers. So the hidden layer activations, and
+7:59
+we normalize those two, there also are more flavors of that
+8:02
+called group norm and instance norm and layer norm. And also
+8:06
+those are a topic for a future lecture in this course. Yeah,
+8:11
+weight standardization is also there are also techniques for
+8:14
+standardizing weights, it's kind of related to the weight
+8:16
+initialization on topic, but there are also additional topics
+8:20
+for that, and also gradient centralization. So gradient
+8:25
+centralization is similar to input standardization, except
+8:30
+that you normalize the gradients so that they have zero mean and
+8:35
+unit variance. So yeah, and next, there are techniques from
+8:41
+yeah, I would say modifying the training loop. So the for loop
+8:45
+over the epochs and the mini batches. And so what we can do
+8:48
+there in terms of the optimizer and things like that should have
+8:51
+maybe added something like different optimizers here,
+8:54
+because they are also optimizers that go beyond adaptive learning
+8:58
+rates. We will talk about this also in more detail in later
+9:03
+lectures. So for example, there are adaptive learning rates,
+9:06
+which are super helpful. They're also auxiliary auxiliary losses.
+9:13
+So we can add additional loss functions, intermediate layers,
+9:16
+and then also modify the training. Intermediately, we can
+9:19
+modify the network training by having these on additional loss
+9:23
+functions. So one common thing that comes to mind right now
+9:27
+would be the inception network. We will talk about that in the
+9:30
+convolution network section where we have multiple loss
+9:33
+functions that we combine from different places in the network.
+9:35
+And that helps also training the network. So just briefly, if you
+9:39
+have a network like that, usually you have the output
+9:43
+output here. And then you have a loss function and you have the
+9:46
+label. So you have the true label. So you have your input
+9:49
+image, the x goes into the network, oops. And the y goes
+9:54
+into the loss function together with y hat, the predicted label
+9:58
+or probability. So you get y y hat as the loss function that
+10:02
+you compute for backpropagation. But yeah, what you can also do
+10:07
+is you can also have intermediate value here,
+10:11
+intermediate prediction from the intermediate layer, and also add
+10:14
+that to the loss function, that is essentially how inception
+10:18
+works. And with that, you can make sure that if you have a
+10:21
+very big, big long network, that also the intermediate layers
+10:25
+are trained well. So Jung Ji and I, we also worked on a method
+10:29
+related to this topic called looking back, looking back to
+10:34
+earlier layers for designing better loss functions. Yeah,
+10:40
+then there's also gradient clipping. So avoiding, like very
+10:44
+large gradients. So if they go too large, we can clip them by
+10:49
+giving them giving it a maximum value. So that is also sometimes
+10:53
+helpful to avoid exploiting gradient problems. And now the
+10:58
+last set of techniques, I just put them also here, because
+11:01
+those are the ones that we are going to cover in this particular
+11:04
+lecture here, in addition to these topics. So we will talk
+11:08
+about l two regularization and l one regularization for adding a
+11:13
+penalty for large weights. So that helps with having smaller
+11:17
+weights. And that also helps with making the network less
+11:20
+sensitive to certain inputs. So that makes the network
+11:24
+predictions a little bit less noisy. So reducing the
+11:27
+variance. And we'll also talk about your early stopping by
+11:31
+looking at validation set performances, and then drop out,
+11:35
+like dropping random units in the network, which is kind of
+11:38
+like a way of adding noise to the network. And then helps also
+11:41
+with, yeah, overfitting. Alright, so this is just like the
+11:45
+big picture overview of all the different techniques that
+11:48
+spontaneously came to my mind, when it comes to improving
+11:50
+generalization performance. Again, we will talk about many of
+11:54
+these techniques, not all of them, but many. So just have to
+11:57
+be patient, because we can only talk about one thing at a time,
+12:01
+but think this is probably a useful overview for you. Alright,
+12:05
+so in the next video, we will talk then about overfitting by
+12:08
+considering making our data set larger, and by augmenting our
+12:13
+existing data.
+
+##v74:
+
+0:00
+Yeah, in practice, one of the best ways you can improve the
+0:04
+performance of your model is really just to focus on the
+0:07
+data set itself before you do anything more fancy. So in this
+0:12
+video, I want to briefly talk about two ways for improving the
+0:16
+performance by focusing on the data set. One is by collecting
+0:19
+more data. And the other is by augmenting the data that you
+0:22
+already have. So how do you know whether more data could be good
+Learning Curves
+0:29
+for your model. So there's a technique called learning curves
+0:34
+or the techniques. Let's say the method is called making a
+0:40
+learning curve. And how does that work? So yeah, I'm showing
+0:44
+you an example where I made an learning curve for softmax
+0:48
+classifier using the M or a subset of the MNIST data set. So
+0:53
+why the softmax classifier that was when I made this, it was
+0:56
+just quick because softmax is faster to train than a multilayer
+1:00
+of reception. So that was more like for efficiency reasons. But
+1:03
+this should work for any type of neural network to help you find
+1:07
+out whether more data is useful. So what you can see here is on
+1:11
+the x axis on different training set sizes. So I was changing the
+1:15
+size of the training set that I used for training the softmax
+1:19
+classifier. So I was varying it from here, it's maybe around
+1:25
+100 training examples up to here, it's around 3500 training
+1:32
+examples, I was changing the size of the training set. But I
+1:36
+was keeping the test set size constant. So I was using the
+1:40
+same exact same test set, just different models, because the
+1:45
+training set sizes were different. So in the beginning,
+1:49
+so let's just briefly talk about the training set accuracy to get
+1:52
+it out of the way. So you can see that the training accuracy
+1:55
+goes down when we add more data. So why is that? I mean, this is
+1:59
+like a little bit unintuitive. And this does not always happen.
+2:02
+I think here, it's just because it's such a simple model. So if
+2:06
+you have a very small data set, actually, it's easy to overfit
+2:09
+the data. So you will always find if you have a very small
+2:11
+data set that you have high accuracy, and then it goes down.
+2:15
+But usually, it also, it might go up again, if you have more
+2:17
+data. So I wouldn't pay too much attention here on the training
+2:21
+set accuracy. What's actually more interesting is that the
+2:26
+test set accuracy goes up. Right? So that is what we want
+2:30
+to see. And you can also see here, the gap between training
+2:34
+and test set performance on shrinks. So whether the training
+2:40
+accuracy stays constant or not, doesn't really matter what's
+2:44
+remembering here is that the test set accuracy goes up. And
+2:46
+just by that one fact, even if the training set here would be
+2:50
+constant, we would reduce our fitting. So in that way, we
+2:55
+don't know really what happens beyond 3500. Right? So we have
+3:00
+no idea what's gonna happen in, let's say in this region
+3:03
+between 3500 and 5000, or even beyond that. But just by looking
+3:10
+at this slope here, if you just look at that slope, you can,
+3:13
+you can just argue or imagine that the performance might even
+3:18
+crew improve further beyond here. So here, it might just be a
+3:22
+good idea to just collect more data. So for instance, if this
+3:26
+is like, really what's going on, then by just collecting 1000
+3:30
+more training examples, you could already increase the other
+3:34
+performance from, let's say, 91%, to maybe up to 93% here. So
+3:43
+it's 2% points in this very high region here already. Of course,
+3:46
+this is only speculating. But yeah, sometimes adding more data
+3:50
+helps. And this can be diagnosed by making such learning curves.
+3:55
+One thing I should say, though, is maybe you shouldn't use the
+3:57
+test set for doing that, because you should only use the test
+4:01
+that ideally once at the very end, instead of using the test
+4:04
+set, you may want to use the validation set. So in the
+4:07
+previous lectures, we always use the validation set during
+4:10
+training, it's usually a better idea to not use the test set. So
+4:14
+just wanted to clarify that. Okay. Yeah, that would be one
+4:19
+way of finding out whether more data helps. The other topic for
+4:22
+this video is looking at data augmentation, like modifying the
+Data Augmentation
+4:28
+data that you have already. So here at the top, I'm showing you
+4:32
+again a snapshot from MNIST. So here are just some example
+4:37
+images from MNIST. And at the bottom, I'm showing you
+4:40
+randomly augmented versions of that. So what you can see is
+4:44
+here, they are slightly zoomed in. But moreover, you can also
+4:48
+see this one is slightly rotated to the left compared to this
+4:51
+one. So these are really pairs. This is slightly rotated to the
+4:55
+right and so forth. So I'm creating modified versions. So
+4:58
+why would I do that? So those can really help the network to
+5:03
+not memorize exact pixel locations, right? Because, for
+5:06
+instance, it might memorize these two, some locations here,
+5:12
+just memorizing them. But if you randomly rotate it, it can't
+5:17
+exactly memorize these locations, it has to learn more
+5:19
+than just these locations, it has to more learn the shape, or
+5:23
+at least a couple of more locations, right, because it
+5:25
+can't always rely on these positions, it has to learn the
+5:29
+relationship between these positions. So in that way, data
+5:34
+data augmentation can be a cheap way of helping with the
+5:38
+generalization performance. So I don't want to go into too much
+Code Example
+5:42
+detail. I mean, like making a new video for the code notebook,
+5:45
+because yeah, I would maybe take too much time, and it's not
+5:48
+necessary, because it's actually pretty straightforward. And I
+5:51
+can describe this here, I think on that single slide. If you
+5:55
+want, though, I have the whole code example here on GitHub,
+5:58
+which you should be able to run just from there. I will also
+6:02
+post the link on canvas, of course. So recall, in the last
+6:07
+week's lecture, we call we talked about these custom data
+6:10
+loaders, where we use the data set. So here, I'm showing you
+6:15
+again, this data set. So but last week, when we did that, we
+6:19
+used a simple transformation here as the argument for
+6:23
+transform. We used to tensor, which is just converting an
+6:28
+image into a pytorch tensor. Now we are using a fancier version,
+6:32
+we let's call it, let's say we call it training transforms. And
+6:36
+training transforms is shown here on the top. So let's
+6:38
+discuss that first. So we are using a library called torch
+6:43
+vision for that. And this one should already be installed when
+6:47
+you installed pytorch. So if you go to pytorch.org, and execute
+6:52
+the installation command, you may have noticed that it already
+6:55
+included torch vision. So here, what you can see is that we are
+7:01
+using torch vision, the transforms sub module, and
+7:05
+there's a compose class, which lets us chain different or
+7:11
+multiple transformations. So here, I'm just showing you a
+7:15
+selection of those. But there are of course, more of them that
+7:18
+you may find online here under this website, there's a whole
+7:20
+bunch of those. So here, I'm using resize random crop random
+7:24
+rotation, and then the two tensor and normalization. So
+7:29
+let's talk about them one by one. So resizing. So MNIST
+7:34
+images are 28 by 28. I'm resizing it, making them
+7:37
+slightly larger, and then cropping them back to 2828. This
+7:42
+is essentially zooming in or cropping a random region from
+7:47
+that image. So why am I doing that? I mean, it's not always
+7:51
+helpful in the case of MNIST, it's maybe not always such a good
+7:54
+idea. Because, I mean, it's not technically necessary. But if we
+8:01
+do that consistently, for both the training and test set, if we
+8:05
+zoom in both, then this is essentially similar to
+8:08
+translating the image. So moving it slightly to the left and to
+8:12
+the right and top and bottom. Because I should say for it,
+8:17
+we'll talk about the test transformation in a second,
+8:19
+let's finish the training set transformation. So yeah, we do
+8:23
+the resizing the random crop. Then I do also a random
+8:27
+rotation. So here, up to 30 degrees, some minus 30 degrees
+8:33
+to the left up to minus 30 degrees to the right. So this
+8:37
+is randomly sometimes it's a small value, sometimes there
+8:39
+may be no rotation. So it's really random. So this helps us
+8:43
+like really almost creating infinitely many new flavors of
+8:47
+our existing images. I'm using this interpolation here. It's, I
+8:52
+would say, it's not ideal either, but it's better than the
+8:55
+default. So you can see it looks a little blurry, but it also
+8:59
+has something to do with zooming. But if you don't do
+9:03
+that, you will see these images are a little bit more, I would
+9:07
+say, jagged. So the edges are a little bit more jagged. So in
+9:10
+that way, there's no ideal way I find this one is slightly better
+9:15
+than the default. But this is really up to you which one you
+9:19
+use, you can also actually ignore that if you like. Oh, yeah,
+9:22
+then we are converting. So here, during these steps, the data is
+9:27
+still in an image format here, it's then converted to a pytorch
+9:30
+tensor. And by default, to tensor will, like we discussed,
+9:35
+will normalize the images such that they are in a zero one
+9:39
+range. But for gradient descent, it might be better to have unit
+9:46
+variance and zero mean, so having them standardized. So how
+9:52
+can we do that? So there's a normalize transform here. So
+9:57
+where we can choose a mean and a standard deviation. So in this
+10:01
+case, because we know the data range for each feature, it's the
+10:04
+same, it's on the pixel values between zero, up to 255. Or in
+10:09
+that case, if we normalize them between zero and one, what we
+10:13
+can do is we can choose point five as the mean, and point five
+10:18
+as the standard deviation, and then the images will be
+10:20
+afterwards in the minus one to one range. So why is that
+10:24
+standardization works like that, if we have an input feature, or
+10:29
+let's say this is our normalized feature, it's a pixel position.
+10:33
+And then we subtract for this given pixel, the mean over the
+10:42
+pixels over all the pixels in the data set in this position. So
+10:46
+let's call it feature J. And this is the mean for feature J.
+10:54
+And then we divide it by the standard deviation for feature
+10:57
+J. And this will give us a unit variance and zero mean. So
+11:04
+standard deviation of one, here, we are choosing these values
+11:08
+such that we have a zero mean. But our standard deviation was
+11:14
+of one sorry, yeah. So that is what we are going to do here. So
+11:18
+the images will be in the range minus one to one, because the
+11:23
+largest value is one. So one, let's do it slowly. One minus
+11:29
+0.5 is 0.5 divided by 0.5 is one, right? So and if the input
+11:43
+pixel zero, zero minus 0.5 divided by 0.5 is minus one, so
+11:49
+they will be in the range between minus and one in this
+11:53
+case. Alright, so this is how we could augment our input images
+12:01
+for the training, but we have to be careful now for the test
+12:05
+set, we don't want any randomness in the test set,
+12:07
+right. So here, we are doing things randomly, we don't want
+12:11
+any randomness usually in the test set. So here, I was
+12:14
+actually for the test transforms, I was removing all
+12:18
+the random parts. However, because I use resizing and
+12:21
+random crop, I also should use them in the test set to have
+12:24
+things consistent. Otherwise, all the tests that images will
+12:28
+look smaller than during training, which might not be a
+12:31
+deal. So here, I'm using the resize, but I'm using a center
+12:34
+crop. So it's cropping the region in the center, rather
+12:37
+than randomly. So if I go back one slide, for instance, it's
+12:44
+hard to see here, but they're almost like center cropped here.
+12:47
+But so this one is maybe slightly to the left. So if that
+12:52
+was a testing image, it would might be more to the left here.
+12:56
+So in that way, um, we avoid randomness here. Okay, um, yeah,
+13:01
+and like I said, we are providing the train transforms
+13:04
+to the data set here, and the test transforms to the test set
+13:08
+here. And we would also use the test transforms for the
+13:11
+validation set.
+13:12
+Alright, so I should maybe also add, we only have one color
+13:16
+channel for MNIST. So if we work with RGB images, we want to also
+13:21
+make sure that we do the standardization for each color
+13:24
+channel. So if we have RGB, we would have three of these
+13:29
+values. In practice, people also sometimes compute the mean and
+13:33
+standard deviation over the whole data set by themselves,
+13:35
+basically for each channel. But that is a little bit more
+13:40
+work. So you can do that. Sometimes people also use these
+13:43
+statistics from the image net data set. But in practice, I
+13:49
+find it makes only a small difference whether you use the
+13:53
+actual mean and standard deviation of the data set, or
+13:55
+you just use these placeholder values. Alright, so these were
+Conclusion
+14:02
+like, two ways you can improve the performance by just looking
+14:05
+at the data set, that is by plotting these learning curves,
+14:08
+and augmenting existing data. In the next video, I want to show
+14:14
+you, yeah, how early stopping works. I mean, just
+14:18
+illustrating the concept of early stopping, we have briefly
+14:21
+seen that, or discussed that already in the previous week,
+14:23
+when we talked about double descent. But yeah, I just want
+14:26
+to recap for completeness, how are you stopping works.
+
+##v75:
+
+0:00
+Yeah, let's talk about some other ways we can use for
+0:05
+Yeah, let's talk about some other ways for dealing with
+0:07
+overfitting. For instance, if collecting more data is not
+0:11
+feasible, and if data augmentation only gets you so
+0:15
+far. So one way would be reducing the network's capacity
+0:19
+by other means. I decided not to do an extensive slide on that
+0:25
+because we discussed several techniques already in that
+0:28
+overview video I made with a mind map. And also, to be
+0:32
+honest, the really most exciting topic here is dropout. So I
+0:36
+don't want to spend too much time on other techniques at this
+0:40
+point. I will briefly talk about early stopping though. And then
+0:43
+in the next video, I will also talk about to regularization,
+0:47
+which are two ways that allow us to reduce the capacity. So
+0:52
+capacity is essentially an interesting term, it refers
+0:56
+really to the ability of the network to fit complex
+1:01
+functions. So like the you can think of it as the complexity of
+1:05
+the decision boundary. So adding a penalty against complexity,
+1:09
+that's essentially what L two regularization is, it helps
+1:12
+reducing the capacity, but also, let's say adding noise via
+1:16
+dropout also reduces the capacity in a way. So all these
+1:20
+kind of topics are kind of related. So in this video, we
+1:23
+will mainly focus on early stopping. And in the next video,
+1:26
+we'll explain regularization. Yeah, and as far as early
+1:30
+stopping is concerned, so there's a general strategy here.
+1:34
+So this is usually something I always recommend when you work
+1:37
+in deep learning, you split your data set into three parts of
+1:42
+large training sets. And the second largest chunk should be
+1:46
+your data set for testing, and then a smaller validation set
+1:50
+that you use for model tuning. And the test set should only
+1:53
+ideally used once and the very end. Once you Yeah, you found
+1:57
+your model, you are happy with it by tuning it on the
+2:00
+validation set, then you use your test set to evaluate the
+2:03
+final performance of this model. And the other validation set is
+2:06
+essentially for tuning the model. But then you can also use
+2:10
+it, of course, for early stopping, that's part of the
+2:13
+tuning, essentially. So last week, I showed you some real
+2:16
+data, like the training, or the epochs and the accuracy, we
+2:22
+also did the same for the loss. So you can also do that for the
+2:25
+loss. Here, just for the sake of keeping things simple, I'm just
+2:30
+showing you an idealized drawing of that. So I'm really stopping
+2:36
+is essentially a method for looking at the training and
+2:40
+validation set performance. And you from there, you try to deduce
+2:44
+a good point for stopping the training, for instance, you may
+2:48
+see that the validation accuracy goes up. So the validation set
+2:54
+serves as a way of estimating the generalization performance,
+2:56
+you can say the generalization performance improves up to a
+3:00
+certain point where you find that the validation set
+3:03
+performance goes down again. So in that way, training longer
+3:07
+may make your performance worse. However, there might be some
+3:10
+exceptions sometimes like we've seen in the double descent
+3:14
+paper last week. But in general, there might be something like
+3:17
+this where you find that if you stop the training early, actually
+3:21
+get a better performance. In practice, this method is not
+3:26
+super common anymore. I mean, it's not totally uncommon to do
+3:29
+that. But I would say first try that either L two regularization
+3:34
+or even better using dropout to improve generalization
+3:39
+performance. And once you use both techniques, and you still
+3:42
+find that early stopping helps, then I would probably consider
+3:45
+early stopping. But I would first consider the other two
+3:49
+techniques I'm going to present in the next two videos. But
+3:53
+again, this is also a useful technique to know about. So in
+3:56
+the next video, I want to show you L two regularization, which
+4:00
+is essentially a penalty against complexity. And then we will get
+4:04
+to the main topic dropout.
+
+##v76:
+
+0:01
+Yes, so in this video, I want to talk about adding a penalty
+0:05
+against complexity. So we will be talking about the so called
+0:08
+norm penalties that we can add to the loss function. There are
+0:11
+two common versions, the one and the two norm. And what they
+0:15
+essentially do is you can think of it on maybe in the context of
+0:18
+a multi layer perception. Let's say we have a hidden layer with
+0:22
+three units and two output units. And then we have, let's
+0:26
+say to, to input features here. And yeah, as you know, everything
+0:31
+is fully connected. Let me quickly draw that. So if we have
+0:36
+a setup like this, and we have a large weight connection at this
+0:41
+point, it's called w one, compared to the other weights,
+0:46
+let's say this is a very large weight, then here, w one will
+0:51
+have a large effect on the network, although it's only one
+0:54
+feature that has, let's say a large weight. So if you have a
+0:58
+lot of inputs, that might happen that there's one large weight,
+1:01
+and then it outweights all the other features. So that could
+1:04
+be causing a lot of noise or variance in the model, it could
+1:09
+be very susceptible to small changes in the input that way.
+1:13
+And by adding like a penalty against large weights, by
+1:17
+keeping them more small and more uniform or closer together, we
+1:21
+can help with preventing like fluctuations in the network. So
+L1/L2 Regularization
+1:28
+yeah, you probably heard about l one and l two regularization
+1:32
+from other statistics classes. So I will keep it relatively
+1:35
+short here. It's also not the most important technique in deep
+1:38
+learning. So it's also not what I'm saying is, it's also not,
+1:42
+let's say, a priority in this course to talk about it, because
+1:46
+there are more, I would say important techniques to talk
+1:48
+about in the context of deep learning. But yeah, you may have
+1:52
+heard of this in the context of lasso regression. So lasso
+1:55
+regression is essentially a linear regression with an L one
+1:59
+penalty. And there's also rich regression, which is essentially
+2:03
+linear regression with an L two penalty. And sometimes that's
+2:07
+also called weight shrinkage, because yeah, it shrinks the
+2:11
+weight, because a large weight will add a penalty against the
+2:14
+loss, which will make more sense when I show you actually how it
+2:18
+looks like. So here is an illustration of the L two norm
+2:25
+or the two norm penalty. So to regularization, in a sense for
+2:29
+linear models, for example, for logistic regression, because
+2:33
+yeah, in this course, we talked more about classification rather
+2:35
+than linear regression, but everything on this slide would
+2:39
+also apply to linear regression. And then I will also later in
+2:42
+this video show you that how we can generalize that to
+2:45
+multilayer neural networks, it's actually pretty trivial. But
+2:50
+just for simplicity to take one step at a time, let's consider a
+2:53
+logistic regression model here, where we have the loss function
+2:58
+here, that's the negative log likelihood. And yeah, I'm just
+3:03
+calling this cost here. So I took this, I think, from my book
+3:06
+or something where traditionally, I differentiated
+3:10
+between cost and loss, I called cost, something that is
+3:14
+computed over the whole training set, whereas the loss is, for
+3:18
+instance, just on a single data point i here. But you can also
+3:22
+think of it as as loss if you like. So this is nothing new.
+3:27
+This is how we compute the loss between the true label and the
+3:33
+predicted label. And here, assume this is the binary cross
+3:37
+entropy or negative log likelihood, let's just say
+3:40
+binary cross entropy. That is, again, nothing new. What's new
+3:48
+is that we are adding now this term here shown here. And this
+3:51
+is essentially weighted, sorry, yeah, it's just a sum, the
+3:56
+credit rate. So the weights squared so that we don't have
+4:01
+negative values. So we are just adding a sum over the squared
+4:05
+weight terms here. So that means, the larger the weights,
+4:11
+because it's even squared, it's even having a larger effect, the
+4:13
+larger the weights, the larger this regularized cost will
+4:17
+become, right. So because if a weight has a large positive or
+4:21
+large negative value, this will make the regularized cost
+4:24
+larger. And what is this term here? So this is lambda over n,
+4:29
+this is just like a normalization term, and lambda
+4:31
+is, I'm saying it here, it's a hyper parameter, it's something
+4:35
+you have to choose. It's essentially the regularization
+4:43
+strength. Right, so the larger lambda, the stronger the
+4:49
+regularization, usually people use a small number like point or
+4:54
+one or point one for regularization. But of course, you
+4:57
+can also choose a lot a number larger than one, and then that
+5:00
+will be a pretty strong penalty. Yeah, and I'm not showing you
+5:06
+really l one regularization, because it's the same concept,
+5:09
+except that instead of using squared weights, it would use
+5:13
+the absolute value here. Yeah, so this here is a geometric
+Geometric Interpretation of L2 Regularization
+5:20
+interpretation or a geometric intuition behind the l two
+5:24
+regularization. So this drawing is based on a seminar talk I
+5:29
+once saw by Professor Robert to Shirani, hope I'm spelling this
+5:38
+correctly or his name. He was one of the main people working
+5:41
+on these techniques, l one and l two regularization, if I
+5:45
+remember correctly. And what this is showing is, is a surface
+5:50
+plot of the loss function, let's say the mean squared error loss
+5:57
+loss for linear regression. And we have a model, a linear
+6:03
+regression model with two weights here. And let's ignore
+6:06
+the bias unit for simplicity. And in the center here, we have
+6:14
+the loss minimum. So that's the point we want to reach. So we
+6:17
+want to find the weights of the model, such that the losses
+6:21
+minimize the mean squared error is minimized. The further we are
+6:24
+apart here, these contours represent the magnitude of the
+6:27
+MSE. So the further we are to the outside, the larger the
+6:30
+loss. So really, we want to find the weights here, this position,
+6:33
+let's say if we only focus on the ellipsoids here, these weight
+6:37
+values that minimize the loss, that would be the regular MSE.
+6:42
+That is something we can do via gradient descent, for example,
+6:46
+as we've seen a couple of lectures ago. But now we have,
+6:50
+yeah, we have this new term, we have the two norm, right of the
+6:55
+weights. So we have two weights, right? So, um, over the two
+7:04
+weights, we have this L two norm, and it is added to the
+7:08
+loss function. So the larger the weights, on the higher the
+7:12
+penalty here, and this gray circle here represents the
+7:19
+penalty term. So this term here, now, it becomes essentially a
+7:27
+constrained optimization problem, we still want to find
+7:30
+or reach zero loss, but the loss consists now of two parts and
+7:36
+the parts that consist of this MSE loss, and this penalty term.
+7:40
+So the penalty term is really here is pink color. Penalty term
+7:45
+is really here like this circle. And the MSE loss here, it's this
+7:51
+one here. So we want to minimize both, we want to have small
+7:54
+weights. So we want to make weights close to zero because of
+7:57
+this term. But we also want to have the weights such that the
+8:01
+MSE here is minimized. So in practice, what will happen is
+8:05
+that, for instance, an optimization algorithm like
+8:08
+gradient descent, will find a good compromise between the two.
+8:12
+So for instance, it will try to keep the weights close to zero,
+8:16
+but also, it will try to keep them close to this MSE loss. So
+8:21
+for instance, it might find this compromise here between the two.
+8:25
+So you can see here for this part, let me use green. For this
+8:30
+part, these weights are not too large, so they're somewhat
+8:33
+close to the center that we want to minimize. But they are also
+8:36
+somewhat close to this point. So it's like a compromise between
+8:40
+the two. So that's how you can think of the L2 regularization,
+8:43
+it's still minimizing the main loss under the constraint that
+8:47
+we want to keep the weights relatively small. So in
+8:51
+practice, what the practical implication of that is, is that
+8:56
+let's say you have a model, let's say a multilayer perceptron
+9:00
+like that, it has a relatively complex decision boundary, it
+9:05
+will essentially make the decision boundary somewhat
+9:08
+simpler for it, for example, like that, if you have a very
+9:11
+strong regularization, it might even become like a linear model,
+9:14
+a very, too simple decision boundary. So yeah, usually, you
+9:20
+have to find a good hyperparameter for lambda, to
+9:24
+have a good regularization compromise here. So, in the
+9:30
+previous slides, I mentioned how that looks like for the
+9:33
+generalized linear models, like logistic regression, where we
+9:36
+have just the sum over the weights. So how can we
+9:39
+generalize that to multilayer neural networks where we have
+9:44
+multiple layers of weights, we don't only have a weight vector,
+9:47
+but also, we have like weight matrices. Actually, it's very
+9:52
+simple, we just use the Frobenius norm. So instead of
+9:55
+having the sum over the elements in the vector, so that instead of
+9:58
+having the L2 norm, we now have the Frobenius norm, which is
+10:02
+which is essentially the same as the L2 norm, except that we have
+10:06
+a sum over the rows and the columns in the weight matrix. So
+10:11
+we have here the Frobenius norm for one matrix, one matrix in
+10:17
+the layer L. Of course, we have multiple weight layers. So in
+10:21
+that way, you can either have a different lambda for each, so
+10:28
+you can have a lambda for each layer, or you can use the same
+10:30
+lambda for all the layers. But you also don't have to
+10:33
+regularize all the layers, but that's usually common. So here,
+10:36
+for instance, you would have a summation also over the
+10:41
+Frobenius norms for the L layers, you can see that here,
+10:44
+that's the L layer weight matrix. And each, each
+10:48
+Frobenius norm would be computed via these two sums over the
+10:51
+columns and the rows. So it's just a simple summation of the
+10:56
+weights. Actually, the squared weights, of course. So now that
+11:03
+we modified the loss function, so how do we do the training if
+11:07
+we use gradient descent, it's actually pretty straightforward.
+11:11
+So gradient descent, recall, we take the derivative of the loss
+11:15
+function with respect to the weights. And we would do the
+11:18
+same thing now with the added penalty here. I mean, if you
+11:23
+think about it, this is just plus, right? So it's a sum, a
+11:26
+sum between the normal loss, let's call it the normal loss,
+11:32
+and this regularization term, because it's just a sum, we can
+11:41
+use the sum rule, and we can compute the derivatives
+11:44
+separately. So this is the derivative as usual that we
+11:48
+talked about, or gradient, if you will. And then we can also
+11:52
+Yeah, compute this part separately and add them up. So
+L2 Regularization for Neural Nets in
+11:55
+for instance, if we have the gradient or partial derivative
+11:58
+of the loss with respect to one of the weights here, we would
+12:01
+have for the weight ij, the derivative of this regularization
+12:06
+term as follows, because it's Yeah, it's just a square term,
+12:09
+right? So if it's on, like this, we can just bring it up front,
+12:14
+right? So in that way, very simple derivative, except that
+12:17
+we have, of course, sorry, we have this lambda term. And then
+12:25
+also, if we have a summation over n, in our loss, we also
+12:31
+have a normalization here over n. So this is essentially it how
+12:35
+we how we compute that. So over n here is over the training
+12:41
+examples, right? Okay. So anything? Oh, yeah. So we have
+12:47
+also here an example of how we implement this in pytorch. So I
+12:51
+don't want to I have actually a code example, I will just
+12:54
+upload this and link this on canvas. But it's so simple that
+12:58
+I don't even need to show you this in a separate notebook, I
+13:01
+think. So how we can regularize the loss is by just summing over
+13:08
+the weights in the model. So if you initialize your model, you
+13:12
+can then iterate over these model parameters. And notice we
+13:17
+only regularize the weights, not the bias units. So here, I'm
+13:24
+iterating over all the parameters in the model, I'm
+13:29
+using named parameters instead of just parameters. Notice this
+13:33
+is model dot parameters is something you would give into
+13:35
+the or provide to the optimizer. So you have seen that before.
+13:38
+Now we are using named parameters. Why are we doing
+13:42
+that, so that we can then say here, only choose the weights,
+13:46
+not the biases. And then here we add these to the loss. So let's
+13:52
+say we have the L two term here, we accumulate all of these just
+13:54
+the squared sums of these weights. So P is a weight. And
+14:03
+yeah, and then we add this to the loss here. So I'm calling it
+14:07
+I'm calling it cost, but you can also call it loss. So this one
+14:11
+is essentially what we have seen in the previous slide, lambda is
+14:14
+our regularization strength here. So this is essentially what I
+14:20
+was showing you here, except for all the weights, of course. And
+14:26
+this is something you would do during the training loop during
+14:29
+the for loop. So that would be one way you can do L two
+14:32
+regularization for neural networks in pytorch. But there's
+14:36
+even a simpler way. So what you can do is, instead of what I've
+L2 Regularization for Logistic Regression
+14:39
+shown you in the previous slide, you can just choose this weight
+14:42
+decay argument here, or you can use this weight decay argument
+14:45
+in the other SGD optimizer. And you can just provide the lambda
+14:49
+regularization strength to the weight decay here, and it will
+14:53
+do L two regularization for you. So actually, you don't even have
+14:57
+to bother with this. I mean, this is optionally, if you like
+15:00
+to do it manually. But you can also just do it automatically by
+15:04
+specifying this here in the optimizer. And this is it. So
+15:07
+that's all you need to do for L two regularization in your
+15:13
+network training. Okay, so this was L two regularization in a
+Dropout
+15:18
+nutshell, I would say I recommend maybe trying this out
+15:21
+in practice. But I must say it's not super common anymore. What's
+15:26
+more common is using dropout, which we will be discussing in
+15:30
+in the remaining parts of this lecture. Actually, I originally
+15:34
+planned to only make one video. But then I think it might be a
+15:38
+super long video. So I'm splitting it into four shorter
+15:41
+parts. So let's get started then and finish up this lecture on
+15:45
+regularization by talking about dropout.
+
+##v77:
+
+0:00
+Yeah, no, we are finally getting to the more interesting part of
+0:03
+this lecture talking about dropout. Or at least that's what
+0:06
+I find a little bit more interesting, because it's a
+0:08
+method specifically developed for neural networks, and not
+0:12
+just an extension of generalized linear models. So to keep things
+0:17
+a little bit organized, I split this topic into four sub topics.
+0:22
+However, don't worry, these will be probably very short videos.
+0:25
+So there are not many slides per topic. But I thought it's just
+0:28
+simpler to organize it this way. So in this first video, I want to
+0:31
+just give you the brief, big picture overview, the main
+0:34
+concept behind dropout. And then we will talk about the co adapt
+0:38
+adaptation technique, not a technique interpretation of
+0:42
+dropout. And then we will talk about the ensemble method
+0:45
+interpretation. And then we will see how we can do that in
+0:48
+pytorch. So for reference, if you're interested, you can later
+0:53
+also check out these papers. They are pretty nicely written
+0:56
+and not too complicated. So these two papers, as far as I
+1:01
+know, are the original papers proposing dropout. So one goes
+1:05
+back to 2012. It's entitled improving neural networks by
+1:09
+preventing co adaptation of feature detectors. So like I
+1:12
+mentioned, we will see what this co adaptation interpretation
+1:16
+means later. And there's also another interpretation that goes
+1:20
+back to this second paper dropout, a simple way to prevent
+1:23
+neural networks from overfitting. This is like the more
+1:26
+like the ensemble interpretation. But yeah, we will
+1:30
+talk about this in more detail. I just wanted to give you these
+1:32
+references for these methods. So if you want to check out more
+1:35
+details, you can find them here. So what is the main concept
+1:39
+behind dropout? So in a nutshell, it's about dropping
+1:43
+nodes. So suppose you have a multi layer perceptron here,
+1:47
+that's a very small one. Essentially, it's doing training
+1:51
+randomly dropping nodes. So for example, here as shown, you
+1:55
+would randomly drop this node with a certain probability. So
+1:59
+if you say the dropout probability is point five, like
+2:04
+50%, then during training for each node, you would say with 50%
+2:09
+probability, I will just delete it during the forward pass. And
+2:14
+in each training, forward pass, it will be different nodes that
+2:19
+will be deleted, because it's a probability. So you randomly
+2:23
+create different models. So one forward pass might delete this
+2:30
+one, another forward pass would have these two deleted, another
+2:34
+forward pass may have this one deleted, and so forth. So why
+2:41
+that is useful, there are a couple of theories. And we will
+2:44
+talk about this here is just like the big picture overview,
+2:47
+how it works. I mean, like what the main what's happening
+2:51
+basically, and then why that helps that is a topic for the
+2:54
+next video. Yeah, now the question is, how can we
+2:58
+implement that efficiently? So how can we implement a dropout
+3:03
+without having to make any major modifications to our neural
+3:07
+network architecture, like deleting nodes or something like
+3:09
+that? So how can we just do it conveniently? So one way would
+3:13
+be by implementing a Bernoulli sampling procedure. So for that,
+3:19
+we can define a drop probability P. So for example, this could be
+3:24
+50%. Or let's say, point five, that's our drop probability. So
+3:31
+with that probability, for each given node, it's the probability
+3:36
+that we drop that node. Now, we create a vector here. So it's
+3:42
+so it's like a random vector, a random sample from a uniform
+3:46
+distribution in the range zero and one. So this vector will
+3:50
+have the same number of elements as the size of the hidden layer
+3:56
+that we want to apply dropout to. So dropout is only applied to
+4:01
+hidden layers, it's not applied to the output layer. So now
+4:07
+let's say we have done that we have, let's say, five units in
+4:10
+our hidden layer. So we have five numbers between zero and
+4:15
+one. I'm just writing down some arbitrary numbers here. Oops,
+4:24
+like this. And now that is when we apply basically a Bernoulli
+4:31
+sampling where we say for each value in that vector for each
+4:34
+value, vi, we set this value to zero. If this value is smaller
+4:40
+than a drop probability, otherwise, we set it to one. So
+4:45
+we are modifying this now that it is a binary vector. So this
+4:48
+one is smaller than point five. So we set it to one, this one,
+4:54
+oh, sorry, should be zero, this one is greater. So we set it to
+4:59
+one, this one is smaller. So we set it to zero, this one, it's
+5:02
+on the border, we have defined smaller, so let's set it to one.
+5:06
+And then this one would be also zero. So we have now this binary
+5:11
+vector. And then we can simply model or multiply this binary
+5:16
+vector with our activations a. So these are the activations in
+5:20
+our hidden layer. And then now we have effectively canceled
+5:25
+activations. And yeah, that's it. That's how we can apply
+5:29
+dropout during training. Okay, so but there's one little thing
+5:34
+thing we have to adjust if we want to use our model for
+5:39
+inference, like making predictions on new data, or
+5:42
+even computing the test set accuracy. So yeah, the reason
+5:46
+is, we don't want to have any randomness when we make real
+5:49
+world predictions, right. So it would be a little bit awkward
+5:52
+if, let's say we predict some, let's say credit scores, but
+5:56
+sometimes random nodes get dropped. So the customer would,
+6:00
+on different days, get different credit scores, although nothing
+6:03
+else has changed. So in that way, we don't want to have any
+6:06
+randomness during testing. So the dropout is only applied
+6:10
+during training. So what effectively what it means, we
+6:15
+don't do any removal of the nodes during testing. However,
+6:19
+there's one additional thing we have to do when we want to
+6:24
+remove the dropping of the nodes. And that has to do with
+6:28
+the scale of the activations. So assume I have a multi layer
+6:32
+perceptron, with multiple hidden layers, let's call that hidden
+6:36
+layer h one and this hidden layer h two, and they are fully
+6:39
+connected to each other, like always. So now, if I drop one of
+6:46
+the nodes, though, in h one, when I drop out, let's say I do
+6:50
+it like this, or let's say, um, let's say it like this, each
+6:55
+value here is the same, the weights are all one and the
+6:59
+activations are all one just to keep things simple. So this is
+7:04
+the case, the activation at that given node here is one times one
+7:11
+plus one times one plus one times one, it's three, right. So
+7:16
+if I have some over the weights, and activations from the
+7:26
+previous layer, for some that up the net input, let's say the net
+7:29
+input is three, because all the weights and all the activations
+7:32
+are one just for simplicity. Now, if I drop one of these nodes
+7:37
+during using dropout, then now I only have two inputs. So the
+7:43
+value now is only two instead of three, because I only have two
+7:48
+incoming activations when computing the net input. Okay,
+7:53
+so that means, um, I mean, this doesn't have any is not a
+7:58
+problem during training, of course, I mean, this is just
+8:00
+like some arbitrary numbers I'm showing you here. But now, if
+8:03
+you don't do any dropout during testing, all the activations
+8:08
+will be larger, right. So during testing, we don't have any
+8:11
+dropout. So the values are actually larger than during
+8:16
+training during training, we had a value of let's say, two, and
+8:19
+during testing, we will have a value of three. However,
+8:23
+everything in the network is kind of has learned to work with
+8:27
+these smaller values. So the threshold, let's say in the last
+8:31
+layer for the prediction would not really work for for these
+8:37
+larger values now, because we have all now throughout the
+8:41
+whole network, larger values, because we don't drop any nodes.
+8:44
+And that could be awkward. So what we do is we just scale these
+8:49
+activations. That's like a very simple trick to deal with this
+8:52
+problem. So let's say we have a drop probability of point five,
+8:57
+and we have an activation of three, one, let's say, we have
+9:02
+two during training. Because this one node got randomly
+9:08
+dropped, I mean, this is just a simplification. And then doing
+9:11
+testing, the value here that comes in here is three, because
+9:15
+there is no dropping of any node. So we have now this
+9:18
+problem is this too large. So how can we do it, get it
+9:21
+smaller, and we can just scale it by one minus the drop
+9:25
+probability. So in this case, okay, this doesn't make quite
+9:28
+sense, because this is not an even number. Let's let's do it
+9:33
+properly properly here. Okay, sorry. So let's do a network
+9:38
+where we have 1234. And 123 nodes here. Same thing applies
+9:44
+during training, we drop 50%. So we drop two nodes randomly. So
+9:49
+the value during training we get is two. But during testing, we
+9:54
+don't drop anything. So the value we may get at this node
+10:00
+here is no four. So how do we scale it, we can scale it by one
+10:05
+minus the drop probability probability, for example, can
+10:08
+have then four times one minus point five, which is four times
+10:15
+point five, which is essentially two. So in this way, we scale
+10:17
+all the predictions during training testing, sorry. So
+10:22
+that's like a simple trick to deal with these activations that
+10:26
+might be too large during testing. And yeah, this is
+10:29
+essentially how dropout works. So in the next video, I want to
+10:35
+talk about the co adaptation interpretation. So one way to
+10:39
+interpret dropout, why it might work in practice. And there's an
+10:43
+alternative interpretation from looking at dropout as an
+10:47
+ensemble method. And then I will show you how we can do dropout
+10:51
+and pytorch. And there's also a concept for that called
+10:54
+inverted dropout, which will be interesting. It's a slight
+10:57
+modification of what I just talked about. It's called
+11:00
+inverted dropout. I will call talk about that when we talk
+11:04
+about the implementation.
+
+##v78:
+
+0:01
+Yeah, now let's try to understand why dropout might
+0:05
+work well in practice. So why would it help? Yeah, making the
+0:09
+network perform better in terms of generalizing better to new
+0:13
+data, for instance, the test data. So one, yeah, one
+0:17
+interpretation is this co adaptation theory. So we will
+0:21
+talk about this briefly. And then the next video, I will talk
+0:24
+about the ensemble method interpretation. So here, the
+0:30
+co adaptation interpretation refers to the fact that now the
+0:34
+network will learn not to rely on particular connections too
+0:38
+heavily. So with that, I mean, if you have a multi layer
+0:41
+perceptron like that, and everything is like always
+0:46
+connected to everything else. So if we have something like that,
+0:57
+then if let's say this neuron is not there during training just
+1:01
+randomly, then the network will rely more on these neurons
+1:05
+compared to this one single neuron, and vice versa. For
+1:08
+example, if this is not here, the network will use these two.
+1:12
+And during training, it's always a different neuron, or there are
+1:16
+different neurons that are canceled, it could be one, it
+1:18
+could be none of them, it could be two of them, and things like
+1:22
+that. So there are always different combinations of
+1:25
+neurons being canceled. So the network can't rely on one neuron
+1:30
+too heavily. And that way, it will consider the others more.
+1:35
+And this could cause the weights to be more spread out, like that
+1:39
+it will try to put weights on all the neurons, instead of
+1:45
+having a large weight for let's say, one neuron, and small
+1:48
+weights for the others, because it can never count that this
+1:50
+particular neuron will be there. So in that way, it does make
+1:54
+sense to put too much weight on that neuron. So in that set,
+1:58
+this could have been a similar effect as the L2 norm, where
+2:01
+the weights will be more spread out and more uniform, rather
+2:05
+than being like, yeah, non uniformly distributed, it might
+2:10
+be actually interesting. I'm not sure if someone has done that
+2:12
+before, but just plotting the distribution of the weights for
+2:16
+each layer. So for instance, if we have, let's say magnitude
+2:22
+here on the y axis, and the weight index on the x axis, and
+2:33
+then if we have different layers, let's say this is for
+2:35
+layer L, maybe before dropout, we see something like where the
+2:40
+weights are not evenly distributed. And after dropout,
+2:46
+maybe we see something where the weights are more, more uniform.
+2:50
+I'm not sure if someone has looked at this yet, that might
+2:52
+be something interesting to do. Um, yeah, also, what I wanted to
+2:56
+say, just as an add on, you can certainly use different dropout
+3:00
+probabilities for the different layers. So you don't have to use
+3:03
+on 50% for every hidden layer, you can use 20%, 80%, and so
+3:09
+forth. It's also another hyper parameter to choose. So how you
+3:14
+have to choose this, it's depending on some
+3:16
+experimentation. 50% was like the original value, if I recall
+3:20
+correctly that they used in the paper. But nowadays, people also
+3:23
+use 20% or 80%. And that might be something yet to experiment
+3:29
+with. Okay, so this is just like one explanation why dropout may
+3:33
+perform well. So it's putting this, I would say emphasis on
+3:37
+particular nodes, and then it makes it maybe more robust to
+3:40
+fluctuations in the input. So in the next video, I want to
+3:44
+briefly talk about another explanation concerning the
+3:48
+ensemble method interpretation.
+
+##v79:
+
+0:01
+Yeah, now let's look at another explanation for why dropout
+0:05
+might perform well. And this is in the context of ensemble
+0:08
+methods. So we can essentially see dropout as an ensemble
+0:12
+method, as I will show you in the next couple of slides. And
+0:15
+yeah, what is an ensemble method. So students who have
+0:18
+taken 451, we talked there about ensemble methods a lot. We
+0:22
+talked about, for instance, on majority voting, begging random
+0:26
+forests boosting, you don't have to know any of that for this
+0:29
+class here. But in a nutshell, what is an ensemble method? It's
+0:34
+essentially a combination of multiple models, where you
+0:37
+average the results of the models. So you can think of it
+0:41
+intuitively. Let's say you have to make an important financial
+0:46
+decision, let's say you, you want to make you want to buy
+0:50
+something or invest, let's say you want to invest into
+0:53
+something. And it's a very important decision. So you
+0:57
+consider asking an expert. So the expert here is your model.
+1:00
+And it might give you a prediction or some advice. That
+1:05
+might be a good advice if it's an expert and expert knows the
+1:10
+topic very well. However, in practice, it's usually an even
+1:14
+better idea to ask a couple of experts and then consider the
+1:18
+shared opinion of the experts. So it's not always better than,
+1:23
+let's say the opinion of a single person, especially if you
+1:26
+have the committee doesn't agree with a single person and the
+1:29
+single person knows something the committee doesn't know. But
+1:32
+on average, usually asking a committee of multiple people is
+1:37
+a better idea than just relying on the opinion of a single
+1:40
+person, right? So in that way, using multiple models, and then
+1:44
+averaging the predictions or taking the majority vote is also
+1:48
+often a better idea than using a single model. Why don't we do
+1:52
+that always then? Yeah, well, because it's usually very
+1:56
+expensive to train models, especially in deep learning. So
+1:59
+in deep learning, I would say most of the time, we want to
+2:03
+focus on a single model, because it's computationally cheaper.
+2:07
+And we also often care about improving a model in general.
+2:11
+And then, let's say in production, you can always train
+2:14
+multiple of these models and then combine them to make the
+2:18
+predictions even more robust. In any case, talking about the
+2:22
+ensemble approach, know why dropout can be seen as an
+2:26
+ensemble method. So you can think of your dropout, the
+2:30
+procedure as having a different model for each mini batch,
+2:34
+right? So because you randomly drop nodes, each forward pass,
+2:38
+each mini batch will see a slightly different model. And
+2:43
+essentially, what we do is we sample over two to the power of
+2:46
+H models by H is the number of hidden units, if we only
+2:50
+consider a hidden layer, if we have multiple hidden layers,
+2:52
+well, this becomes even larger. But if you have already, let's
+2:56
+say, if you only have a hidden layer with 10 units, you already
+3:00
+have 10 to the power of 10 possible combinations of hidden
+3:05
+layers that you may sample during each forward pass. So in
+3:09
+that way, it can be seen as a model ensemble, except that
+3:13
+there is one restriction. And the restriction is that we have
+3:17
+a time dimension. So we don't have these models in parallel,
+3:20
+right? So what I mean is, if we have, say, hidden layer, a unit
+3:25
+network like that, and another network like that, and maybe
+3:31
+running out of space,
+3:34
+let's say each of these is one multi layer perceptron, I'm not
+3:38
+connecting all the units here. But let's say, in this first
+3:42
+one, first forward pass, we drop this one, and the other one, we
+3:45
+drop this one. And then here, we drop these ones. So we have
+3:48
+three different networks here. But we don't use all of them in
+3:51
+parallel, right? We usually, because it's a training for for
+3:56
+loop, we go through them one at a time. So we have during the
+4:02
+first forward pass, maybe this model during the second pass,
+4:05
+this for this model, and during the third pass, this model. So
+4:10
+there's essentially a time constraints or restriction. And
+4:14
+we can also see this restriction as weight sharing, because the
+4:18
+second model, receive, it will, the first model will update the
+4:23
+weights, and then the second model will be depending on the
+4:27
+weight updates from the first model, right? That's just like
+4:30
+how the regular training works, because each iteration, you
+4:33
+update the weights, and each consequent model will work with
+4:37
+the weights from the previous backward pass. So in this way,
+4:41
+so in this way, there's like this weight sharing between the
+4:44
+different forward passes. So there's a weight sharing over
+4:48
+these models. And yeah, we can see that as a type of
+4:51
+regularization, like a constraint, an additional piece
+4:55
+of information or constraint that we add. So in that way, we
+4:58
+can see this weight sharing as a regularization. And still we
+5:04
+have, I mean, while we have this weight sharing during training,
+5:07
+we could technically create all these different models after
+5:12
+training during inference, and then average over all these
+5:15
+models. I mean, there's nothing that prevents us from doing
+5:19
+that. The only problem with that is if we even only consider a
+5:22
+small case with 10 to the power of 10 combinations, this is like
+5:26
+a very large combination of models. So this is very, very,
+5:29
+very expensive. And this is something we technically
+5:32
+wouldn't want to do in practice, because yeah, it's just way too
+5:35
+expensive. But yeah, let's just for a second, continue with this
+5:39
+thought experiment, and assume we have now created all these
+5:45
+models for or during inference. So for instance, if we had a
+5:49
+hidden layer with 10 units, we have these 10 to the two to the
+5:53
+power of 10 models, let's call that m we have m models now. So
+5:58
+how do we average the predictions of these models?
+6:01
+For simplicity, think of a binary classification case. And
+6:04
+in this case, it's essentially averaging the log likelihoods of
+6:08
+the predictions, which is essentially what you probably
+6:12
+know as the geometric mean. So for instance, if we have a p
+6:17
+probability score p for a given test data point i, so if this
+6:20
+test data point i here, then we multiply all these probabilities
+6:25
+for the m models and take this to the power of one over m. And
+6:32
+here, I was just rewriting this to show you this is essentially
+6:35
+averaging log likelihoods. So some of the log likelihood terms
+6:41
+here, and then times one over m. And here, I'm just adding the
+6:45
+exponent. So I was just taking on considering the lock of this
+6:49
+here, and this one undo the undoes it. So it's essentially
+6:53
+the same computation. And here inside, you can think of it as
+6:57
+averaging the log likelihoods. So essentially, what this is,
+7:01
+it's we are computing the geometric mean. So that would be
+7:05
+one way we can combine the predictions. And if we have
+7:10
+multiple classes, more, more than binary classification, we
+7:15
+also want to normalize these so that they sum up to one
+7:20
+probabilities, because we have multiple classes, right? If we
+7:23
+have multiple classes, we have multiple probability scores. And
+7:26
+ideally, we'll want them to sum up to one. And the class level
+7:30
+can then be obtained by considering the class with the
+7:33
+highest probability.
+7:37
+Yeah, but this still doesn't solve our problem that this is
+7:41
+very computationally expensive, because we have to consider two
+7:45
+to the power of 10 models, right for averaging. And here, this is
+7:49
+also assuming that we only have one hidden layer with only 10
+7:53
+units. If we have a hidden layer, let's say with 64 units,
+7:57
+then yeah, this would be really infeasible. So what do we do
+8:02
+about that? How can we address this problem? So actually, the
+8:06
+regular dropout technique that we discussed earlier,
+8:09
+essentially is already computing this geometric mean, or
+8:12
+essentially, it's approximating this geometric mean, because
+8:16
+the other scaling factor that I mentioned the one minus p that
+8:19
+we use to scale the data after training, when we use the model
+8:23
+for testing, this is essentially an approximation of this
+8:26
+geometric mean. So we don't have to create all these different
+8:30
+models, we only consider the last model after training. So
+8:33
+just the model that comes out of training. And then this scaling
+8:37
+will essentially compute an approximated version of that
+8:41
+geometric mean, as they mentioned in the original
+8:44
+dropout paper. And they also argue essentially, if you have a
+8:50
+linear model, then the geometric mean would be actually exactly
+8:56
+like this scaled version here. So essentially, we are
+8:58
+approximating the geometric mean and dropout of a model
+9:01
+ensemble. And this is essentially the explanation of
+9:05
+dropout, why it might work well, because essentially, we can
+9:08
+think of it as a model ensemble.
+
+##v80:
+
+0:01
+Alright, finally, let's talk about how we can implement
+0:04
+dropout in practice. That is how we use dropout in pytorch. So
+0:10
+but before I can do that, I have to explain one more thing. It's
+0:13
+called inverted dropout. But don't worry, that's actually a
+0:16
+very simple concept. It is hopefully simple to explain to.
+0:21
+So and I wanted to explain that because in fact, nowadays, most
+0:25
+frameworks implement inverted dropout, including pytorch. So
+0:30
+what you are going to use in pytorch is called inverted
+0:33
+dropout. So what is inverted dropout? So if you recall, in an
+0:38
+earlier video, I mentioned that we are scaling the activations
+0:41
+during testing by a factor of one minus p, right? Because
+0:45
+during training, we, we drop nodes, right? And in testing,
+0:54
+this is an regular dropout, we scale activations by factor of
+1:03
+one minus p. And that is because during training, when we drop
+1:08
+the nodes, if you think of the net inputs, they will be smaller
+1:14
+than the net inputs during testing, assuming all the net
+1:16
+inputs are positive for simplicity. And so, because
+1:20
+other units in the network expect these activations on a
+1:25
+certain scale, the scale of the activations during testing would
+1:28
+be too large if we don't drop any nodes, right? Because during
+1:31
+testing, we don't drop any nodes. But then we have to
+1:34
+adjust the magnitude of these activations. So we're scaling by
+1:37
+one minus p, where p is the drop probability. Okay, so this is
+1:49
+what we do in regular dropout. Now, in inverted dropout, we
+1:54
+still drop notes during training. But we what we don't
+1:57
+do is we don't scale the activations during testing
+2:00
+anymore. So instead, so instead of doing this during testing,
+2:07
+the scaling, we do it already during training. So we do during
+2:12
+training, this scaling by a factor of one minus p, and then
+2:16
+we don't have to do anything during testing. Because then the
+2:20
+activations will be on the expected scale during testing
+2:23
+automatically if we already scale during training. So why
+2:28
+do we do that? Why do we do the inverted dropout? I'm not 100%
+2:33
+sure. But I believe this trend was started back then in 2015
+2:37
+in TensorFlow. That's was at least was the first time I've
+2:40
+seen it. So I've seen that in TensorFlow. And I think my
+2:44
+theory is that if you have a big company, let's say like Google,
+2:49
+you do a lot of predictions, right, you have millions or
+2:52
+billions of people using, let's say Google search. And if your
+2:55
+Google search engine relies on a neural network with dropout, it
+2:59
+would be very expensive to scale the predictions for each user.
+3:05
+I mean, the scaling is a simple operation. It's just one
+3:08
+multiplication, right. But if you have a billion search
+3:10
+queries, you have to think about having 1 billion additional
+3:14
+operations, right. So in that way, I think to save
+3:17
+computational resources during prediction time during
+3:21
+inference, people are scaled during training so that they
+3:26
+don't have to do anything during testing. That's at least my
+3:29
+theory. In any case, both dropout or inverted dropout
+3:33
+should give you exactly the same results. It's just a matter of
+3:36
+whether we perform the scaling during training or during
+3:40
+testing. And it happens that most frameworks nowadays,
+3:43
+including pytorch use actually inverted dropout. Yeah, and
+3:48
+here's a code snippet illustrating how we can use
+3:51
+dropout in pytorch in the sequential layer. I have the
+3:56
+full code example also in a Jupyter Notebook, if you are
+3:59
+interested to take a look at it. I have a link somewhere later
+4:02
+in my slides, but I also will post it again on canvas, like
+4:04
+always. So but yeah, here's the essential part for dropout. So
+4:09
+here, what I have is a multi layer perception with two hidden
+4:13
+layers. And this is the first layer, first hidden layer. And
+4:18
+this is the second hidden layer. And I'm just adding, you can see
+4:22
+I'm just adding dropout here, after the activations. So why
+4:28
+after the activations? Well, because we want to zero out the
+4:32
+activations, right. But in the case of relu, it doesn't really
+4:35
+matter whether we have it before or after relu, because if the
+4:39
+input to redo is zero, then the output of relu is also zero,
+4:42
+right? Because recall, how relu looks like it looks like this.
+4:48
+However, it would make a difference if we have, let's say
+4:52
+logistic sigmoid, because for the logistic sigmoid at zero, we
+4:57
+have this s shaped curve, right? So I'm not good at drawing this.
+5:03
+We have this s shaped curve for the logistic sigmoid. And if the
+5:09
+input is zero, then we will get actually a pretty large output
+5:12
+of point five. So usually, for relu, it doesn't matter whether
+5:18
+we have dropout before after, but for other activation
+5:22
+functions, it might matter. So it's always good to have dropout
+5:25
+after the activation just to be consistent. Any case, so yeah,
+5:28
+this is how we use a dropout. So the drop probability is just
+5:31
+some hyper parameter I also provided here as input. Yeah,
+5:35
+one more thing maybe to mention here is we don't use dropout for
+5:39
+the output layer. Why is that? Well, because it doesn't really
+5:42
+make sense, right? If we have, let's say 10 class labels, and I
+5:45
+drop three of the nodes corresponding to the class
+5:48
+labels, that would be a little bit awkward, right? So we don't
+5:51
+want to drop any class label predictions, we only want to
+5:54
+drop hidden activations. And this is essentially how you can
+5:59
+modify a neural network to use dropout. Alright, so also, maybe
+6:05
+minor thing to mention, you don't have to use the same
+6:07
+probability here and there, you can use different probabilities
+6:09
+also. Yeah, one more modification you have to make
+6:14
+in the code, though, is you have to make pay attention that you
+6:17
+use model train and model eval, when you do the model training
+6:22
+and the testing. So I mentioned this earlier, when we talked
+6:25
+about pytorch, that this is important. I always do that no
+6:28
+matter whether I have dropped out or not, just to make sure
+6:31
+that there's no unwanted side effect or no unwanted behavior.
+6:36
+So why is that required? So this will essentially set the model
+6:40
+or tell the model that it's currently in training mode. So
+6:44
+it will automatically use dropout. So during training
+6:48
+mode, it will actually use these dropout things. However, during
+6:53
+model evaluation, during testing here, it will essentially skip
+6:58
+dropout, right, because we don't want to use dropout during
+7:02
+testing or prediction. So when we set our model to eval mode,
+7:06
+eval stands for evaluation, then it will not use dropout. So it
+7:10
+can essentially just skip dropout, or you can also think
+7:13
+of just setting the drop probability to 0.0. So it won't
+7:17
+drop anything. So this is important. So you have to really
+7:20
+make sure you use train and evil. And not only if you use
+7:24
+dropout, I would always recommend doing that because it
+7:27
+doesn't hurt, right. So it's always a good practice to using
+7:30
+those. You have the full code example for that here on GitHub,
+7:36
+if you want to check it out. So here, I trained this multi layer
+7:40
+perceptron on MNIST. So at the top, I have no dropout. So you
+7:45
+can see the training loss on the left hand is the training loss
+7:48
+for 50 epochs, it goes down. And here on the right hand side,
+7:53
+this is the accuracy on the training and validation set. And
+7:56
+you can see the training set accuracy goes up like expected
+8:01
+during training. And the validation accuracy also goes
+8:04
+up. But what you can see here is that at some point, you will
+8:07
+have an overfitting gap here. So the model without dropout starts
+8:12
+to overfit at some point, here at the bottom, I added 50%
+8:16
+dropout. So this is exactly the model I was showing you here
+8:19
+with 50% dropout now. So you can see the accuracy improves. But
+8:24
+here, we don't have any overfitting anymore. So we are
+8:27
+reducing the overfitting, I should say there is one little
+8:30
+caveat, though, if I computed the test set accuracy, this was
+8:35
+like 97.5% approximately, and this was only 96.5%. So maybe I
+8:41
+was doing too much dropout here at the bottom, because I reduced
+8:45
+overfitting, but at the same time, I also maybe added too
+8:49
+much of a regularization penalty here using dropout. So that also
+8:53
+that, yeah, the performance overall is a little bit lower.
+8:57
+But yeah, essentially, this is how dropout works, you can play
+9:00
+around with that. And yeah, with that, maybe some more practical
+9:05
+tips. So I recommend not using dropout if your model does not
+9:09
+overfit. So I would maybe just train the model and see how it
+9:13
+behaves. If it doesn't overfit, then there's no need to use
+9:16
+dropout. But if you see that there's overfitting, like you
+9:20
+can see here, then it's worthwhile actually adding
+9:22
+dropout. In practice, also, the creators of dropout recommend,
+9:26
+essentially, if you observe that your model does not overfit, you
+9:30
+should increase the capacity of your model, adding more
+9:34
+parameters until it overfits, and then adding dropout to it.
+9:38
+So essentially, they are arguing that it's better to design a
+9:42
+model that overfits and then add dropout compared to designing a
+9:47
+model that does not overfit. So overall, they expect to see that
+9:52
+you will get a better performance if you make a model
+9:55
+larger, such as it overfits and then use dropout to reduce the
+9:59
+overfitting. Yeah, there's also, you may have already had this
+10:04
+idea while listening to this lecture, there's also a related
+10:07
+idea, randomly dropping weights. So instead of dropping the
+10:11
+activations in dropout, we can also actually randomly drop
+10:14
+dropping weights. So if you had this idea is a potential research
+10:18
+idea, I have to unfortunately disappoint you, someone has
+10:21
+already worked on this, it's called drop connect. So there's a
+10:25
+it's more like a general generalization of dropout,
+10:29
+because yeah, you can think of it, it can, if you let's say, if
+10:33
+you consider, let's say this node here, if you drop this weight
+10:37
+and this weight, both weights, if you drop both, then it's
+10:41
+essentially the same as dropping this activation. So in that way,
+10:43
+you can think of drop connect as a generalization of dropout. But
+10:46
+yeah, in a more general sense, it's just dropping weights
+10:49
+randomly. So the paper for that is can be found here.
+10:56
+Unfortunately, or I'm not sure if it's unfortunate or
+10:59
+fortunate, it doesn't really matter. But it happens that this
+11:01
+is something I find that works not so well. In practice, I long
+11:05
+time ago, I tried it once I found that dropout works better.
+11:08
+And also, I really don't see it often being used in practice. So
+11:14
+I think it's just less popular than dropout, maybe because it
+11:17
+doesn't perform so well as dropout. Yeah, to close this
+11:22
+lecture, I have a reading recommendation for you. The
+11:25
+original dropout paper, it's actually a really nice paper,
+11:29
+very, I would say intuitive, nicely written, and very
+11:32
+accessible. It doesn't have any or not much mathematical jargon,
+11:36
+which is nice. So if you want to practice reading research
+11:39
+papers, that's actually a good one to start with. And yeah,
+11:43
+also, happy Women's Day, if you're watching this today. So
+11:46
+today is the International Women's Day. And with that, let
+11:48
+me close this lecture. And next time, we will talk about some
+11:53
+weight initialization techniques. And also, then we
+11:55
+will talk about learning rates later and different optimizers.
+11:59
+So essentially, other techniques for improving neural network
+12:02
+training.
+
+##v81:
+
+0:00
+Yeah, hi, everyone. So last week, we fell into a little bit
+0:04
+of a rabbit hole when I started talking about different ways we
+0:08
+can improve neural network training and the generalization
+0:11
+performance. Of course, we can't cover all the topics I outlined
+0:15
+on that mind map. However, I think there are a few important
+0:18
+ones that are really worth talking about. So in this
+0:21
+lecture, I want to talk about batch normalization, and also a
+0:24
+little bit about different weight initialization schemes,
+0:27
+which are also kind of important to make neural networks work
+0:30
+well in practice. And then in the next lecture, I want to
+0:33
+briefly talk about optimization algorithms. And then we will
+0:37
+move on and talk about cooler things like convolutional
+0:40
+networks and recurrent neural networks. But for now, let's
+0:43
+talk about batch normalization, because that's really a good
+0:46
+technique for making the network train better and faster.
+Lecture Overview
+0:53
+Alright, yeah, just to recap, again, today, we are talking
+0:55
+about tricks for improving deep neural network training. So
+1:00
+today, in particular, we will talk about feature and input
+1:04
+normalization, and focus on a topic called batch norm. And
+1:08
+then I will also talk about weight initialization schemes
+1:11
+when we initialize the model weights. And there are two
+1:15
+particular techniques we are going to take a look at. There's
+1:17
+the Xavier glorot initialization scheme and the
+1:20
+caming he initialization scheme. Yeah, and then in the next
+1:25
+lecture, we will talk about optimization algorithms for
+1:28
+improving gradient descent learning, for instance, as our
+1:31
+mess prop and a grad, Adam, and I will also provide you with a
+1:35
+list of many, many more algorithms. But yeah,
+1:37
+personally, I think a stochastic gradient descent with momentum
+1:41
+and Adam are still the most useful or at least most popular
+1:46
+ones.
+Overview
+1:48
+Alright, so as an overview, things we are going to cover
+1:51
+today. So I structured it into seven parts. Some of these
+1:55
+parts will be very short, but I try to structure it as always,
+1:58
+so that they go by topic and that is somewhat organized. So
+2:03
+first, we will just briefly talk about input normalization, then
+2:07
+we will switch to batch normalization, I will show you
+2:09
+how we do batch normalization in pytorch. And then we will have
+2:13
+a discussion of how or why batch normalization works. So we'll
+2:18
+explain here, how it works, like the techniques or the procedure.
+2:22
+And then we will revisit this here and discuss why it may have
+2:28
+a positive effect in practice. So it's still a controversial
+2:31
+topic. So it's still not clear. And I will highlight some of
+2:34
+the theories, then we will switch topics in this section
+2:37
+here and talk about these different weight initialization
+2:41
+schemes like on why we care about that two different
+2:44
+examples, and then also how it works in Python. Alright, so
+2:48
+with that, let's get started with input normalization.
+
+
+##v82:
+
+0:00
+Alright, let's start by talking about normalizing inputs to
+0:04
+improve gradient descent. So essentially, input
+0:07
+normalization. Yeah, so this is a just a brief recap why we
+0:13
+normalize inputs for gradient descent. We already talked
+0:16
+about this a little bit when we talked about gradient descent
+0:19
+and stochastic gradient descent, I think that was in lecture
+0:21
+five. So yeah, just to recap, why do we normalize on those
+0:25
+weights? So that's really to find a good learning rate and to
+0:29
+have a I would say more stable training. So suppose for
+0:33
+simplicity, we have here shown a surface plot of a convex loss
+0:38
+function. So here, this is like a convex function shown here. So
+0:45
+usually, when we work with deep neural networks, that's not the
+0:48
+case, that's not a convex function anymore. But just for
+0:51
+simplicity, assume here, it's convex. And we have, let's say,
+0:54
+linear model, let's say linear regression with two weights,
+0:58
+just to keep things simple. Ignoring the bias also. Now,
+1:04
+technically, when we have something like gradient descent,
+1:06
+and this is fully circular, let's say in this lower case
+1:10
+here, we would usually take steps perpendicular to these
+1:14
+contours. However, when we have stochastic gradient descent,
+1:19
+also, these steps won't be perpendicular anymore. And
+1:23
+especially, this will be exaggerated. If we have these
+1:27
+these elliptical losses, so where we may overshoot in one
+1:32
+dimension, so instead of let's say going here, we take a step
+1:35
+perpendicular, but instead of stopping here, and then taking
+1:40
+this step here, we overshoot and then we go this zigzagging. And
+1:44
+then also, if we have stochastic gradient descent, this is even
+1:46
+more exaggerated. So why? Why this weird also zigzagging can be
+1:53
+amplified is when we have features on different scales. So,
+1:59
+for instance, imagine a data set where we have, let's say, I
+2:03
+don't know the age of a person from 10 to 50 years, and then
+2:08
+let's say the income of a person, let's say from I don't
+2:11
+know 10,000 to, let's say 500,000 US dollars or something
+2:17
+like that. So these are on vastly different scales, right.
+2:20
+And remember how we do gradient descent. So usually, what we do
+2:24
+is we have the weight update, let's say weight one, we would
+2:28
+update it by weight one minus the partial derivative of the
+2:35
+loss with respect to that weight, and then times a
+2:39
+learning rate alpha, right. So, in this part, this computation
+2:44
+involves usually on x the input itself, for example, it could be
+2:48
+on y hat minus y times, let's say x, x one is the input
+2:56
+feature. So here, the input feature kind of scales on the
+3:01
+whole thing. And then if we have input features on very different
+3:05
+scales, then, well, finding a good learning rate would be
+3:09
+hard, we would have to choose a learning rate for each weight
+3:14
+individually. And that would be a lot of hassle. So for
+3:16
+instance, because if we consider now w two, two minus alpha, like
+3:28
+this, so let's say, this one and this one, these learning rates,
+3:32
+we usually use the same learning rate. And this really only works
+3:36
+well if the features are on the same scale, right, because if
+3:40
+this one is like 1000 times larger, we may have to use a
+3:43
+1000 times smaller learning rate to get a good behavior. Another
+3:47
+thing is also that most optimization algorithms really
+3:50
+work well if the features are centered at zero, and have only
+3:55
+like a small, small values around zero. One issue is also
+4:01
+always when we have very large or very small numbers in the
+4:04
+computational context, because then we also have computational
+4:07
+instability issues. So one common theme that works pretty
+4:12
+well in practice is z score standardization. So people just
+4:16
+call it standardization. It's essentially giving your data or
+4:20
+features the properties of a standard normal distribution. I
+4:24
+mean, the data after applying this won't be normal if it
+4:28
+wasn't normal before, but it has the properties of a standard
+4:31
+normal distribution, which is zero mean and unit variance. So
+4:35
+unit variance is a fancy word for saying that the standard
+4:38
+deviation is one or the variance is one. So again, if the data is
+4:43
+not normal to begin with, this won't change, this won't really
+4:47
+change the distribution how it looks like it's just people say
+4:49
+it has the parameters of a normal distribution, because
+4:52
+essentially, it will have three, zero mean and unit variance, but
+4:59
+just think of it as here as centering the data with
+5:03
+standard deviation or variance one. So how it works is for each
+5:07
+feature. So let's say this is for a particular data point. So
+5:12
+we want to scale data point. I let's say this is like an iris
+5:17
+flower, I, we want to scale the J's feature where J might be
+5:22
+something like let's say simple length. And how we do that is
+5:29
+we subtract the feature mean. So here the feature mean, this
+5:34
+would be over, over all flowers. So one over n, right? Let me do
+5:45
+this properly here. One, one over n equals one, n and then x,
+5:57
+i, j. So we will just compute the mean across this feature.
+6:06
+And here we do the same thing for the standard deviation. And
+6:11
+this is essentially it this usually helps with a better
+6:13
+behavior. So we will then usually have a more elliptical,
+6:18
+sorry, a more symmetric loss surface. But again, this only
+6:22
+applies really if we have a very simple, generalized linear
+6:26
+model, like linear regression, in this case, for example, if we
+6:29
+have something else, like a deep neural network, this won't be a
+6:33
+convex loss function anymore. But still, it helps to
+6:36
+standardize the inputs, it's still recommended in practice.
+6:41
+Okay, so this is one way we can standardize the inputs. But now
+6:45
+when we talk about deep neural networks, so let's say we have
+6:49
+the inputs here x one and x two, and then we have activations a
+6:53
+one, a two, three, and then let's say we have two output
+6:57
+units, let's call it all one and two. Okay, so previously, on the
+7:02
+previous slide, we talked about standardizing these things here,
+7:06
+right, so the inputs. Now, what about the activations might also
+7:11
+be helpful to standardize the activations that go then into
+7:15
+these output into the output layer, right. So that might also
+7:20
+be helpful to standardize the activations, the hidden layer
+7:23
+activations, because you can really think of these ACS, the
+7:26
+activations, you can think of them as the inputs to the next
+7:30
+layer, they essentially just like x, except that these are
+7:33
+the inputs to the next layer. So in the next video, I want to
+7:36
+talk about one technique called batch norm, which is essentially
+7:43
+variant of the standardization for standardizing hidden
+7:48
+activations, it's coming with a twist, there will be a learnable
+7:52
+or two learnable parameters for that. But essentially, you can
+7:55
+think of it as your standardization of the hidden
+7:58
+layer activations. So that will be the topic of the next
+8:00
+video.
+
+##v83:
+
+0:01
+Okay, let's now talk about extending the input
+0:04
+normalization to the hidden layers using the technique
+0:07
+called batch normalization. I will just show you in this video
+0:11
+how it works. And then in the next video, I will show you how
+0:15
+we can use it in pytorch. And then I will show you or explain
+0:19
+to you why it works. Or at least we will discuss some of the
+0:24
+theories trying to explain why it works.
+0:27
+Alright, so batch normalization, or in short, batch norm goes
+0:32
+back to a paper published in 2015, called batch
+0:37
+normalization, accelerating deep network training by reducing
+0:42
+internal covariate shift. So internal covariate shift, that's
+0:47
+like, yeah, I don't know a fancy word for just saying that the
+0:51
+feature distributions shift during the course of the
+0:55
+training internally in the hidden layers, we will explain
+0:58
+or think about this more when I go to the video where I offer
+1:03
+some theories why batch normalization works well in
+1:05
+practice. So here, I'm just, I would say the short version of
+1:11
+batch normalization, what it is, it's about normalizing the
+1:15
+hidden layer inputs. So instead of just normalizing the inputs
+1:19
+to the network, we normalize also internally, the inputs to
+1:24
+each hidden layer. And this helps you with exploding and
+1:28
+vanishing gradient problems so that the gradients don't become
+1:30
+too large or too small. And overall, it can increase the
+1:35
+stability during training. So in that way, training progresses
+1:39
+more smoothly. And also the convergence rate improves. That
+1:44
+means it may be that we need fewer epochs to get the same
+1:50
+loss that we would achieve if we don't use batch norm. So you
+1:54
+usually with batch norm, the networks train faster. And how
+2:00
+you can think of it as an additional normalization layer.
+2:04
+And there are also some additional trainable parameters
+2:07
+involved. Yeah, so in the next couple of slides, I'm going to
+2:13
+walk you through the procedure of batch normalization. So just
+2:17
+for context on let's suppose we have a multi layer perceptron.
+2:22
+Okay, so let's say we focus in on this activation here in the
+2:27
+second hidden layer. So the first activation in the second
+2:30
+hidden layer. And we're actually looking at the net input of that
+2:35
+activation. So remember how we compute the activation. So it's
+2:39
+usually by applying activation function to the net input. What
+2:46
+type of activation function doesn't really matter here, it
+2:48
+could be logistic sigmoid 10h or relu should work with any type
+2:53
+of activation function. Alright, so yeah, we are focusing on this
+2:59
+hidden layer net input corresponding to the activation
+3:04
+here now. And also now suppose we have a mini batch. So we have
+3:09
+a mini batch such that the net input of a given training
+3:12
+example at layer two is written as fellows. So I have now this
+3:18
+x i here for the index of the training example in that mini
+3:23
+batch. So if I have i equals one, this would be the first
+3:27
+example in that mini batch. And just to for simplicity, I will
+3:31
+actually ignore the layer index in the next couple of slides
+3:35
+just so that the other notations are a bit simpler to read. So
+3:40
+yeah, here, that's the first step of batch norm, there are
+3:44
+two steps. So the first step is to normalize the net inputs.
+3:49
+This is essentially the same as the standardization that I
+3:52
+explained earlier for the inputs. So what's going on here
+3:57
+is we are computing the mean over a feature. So the j is the
+4:03
+feature index again. So you can actually use batch norm for any
+4:11
+type of input. So we will also see there is a two dimensional
+4:15
+version for that for convolutional networks later on.
+4:18
+But here we are just focusing on the regular one dimensional
+4:22
+version where you have a feature vector, for instance. So let's
+4:25
+say we have, yeah, the J feature. And if I go back, so if
+4:33
+you consider this activation here, what are the features, so
+4:39
+the features are all essentially all the previous layer
+4:43
+activations, right? So all these go into that activation. So all
+4:50
+of these here are the features of this activation here. So J
+4:59
+really is the index over the activations from the previous
+5:03
+layer. So we can also think of it as the feature index or
+5:06
+previous, which are the previous layers, activations. Yeah, so we
+5:19
+compute from that the mean and the variance. So that is nothing
+5:27
+that should be new to you. It's a simple, simple calculation
+5:31
+here. And then we standardize. So this is like what we had in a
+5:35
+previous video as standardization. And this is
+5:39
+essentially it's in that way, step one of batch norm is
+5:43
+similar to the input standardization. Except now, we are
+5:48
+looking at a hidden layer. So instead of looking, instead of
+5:52
+looking at standardizing x, we are now standardizing these A's
+5:56
+from the previous layer. So after step one comes step two,
+6:02
+so one more thing to say about step one. So in practice, we
+6:08
+modify this standardization slightly, such that we don't
+6:13
+bump into, yeah, division zero issues if the variance is zero,
+6:18
+if there's no variance. So for numerical stability, we add a
+6:22
+small value epsilon here. So here we have the variance plus
+6:26
+this little epsilon, and then we take the square root instead of
+6:29
+instead of dividing by the standard deviation directly,
+6:32
+that's just like a small computational trick to prevent
+6:36
+division by zero errors. Now step two. So step two is the
+6:43
+pre activation scaling. What do I mean by pre activation? So
+6:48
+this is the value that is computed before the activation
+6:54
+is computed, it will become more clear in the next slides where
+6:58
+I have step one and step two connected to each other. So this
+7:06
+is essentially what we have done in the previous slide. So if I
+7:09
+go back, this is the end of step one. And then from step one, we
+7:16
+go here to step two, where we apply a scaling. So there's a
+7:22
+gamma J, and a beta J. And both of these are learnable parameters
+7:29
+that are also learned using backpropagation. So similar to
+7:34
+the weights in the network, these are also updated via
+7:37
+backpropagation. So what do these do? I mean, essentially,
+7:41
+there is a scaling parameter here. And there's a shift
+7:45
+parameter, right? So technically, it can learn to undo
+7:52
+what we just did in step one, right? So it essentially can
+7:57
+undo it. So if gamma, I, J, sorry, if that happens to be
+8:06
+equal to, let's say this term, and beta J happens to be equal
+8:18
+to this one, I mean, these are learnable, so it may happen. So
+8:23
+the network can actually learn to undo step one, the scaling or
+8:30
+standardization, whether it does that or not. It's Yeah, it
+8:35
+really depends. But I'm just saying here, the possibility
+8:38
+exists, that it can undo this. But in that way, what's
+8:43
+happening here is it's something that is a little bit more
+8:46
+flexible than just regular standardization. So here, step
+8:50
+one would be a regular standardization of the hidden
+8:52
+layer activations. And step two is a little bit more, I would
+8:56
+say flexible. So technically, this whole step one and step two
+9:02
+thing can just simplify to regular standardization, if this
+9:06
+is given, or it could be something different. And in
+9:09
+practice, it happens that this set up the step one and step two
+9:14
+set up works better than just step one alone, it just happens.
+9:19
+So and yeah, one theory or could be it's just my theory that I'm
+9:24
+coming up with. But one simple explanation could be, for
+9:27
+example, it might perform better because yeah, we just have
+9:31
+additional learnable parameters. It's essentially as if we have
+9:34
+more, yeah, more parameters in the network. So the network has
+9:37
+a higher capacity, maybe. But yeah, we will look at some other
+9:40
+theories in a future video.
+9:44
+Alright, um, yeah, so as I said, so this controls the mean, and
+9:48
+this controls the spread of scale. So from this one, and
+9:52
+this one, basically. And like I also already said, technically,
+9:58
+batch normally, I could learn to perform standardization with zero
+10:01
+minute unit variance. If, um, yeah, if these are the same, and
+10:06
+these are the same.
+10:11
+So here is step one and step two connected and summarized. So
+10:17
+yeah, I'm not showing you the numerically stable version, but
+10:20
+you probably know, I mean, you can also do it doesn't really
+10:24
+matter. It's just for keeping things simple. So here's the
+10:28
+whole procedure of how it would look like here, I'm applying it
+10:32
+to both this layer and this layer. So the colors should
+10:37
+match here. So let's say x is our input, then we first compute
+10:41
+the net input. So if we are here, we are computing the net
+10:43
+input. And then this would be step one where we standardize
+10:48
+the net input. Then what we do is we compute this pre activation
+10:55
+scaling. So this is a scaling. And then we compute the
+10:59
+activation. So the activation in this case would be computed by
+11:04
+sigma or let me write this down properly, a one, one would be
+11:09
+sigma, a prime one, one, right. And then once we have that, we
+11:19
+go to the next input. So this is the next net input. Then again,
+11:23
+we do step one. So here we can step one. And then we do step
+11:29
+two. And then we compute again, activation should be a one here,
+11:38
+sigma, a one, two, prime. So yeah, this is essentially it.
+11:46
+And yeah, this is how batch norm works. Um, do I have anything
+11:49
+more? Yeah, one more thing to consider is that this one also
+11:54
+makes the bias redundant, right? So I'm not showing the bias unit
+11:58
+here. And this network, but technically, you would have a
+12:02
+bias unit, b one here, here, b two, here, b three, that gets
+12:10
+added to the net input. Right? So that is something that you are
+12:15
+familiar with. And the if you think about how the bias works,
+12:22
+right? So if I have a simple case here, the net input, it's
+12:25
+on, it's right in like, W, just for simplified case. So let's
+12:37
+say I'm computing the net input for the second layer, this would
+12:43
+be weights from the first layer, multiplied by the activation
+12:53
+from the first layer here, layer one, layer one, and then plus
+12:59
+the bias. So I'm only considering your simple case
+13:02
+omitting the index. Otherwise, I would have another index. But
+13:05
+yeah, you know what I mean. So I would have the bias added to it,
+13:08
+right? But this kind of becomes redundant, because essentially,
+13:13
+the bias could be already included in this beta or the
+13:15
+beta would essentially, if you leave out this bias here, the
+13:19
+beta would essentially take the role of that bias if we compute
+13:23
+batch norm. So in that sense, you can skip the bias when you
+13:28
+define the layers, I will show you that in the code example,
+13:31
+how we can do that. I mean, it doesn't really matter. But
+13:35
+whether we do it or not, it should work both ways in
+13:37
+practice. But it's just, I would say a little cleaner to not use
+13:41
+a bias because it's redundant. I will show you in the next video
+13:44
+in the code example, how that looks like. So you can actually
+13:47
+apply an argument, say bias equals false. Yeah, and also
+13:53
+note that now when we use batch norm, batch norm has learnable
+13:58
+parameters. So if we use batch norm in a given layer, it has we
+14:03
+have an additional two vectors that have the same dimension as
+14:07
+the bias vector, right. So if we have, we use batch norm here in
+14:11
+this layer, we will have two, four dimensional vectors, like
+14:18
+this bias vector here would also be four dimensional, right,
+14:21
+because there's one bias for each in layer activation.
+14:26
+Alright, so I think this is all I have about batch norm. This is
+14:29
+how batch norm works. In my slides, I actually had also
+14:33
+short or not short, it was actually like 10 slides or so
+14:36
+how we do backpropagation with batch norm, but I promised you
+14:38
+not to torture you with these nitty gritty details and math
+14:42
+mathematical details, because that's not super important
+14:45
+because we use auto grad and practice anyway. And I think
+14:47
+it's in this course also, more important to understand the
+14:50
+bigger picture concepts. And then if you're interested, you
+14:53
+can study those things later on. So yeah, and also if we would
+14:58
+start like going through these slides, it would take another
+15:00
+half an hour. I would rather complete this lecture today so
+15:04
+that next lecture, we can talk about optimizers and move on to
+15:06
+convolution networks. I hope you don't mind. So in that way, next
+15:10
+video, I will show you batch norm in pytorch.
+
+##v84:
+
+0:01
+All right, let's now talk about how we can use batch norm in
+0:05
+practice. And also, we will talk briefly about how batch norm
+0:10
+behaves during inference, because yeah, you know that
+0:13
+during training, we have mini batches, but that's not
+0:16
+necessarily the case if we want to use our network for
+0:19
+prediction. Sometimes we only have a single data point. So how
+0:23
+would that work? So but yeah, first, let me show you how
+0:26
+batch norm works. When we use pytorch. I've actually just used
+Code Example
+0:32
+the code from last week where I implemented dropout and just
+0:36
+made a slight modification where I removed dropout and added a
+0:39
+batch norm layer. So I was just accept that reusing the same
+0:44
+code. So I don't want to walk through this in detail. But you
+0:47
+can find the code here on GitHub. And here I'm showing
+0:51
+you the main code, the multi layer perceptron that we have to
+0:54
+modify. And yeah, so what we have here is one, two hidden
+1:00
+layers, and the output layer at the bottom. And first, notice
+1:04
+that I'm using again, flatten, that's because I was working
+1:07
+with MNIST and MNIST is on n times one times 28, times 28
+1:13
+dimensional, and flatten will essentially flatten this to a
+1:16
+vector to n times 784 dimensional vector, where n is
+1:21
+the batch size, and then it will work with the fully connected
+1:25
+linear layer here. So yeah, I here insert batch norm after the
+1:30
+linear layer, notice that there's a one D, it may be
+1:34
+confusing. Why is there a one D? That's because there is a
+1:37
+slightly different version of batch norm for convolutional
+1:40
+networks. We will discuss this in the convolutional network
+1:44
+lecture where this would be called batch norm 2d for the
+1:47
+convolution networks. So to keep them apart, this is called batch
+1:51
+norm 1d. This is essentially just the batch norm that we
+1:54
+discussed here in the previous video. So the one is just to
+1:57
+keep them apart. Yeah, and here I'm doing the same thing in the
+2:02
+second hidden layer. Also, yeah, notice that I set the bias to
+2:06
+false because it would be redundant, right? Because if we
+2:09
+compute the net input as, let's say the weight times the feature
+2:15
+plus B, and then batch norm, we had this plus beta values in
+2:21
+that way, the bias becomes kind of redundant. So it's not
+2:24
+necessary, but you can have it there. It doesn't really matter.
+2:27
+I ran it with and without it, I didn't notice any difference in
+2:30
+this case. Okay, so this is how your batch norm looks like a
+2:36
+full code example can be found here. But there's really
+2:39
+nothing, nothing really to talk about, because it's just two
+2:44
+lines of code here. Um, yeah, so I was also just for fun running
+Experiments
+2:50
+some experiments without the bias that I just showed you. And
+2:54
+having batch norm before the activation, that's usually how
+2:58
+yeah, that was originally how it was proposed in the paper. But
+3:02
+sometimes people also, nowadays, it's even more common to have
+3:05
+it after the activation. I will talk more about that in the next
+3:08
+video. My phone some benchmarks, some more sophisticated
+3:12
+benchmarks I wanted to show you. So but here in this case, when I
+3:16
+ran the code of the multi layer perceptron that I just showed
+3:19
+you, I enabled the bias. So I'm actually not showing it here. I
+3:23
+don't know why I deleted it. But on by default bias is true if
+3:27
+you don't set anything and I found it was the same
+3:31
+performance. I then also inserted batch norm after the
+3:36
+activation instead of before the activation like here or here. So
+3:40
+I know, instead of here having it before the activation, I now
+3:46
+have it after the activation in both cases. And I also didn't
+3:50
+notice any, any difference really here. Um, yeah, and then I
+3:56
+also ran experiments with dropout. In this case, also, I
+4:00
+didn't notice much of a difference, except now the
+4:03
+network was not overfitting anymore. The test accuracy for
+4:06
+both dropout cases was slightly lower compared to no dropout. I
+4:11
+think I use just too much dropout. But I could at least
+4:14
+see there was no overfitting anymore. But either comparison
+4:18
+here is inserting batch norm before the activation, and then
+4:25
+dropout. And then after the activation, and then dropout. And
+4:31
+I also did not notice any difference here. In practice,
+4:35
+people nowadays, it's more common to actually recommend if
+4:38
+you use dropout to recommend having batch norm after the
+4:41
+activation. And yeah, one little fun memory aid to remember that
+4:45
+is, if you consider this case, so you have batch norm, then
+4:51
+you have the activation and then you have dropout, you may call
+4:56
+it bad, it might be better to have batch norm after the
+5:00
+activation, that's typically a little bit more common. In this
+5:03
+case, I didn't notice any difference, it may make a small
+5:06
+difference in other types of networks like convolution
+5:08
+networks. So I would if you use dropout in a bedroom, I would
+5:12
+probably go with this variant. But yeah, of course, it's
+5:15
+something, it's a hyper parameter, essentially to
+5:17
+experiment with. Alright, so I have one more thing about drop
+Training
+5:23
+out in pytorch. So when we look again at our training function
+5:27
+here, this is exactly the same training function that I used
+5:30
+last week in dropout. But again, this is again, highlighting
+5:33
+train and evil are important here that we during training set
+5:39
+our model into training mode, because that's where batch norm
+5:43
+will compute the running mean and the running variance, I will
+5:48
+talk about this in the next slide. So here, batch norm will
+5:52
+actually compute some running statistics during training. And
+5:57
+these running statistics are then used in the evaluation mode
+6:01
+Asian mode when we evaluate our model on new data. So during an
+6:05
+evaluation, you have to imagine that you are mimicking the
+6:10
+inference scenario. And in inference, you may only have a
+6:13
+single data point, right? So let's say you have the Google
+6:18
+search engine, and there's just one user running a query, and
+6:21
+you have a network that has batch norm. So you have to
+6:24
+normalize, but you don't have a batch of users. So only if one
+6:28
+user. So how do we deal with that scenario? So there are two
+Compute
+6:33
+ways to deal with that scenario, the easy one would be to use a
+6:37
+global training set mean and variance. So you would compute
+6:41
+these means for the features and the variances for the features
+6:45
+for the whole training set. That's something you would also
+6:48
+usually do or could do when you compute the input standardization.
+6:53
+But this is actually not very common in practice for some
+6:56
+reason. So what's more common is to use an exponentially weighted
+7:01
+average, or a moving average is just a different name for that.
+7:05
+So usually, practice people keep a moving average of both the
+7:09
+mean and the variance during training. So you can think of it
+7:12
+as also as the running mean, how it's computed is by having a
+7:16
+momentum term, it's usually a small value like point one. And
+7:21
+this is multiplied by the running mean from the previous
+7:25
+on epoch, or sorry, previous mini batch. And then what you so
+7:32
+you have this, this term, this is like the running mean times
+7:36
+momentum term, this is a point one value. And then you have one
+7:40
+minus the momentum, this is like a point nine value, then plus
+7:46
+yet plus point nine times the current sample mean. So that's
+7:50
+the mini batch mean, and you just do the same thing also for
+7:57
+the running variance. So here, essentially, this is just like a
+8:01
+moving average or running mean. And you do the same thing for
+8:05
+the variance. That's what you keep. And then during inference,
+8:08
+you use that one to scale the data point that you do a
+8:12
+prediction on you yourself don't have to do that. Yeah, yourself,
+8:16
+by the way, by using model evil, it will actually happen
+8:20
+automatically. But yeah, here's just like the explanation what's
+8:23
+gonna happen under the hood. Okay, so yeah, that is how batch
+8:28
+norm works in pytorch. And in the next video, I want to
+8:33
+briefly go over some very brief, a brief rundown of all the types
+8:40
+of literature that try to explain how batch norm works.
+
+##v85:
+
+0:02
+Yeah, in the previous videos, we discussed how batch norm works.
+0:05
+Let's now discuss why batch norm works. I can't give you the
+0:09
+definitive answer here. But at least I pull together some
+0:13
+theories and some practical or empirical evidence to kind of
+0:18
+support certain claims. So I think that might be interesting
+0:21
+if you are really interested in studying batch norm. So
+0:25
+originally, so the paper that proposed batch norm mentioned
+0:30
+this internal covariate shift. So the authors of the original
+0:33
+batch norm paper said that, um, yeah, batch normalization
+0:37
+accelerates training by reducing this internal covariate shift.
+0:41
+What is this internal covariate shift? What does it mean? So
+0:44
+it's essentially saying that the layer in input distribution
+0:49
+changes. So this shift, there's a shift in the distribution of
+0:52
+these inputs to a given layer. So it's essentially a feature
+0:55
+shift. So the features, if you think of the inputs to a given
+1:00
+layer as the features, the distribution of these features
+1:04
+shift over time during the course of training. So that's
+1:08
+one theory that happens during a regular training and batch norm
+1:13
+helps preventing it by renormalizing these inputs. However,
+1:17
+there's no guarantee for that. And there's also no strong
+1:21
+evidence for this theory. I will show you a paper that kind of
+1:25
+debunks this theory. Another theory that's like more what I'm
+1:30
+kind of sometimes speculating is that your batch norm provides
+1:34
+additional parameters that might help. However, I think this is
+1:38
+also maybe not a reasonable theory because it is something
+1:42
+you can simply test by inserting or making the previous layer a
+1:47
+little bit larger adding some parameters to it. And I don't
+1:50
+think I think at least someone would have tested that already.
+1:53
+So that's probably not the case. Another idea is maybe that it
+1:58
+makes these layers a little bit more independent of each other.
+2:01
+So for instance, if you think about one layer producing some
+2:05
+nonsense outputs or something, yeah, it's very sweet. Let's say
+2:10
+you have a late layer in the network. They are very close to
+2:14
+the output. It kind of depends on the previous layers of
+2:19
+giving it good input. So if you screw up one of the early
+2:22
+layers, well, then the output layer or all the other layers
+2:25
+are really also depending on that. So you're kind of it's
+2:29
+like a domino effect you have like if you screw up one layer,
+2:32
+you screw up the other layers too. And the same thing can
+2:35
+happen during both the forward and the backward pass, right,
+2:38
+because the forward pass, you go from the left to the right. And
+2:43
+in the backward pass, you go from the right to the left. So
+2:46
+that way, if something is wrong in one given layer, it will
+2:49
+affect all the other layers. And maybe with this batch norm, this
+2:53
+kind of helps decoupling the layers a little bit in terms of
+2:57
+if one layer screws up the other layers a little bit more robust
+3:00
+to that. But it's also just one of the many theories. So here,
+3:06
+I found a paper from 2019. I mean, it might already be
+3:10
+outdated. I don't know. But I found it interesting. So I
+3:13
+included it here. So this paper is called How does batch
+3:17
+normalization help optimization. So here, they in the abstract
+3:22
+basically state that batch norm is good for stabilizing the
+3:26
+training, but also the exact reasons are still poorly
+3:30
+understood. And then they mention the internal covariate
+3:34
+shift as one of the potential reasons. But they demonstrate
+3:39
+that such a distributional shift, or distributional
+3:44
+stability of the layers has little to do with the success of
+3:48
+batch norm. So they are essentially saying, the
+3:50
+covariate shift or preventing covariate shift is not really
+3:53
+why batch norm works so well. Yeah, instead, what they find is
+3:58
+that it makes the optimization landscape significantly
+4:04
+smoother, so essentially making or creating a smoother loss
+4:07
+surface. And this helps them with making the training more
+4:12
+stable. And it allows us to have larger learning rates and have
+4:17
+faster training because we have more stable behavior of the
+4:20
+gradients. So I took some visualizations from the paper
+4:24
+shown here. I don't want to go into too much detail about this
+4:31
+paper. I mean, if you're interested, you're very welcome
+4:34
+to read it. So here are only a few takeaways. So what they say
+4:39
+is essentially that batch norm enables faster convergence by
+4:43
+allowing larger learning rates, I found that interesting. So
+4:47
+let's focus on the left plot first. That's the training
+4:53
+accuracy here. And this is the number of steps. So instead of
+4:59
+epochs, they have steps here. So that's the steps, you can think
+5:02
+of it as iterations or mini batch updates, doesn't really
+5:06
+matter whether we have epochs here or mini batches plotted, it
+5:09
+really just represents the training, the course of the
+5:13
+training. So we have 15,000 updates. And you can see there
+5:18
+are four graphs. So the red ones are a standard network with
+5:26
+learning rate point one and point five. And just looking,
+5:30
+let's use the red for this one. So just looking at this red
+5:34
+curve here, you can see the point one trains relatively
+5:39
+well, it reaches 100% at some point, however, the large one,
+5:42
+the point five doesn't train so well. So it doesn't. So the
+5:47
+learning rate is essentially too large. So what we have then is
+5:52
+the same point one and point five now with batch norm. Now, if
+5:56
+you look at it, the one with point one trains actually
+6:04
+faster, also with point five. It also trains at all. I mean, the
+6:10
+other one with point five, when we had the standard one, it fell
+6:14
+apart here, right. So batch norm essentially allows us to also
+6:18
+have larger learning rates. In this case, the larger learning
+6:21
+rate is not better than the point one learning rate, but it
+6:25
+is stable, it is training. What the interesting takeaway here
+6:30
+is, though, is that overall, the training with batch norm is
+6:36
+faster. So even though we reach the same performance in the end
+6:40
+and the training set, what is nice here is that batch norm
+6:44
+trains faster. Now on the right hand side, that's what we really
+6:48
+care about. That's the test accuracy. How does the test
+6:51
+accuracy look like? So here, I assume they are testing or they
+6:54
+using the same test set for so they train the model. And then
+6:58
+they use the same test set to make this plot where this is
+7:03
+really like the training steps here. So yeah, what we can see
+7:09
+here is during training. So first, also, again, with batch
+7:14
+norm, we see that the accuracy increases faster. In the end, I
+7:20
+would say there's little difference between the red and
+7:23
+the blue one, there's a slight difference. So you can say maybe
+7:26
+batch norm performs better. And you can see also batch norm is
+7:30
+stable with a point five learning rate. I wouldn't say I
+7:36
+mean, the, I wouldn't say the training is faster or
+7:40
+convergence is faster, because it allows us larger learning
+7:43
+rates, because we can see the smaller learning rate still
+7:45
+works better. But what I would say is it's making our training
+7:50
+more robust. So it's maybe requiring less time to find good
+7:54
+hyper parameter settings to get good results, which is kind of
+7:58
+nice. So if it just stabilizes training, this is something I
+8:02
+would always want to do, right? Why would we not want to batch
+8:05
+norm, then? Alright, so next day looked also into this covariate
+8:11
+shift here. Let me take a look at this figure to refresh my
+8:15
+memory here.
+8:16
+Yes, so what they are showing here is again, training, the
+8:20
+cause of the training and the training set accuracy. And on
+8:25
+the right hand side, these are the distributions of the
+8:29
+activations in the different layers. So they look at layer
+8:33
+two, layer nine, and layer 13 of a deep neural network, a VGG
+8:38
+network, we will talk about VGG in the convolutional network
+8:42
+lecture. So what we can see is for standard, that the
+8:46
+distributions across layers are slightly different. So I can't
+8:53
+really read these numbers here, it's very small. But these
+8:58
+should be ordered by increasing size. So I think this
+9:03
+corresponds here to the, to the steps. So the steps that we see
+9:08
+here, so this at the bottom is the later training and each, you
+9:14
+can think of each bell curve or each histogram here, as the
+9:18
+activation, the distribution of the activations at that given
+9:20
+step. So what you can see is they are all kind of in line
+9:25
+here. So there's not much distributional shift, I would
+9:29
+say here, maybe there's some some shift, you can see, it's
+9:33
+maybe I'm not sure it's hard to see that the distributional
+9:37
+shift here, it's hard to see that the, the mean of the
+9:41
+distribution during the course of the training during the steps
+9:45
+shifts a little bit to the left, for instance, we can also see
+9:48
+this a little bit here, right. So in that way, this one is the
+9:51
+one with batch norm, it's not, I would say that much different.
+9:57
+Now what they did is they produced batch norm variant by
+10:01
+adding noise to it. So here, you can clearly see on that the
+10:05
+distribution shifts. So you can see, here, this peak is very
+10:09
+different from this peak. So you can see a huge shift of the
+10:12
+distribution. So here, this one, however, when they then do the
+10:16
+training. So you can see here on the left hand side, when they
+10:19
+do the training, both the standard, sorry, the batch norm
+10:25
+and the noisy batch norm both perform really well. So even
+10:30
+though there is covariate shift, or there is no covariate shift,
+10:33
+doesn't seem like it affects the performance that much. So even
+10:38
+let's say, if batch norm fixes this covariate shift, I they
+10:43
+think it's not really the explanation why it results in
+10:46
+such a good performance, because then you would expect for this
+10:49
+case here, a very poor performance, but that's not the
+10:52
+case. So that's just one observation from this paper
+10:55
+here. Okay, now let me list a few more papers, I don't want to
+11:00
+go into these in too much detail. But if you are interested,
+11:04
+you are encouraged to read more. It's of course not required for
+11:08
+this class. But yeah, if you're really interested in batch norm,
+11:11
+doesn't hurt to read those. Okay, so just in chronological
+11:17
+order, there's the theory that it reduces covariate shift. So
+11:20
+this is the original paper, then we just saw the paper that says
+11:24
+that it makes the optimization landscape smoother. There's
+11:28
+another paper I found where they say that the reason why batch
+11:32
+norm works so well is that batch normalization implicitly
+11:35
+discourages single direction reliance. Then another paper
+11:41
+from 2018 also says that it acts as an implicit regularizer. And
+11:45
+that is then helping with a generalization accuracy. And
+11:50
+another paper was not so positive about batch norm, it
+11:53
+says essentially that batch norm causes exploding gradients. So
+11:57
+um, yeah, we will actually talk about these skip connections in
+12:01
+a future lecture too, by the way. Yeah, let's get now to the
+12:05
+practical advice section of this video. So there are also slight
+12:09
+modifications of batch norm. So one is putting batch norm before
+12:13
+the activation. So this is the original version of batch norm
+12:18
+that was discussed on the previous slides of previous
+12:20
+video, and also presented in the original paper. So here, the
+12:25
+workflow is as follows. First, we compute the net inputs. And
+12:29
+then we apply batch norm, then we apply the activation
+12:32
+function, and then we compute the next layer inputs. However,
+12:35
+we can also put batch norm after the activation. So what we do is
+12:40
+we essentially flip the order here, we first apply the
+12:44
+activation function and then use batch norm. So we can see that
+12:48
+inputs applying activation function batch norm, and then
+12:51
+computing the next layer inputs. This could make more sense in
+12:57
+practice, if you think about it as, let's say batch for
+13:01
+simplification, let's say you use batch norm and batch norm
+13:05
+learns to standardize your feature activation distribution,
+13:10
+let's say at mean zero, right, so you have no zero mean
+13:16
+features, but then you apply the activation function. Let's say
+13:21
+on the left hand side, we apply the activation function, then
+13:24
+what kind of change this distribution before it gets to
+13:27
+the next layer, right? Because let's say we have mean zero for
+13:32
+a given feature. And if you use, for example, a logistic sigmoid
+13:36
+function, then the mean will change from zero to point five,
+13:41
+right. So then next layer receives inputs that are at
+13:45
+point centered at point five and not centered at zero, right. So
+13:49
+in that way, the sigmoid would remove also the negative values.
+13:56
+So in that way, maybe it makes more sense to put batch norm
+14:00
+after the activation. Personally, I haven't found any
+14:05
+big difference. I haven't benchmarked this extensively. I
+14:09
+tried it here and there, I didn't notice a big difference. I
+14:13
+did some searching online, there was a repository that I found
+14:17
+where they did some experiment, or experiments, multiple ones,
+14:21
+and found that before and after did make or have a difference.
+14:26
+And they found, for instance, that putting batch norm after
+14:29
+the activation, indeed, resulted in a, in a better accuracy. So,
+14:37
+I mean, why not, it may make sense just to put it always
+14:40
+after the activation and not worry about it. All right, some
+14:46
+more practical consideration. So batch norm, I should also say,
+14:51
+only works really well if we have reasonable batch sizes. So
+14:56
+if we make the batch sizes too small, then batch norm doesn't
+14:59
+work very well anymore. So that might be explained by the fact
+15:03
+that these mean and standard deviation statistics become very
+15:08
+noisy, if we have small batch sizes, right. So here, I found a
+15:12
+paper, this is actually a paper about an alternative to batch
+15:16
+norm, it's more for convolution networks, but it's called a
+15:19
+group norm, we can revisit this maybe later, we don't have to
+15:22
+talk about group norm here. It's really just something that
+15:25
+doesn't work for multi layer perceptrons, it's only for
+15:28
+convolution networks. But what I found interesting was here, this
+15:31
+figure, ignoring the group norm plot here, what you can see is
+15:35
+they did an experiment with different batch sizes. And here's
+15:39
+the percent error. And they have it here at 32. Unfortunately,
+15:44
+they are not showing larger ones. But you can see 16 and 32
+15:48
+both work. But if you make it smaller, so if you make the
+15:52
+batch size smaller, like eight, four or two, then batch norm
+15:56
+becomes really bad. So you get a very large error here. So just a
+15:59
+practical consideration. If you use batch norm, it's highly
+16:03
+recommended to use a batch size greater than 16. In practice, I
+16:07
+would even say bigger than 632, or even 64. So here's some
+16:15
+further reading resources, if the previous ones were not
+16:18
+enough, if you are interested. Yeah, like I said, we can't
+16:22
+cover everything in this course. This is an introductory course.
+16:25
+So I have to be very selective with topics. But if you're
+16:28
+interested, some additional papers that you might find
+16:32
+interesting, maybe in the context of your project, you
+16:34
+can try one or the other paper and see whether that helps. So
+16:38
+one is conditional batch norm, which is essentially including
+16:42
+class information. So having different parameters for the
+16:44
+different classes in the data set, which kind of makes sense.
+16:50
+Yeah, then there's a paper on measuring the effects of data
+16:53
+parallelism on neural network training. So here, what I just
+16:59
+found interesting is it's not directly related to batch norm,
+17:02
+but it's related to the previous slide regarding the batch sizes.
+17:07
+So sometimes in practice, people say, don't use a large batch
+17:12
+size. So let's go back. So there are two theories, one theory or
+17:18
+one, not theory, but recommendation is to use large
+17:22
+batch sizes, because large batch sizes help you to utilize the
+17:26
+GPU better, because you have larger matrix multiplications,
+17:30
+and then the training will be faster. And it's, it's better.
+17:33
+Some people say, choosing smaller batch sizes is better
+17:37
+because it helps with generalization, because then maybe
+17:40
+the loss gets, yeah, we less likely to get trapped in local
+17:46
+minima on the loss surface. However, yeah, this is very
+17:50
+controversial. Here was just a paper I found interesting where
+17:53
+they say basically, they don't find any evidence that large
+17:55
+batch sizes degrade the performance. Um, yeah, and then
+18:03
+another one here is an alternative to batch
+18:09
+normalization that might I have not tried it myself, but it's
+18:12
+only interesting. It just came out this year, I saw that this
+18:15
+year, I haven't even read this yet, because I have such a huge
+18:19
+list of papers I find interesting, and I want to read,
+18:21
+but there's only so many hours in the day. But that sounded
+18:25
+pretty appealing. So they say that they present a plug in
+18:29
+replacement for batch normalization called
+18:30
+exponential moving average normalization, which improves
+18:34
+the performance of existing student teacher based self and
+18:38
+semi supervised learning techniques. I'm not sure whether
+18:41
+it applies also to regular networks, but could be
+18:45
+worthwhile looking into. So I just had that on my reading
+18:48
+list. And I thought I just included here. And the last one
+18:53
+I have here is it's actually without batch normalization. So
+19:01
+here is usually people say batch normalization is really
+19:04
+important to reach good performance. And here in this
+19:07
+recent paper also from 2021, they demonstrated that also you
+19:11
+can actually get good performance without batch
+19:14
+normalization. So they mentioned that previous work was already
+19:20
+successful in demonstrating that you can train without
+19:23
+batch normalization, get good performance, but these models do
+19:26
+not match the test accuracy of the best normalized networks,
+19:29
+and are often unstable for large learning rates, or strong data
+19:34
+augmentation. So while it is possible to get good
+19:37
+performance, it's not as good as with batch normalization, and
+19:40
+the models are more unstable. But in this work, they Yeah, they
+19:45
+have an alternative to make them stable. So they call it adaptive
+19:48
+gradient clipping. So gradient clipping is a technique that if
+19:52
+you have a very large gradient, you clip it at a certain value
+19:57
+so that it doesn't cause problems like exploding gradient
+20:00
+problems. And they say by having adaptive and adaptive version of
+20:04
+that gradient clipping, they can train a network without batch
+20:07
+normalization and get a good performance. But yeah, again,
+20:10
+this is a very recent paper. Time has to tell whether this is
+20:16
+really also working well across other architectures. But that
+20:20
+might be also something cool to look into maybe in the context
+20:23
+of your class project. So again, I'm just throwing out some ideas
+20:26
+or interesting reading material here, you don't have to read
+20:30
+that, of course, I'm just sharing it because it sounds
+20:33
+interesting. Alright, so one last thing I mentioned here on
+20:40
+these batch sizes, and you may have noticed, they are all
+20:43
+powers of two, right, two to the power of 23456, and so forth. So
+20:48
+why is that? Why do people usually choose batch sizes in
+20:52
+powers of two. So that has something to do with how GPUs
+20:56
+work as this. Just briefly, there's this paradigm, single
+21:00
+instruction, multiple data. So it's like, you have multiple
+21:05
+data points, let's say multiple values in a vector, and you have
+21:08
+a single instruction, let's say, like addition, and you can
+21:11
+distribute this instruction to apply to everything in a vector.
+21:15
+So that's like, how, on a certain level, parallelism works
+21:20
+on a CPU and GPU. So and on GPUs, the number of processing
+21:28
+cores is usually a power of two, that's just how I don't know the
+21:32
+chip design works. Now, you can take that and take it or make it
+21:38
+an advantage by choosing a batch size that is also a power of two,
+21:43
+because then you can get better balance out how these cores are
+21:47
+used. For instance, if you have 32 columns in a matrix, you can
+21:53
+so let's say you have your design matrix, you would do a
+21:56
+transpose on this matrix, and then these columns, you can map
+21:59
+them to dot products to each of the processing core. So if you
+22:03
+have 16 processing cores, for instance, you can run to dot
+22:07
+products on these 16 cores, right. So if you have only 31
+22:14
+columns, then one core would be finished faster, but it has to
+22:18
+wait until the other ones finish anyway, so you don't fully
+22:22
+utilize your CPU GPU. So in this case, it's just so that the GPU
+22:27
+is better utilized, people prefer these powers of two when
+22:32
+you're choosing batch sizes. But yeah, this is also anecdotal,
+22:37
+you don't have to of course, choose batch sizes that are
+22:41
+powers of two is just, you know what it is, it's actually also
+22:44
+making life simpler, because there are so many hyper
+22:48
+parameters to tune in to consider. And if you know, also
+22:52
+would consider values between values, powers of two, then you
+22:57
+would even have more hyper parameters to consider, right.
+22:59
+So if you say, I only tune powers of two, so you have 32
+23:02
+batch size 64128, and so forth, then this is less than saying I
+23:08
+will consider 2530 3540, and so forth, right. So in this way,
+23:14
+it's also one way to keep things simpler for hyper parameter
+23:18
+tuning. And yeah, of course, it utilizes the CPU and GPU
+23:21
+better. But in practice, it doesn't make such a huge
+23:25
+difference. It's not like you get any significant speed up
+23:29
+through that. Okay, so that was enough about batch norm. Let's
+23:34
+now talk also about weight initialization.
+
+##v86:
+
+0:01
+Yeah, previously, we talked about input normalization, but
+0:05
+weight initialization matters to to have everything on the right
+0:09
+or on a good scale. No pun intended here, though. So now we
+0:14
+are briefly motivating why we care about when weight
+0:17
+initialization, and then I will show you two common ways to
+0:20
+initialize weights. And then we'll see how we can do that in
+0:24
+pytorch, or whether we even have to bother about that in pytorch.
+0:27
+So previously, we discussed that we want to initialize weights to
+0:33
+small random numbers to break symmetry in the multilayer
+0:37
+perceptron. So I gave it to you as a question to think about. And
+0:42
+yeah, we discussed this on Piazza, if you have still
+0:45
+questions about that, there was a good answer on Piazza on
+0:49
+that. So, um, yeah, but besides having small random numbers to
+0:55
+break the symmetry, we also want the weights to be relatively
+1:00
+small, right. So that is another thing to think about. But it has
+1:03
+something to do with what I showed you earlier in an earlier
+1:07
+video here about input normalization. So just to kind of
+1:14
+explain or motivate this a little bit, think of the
+1:16
+multilayer perceptron again, where we here have the
+1:19
+multivariable channel for updating one particular weight.
+1:23
+So this is something I just copy and paste it from a previous
+1:26
+slide, nothing new here. But I want you to focus briefly on on
+1:31
+this part here where we have the derivative of the activation
+1:35
+with respect to the activation in the previous layer. So
+1:40
+actually, we could expand that to let's show it written it like
+1:49
+this. Let's do it like this. Z one, two, and then I'm just
+2:05
+expanding it here. So what the critical part here is, is this
+2:12
+part where we compute the derivative of the activation
+2:15
+with respect to the input, particularly for example, if we
+2:18
+have something like the logistic sigmoid, right, because if we
+2:23
+have a logistic sigmoid, if you recall the, yes, the partial
+2:27
+derivative of the logistic sigmoid with respect to its
+2:30
+input. So the derivative is largest if the input is zero,
+2:35
+right. And also, even if it's zero, it's just point to five.
+2:41
+So if we have something like this here, where we have this
+2:45
+term, we have a number that is always smaller than one, right.
+2:51
+So in this case, this can lead to a so called vanishing gradient
+2:55
+problem. Because then we multiply a number with a number
+3:02
+smaller than one multiple times if we have many layers. So for
+3:05
+instance, if we assume this is the largest gradient or partial
+3:10
+derivative, we can get for the logistic sigmoid function. And
+3:13
+then if we have 10 layers, we have a multiplication with a
+3:17
+value that is at most point to five. And that will degrade the
+3:24
+other gradients as well substantially, right, because if
+3:26
+I go back one more time, so we have all these these other terms
+3:30
+here, right. So the term here, here and here, it's all
+3:35
+multiplied with this one, right. So this is small, then well, we
+3:39
+we degrade the whole the whole update here, the gradient here.
+3:44
+And this is only for two layers, if we have more layers, we have
+3:47
+more of these terms in the in there, if we use the logistic
+3:50
+sigmoid. So in fact, then we would, if we have 10 layers, we
+3:56
+would degrade the value by about 10 to the power of minus six, so
+4:00
+the gradient will be so small, that the network will probably
+4:04
+not learn much anymore. So, you know, because of that, it's
+4:11
+usually a good idea to use other types of activation functions,
+4:16
+you can also kind of regulate that with the learning rate. But
+4:23
+this is one of the motivations why it's important to initialize
+4:26
+the weights centered at zero, for example, if you use a
+4:30
+logistic sigmoid function, because then you will have at
+4:33
+least the maximum gradient, right. So if I go back, if you
+4:38
+have inputs, or the net inputs that are small, let's say in
+4:41
+this range, or large in this range, then the gradient will be
+4:46
+even smaller, right. So in this way, you want to have something
+4:49
+that is at least they are centered at zero. So you can
+4:53
+initialize your weights, for example, from a random, from a
+4:58
+random uniform distribution, for example, for example, in the
+5:00
+range 01. But if you use a logistic sigmoid, for example,
+5:04
+it might be better to do it in a range between minus point five
+5:07
+and point five, or maybe even smaller, minus point Oh, five,
+5:11
+and 0.05. So, um, you can also choose a positive range. I mean,
+5:19
+if you have a relu function, it probably doesn't really matter
+5:21
+that much. However, this gives you more combinations, if your
+5:25
+inputs are also negative and positive, right. So in that
+5:28
+way, um, yeah, you can do either or if you have a relu, or you
+5:32
+can also Yeah, just what's very common is to initialize the
+5:35
+weights from a random Gaussian distribution with mean zero and
+5:39
+the small variance. But these are just some, I would say some
+5:44
+suggestions that have been used in the past. Nowadays, it's
+5:49
+actually more common to use either something like the
+5:53
+Xavier glorot initialization or camming her initialization. So
+5:58
+we will talk about this in the next video.
+
+##v87:
+
+0:01
+Yeah, let's now take a look at two of the most common weight
+0:05
+initialization schemes for deep neural networks. So the first
+0:10
+one we start with is called Xavier glorot initialization.
+0:14
+Sometimes people just say Xavier initialization. Sometimes people
+0:18
+say glorot initialization. So the fact or the name comes from
+0:22
+the name of the first author of the paper that proposed this
+0:27
+method. So usually this type of initialization is used in
+0:32
+connection with a 10 h function, the hyperbolic tangent,
+0:37
+activation function. And yeah, recall, this is also a sigmoidal
+0:41
+activation function similar to the logistic sigmoid, except
+0:44
+that the output is centered at zero. And so where we have in
+0:51
+the logistic sigmoid, something like this, I'm really not good
+0:55
+at drawing this. Let's try again, where the output is at
+1:03
+point five, for the logistic sigmoid, then we have for the
+1:08
+10 h, something more like, like this, where we have one and
+1:18
+minus one here. And the if you recall the partial derivative of
+1:23
+that function with respect to his input is one. So instead of
+1:28
+point two, five for the logistic sigmoid for the 10 h, the
+1:31
+derivative at the highest point here in the center is one. So in
+1:38
+this case, we have less of a vanishing gradient problem
+1:43
+compared to the logistic sigmoid. But of course, it
+1:47
+still has the problem of this saturation near extreme values.
+1:53
+So here at this point, and here at this point, we have still
+1:57
+this very small or zero gradient, which is still a
+2:00
+problem. And yeah, this Xavier initialization can act as a
+2:05
+small improvement to prevent these extreme values. So how
+2:12
+does it work? So it's a essentially a two step procedure.
+2:16
+The first step is to initialize the weights from a Gaussian or
+2:21
+random uniform distribution. And then the weights in the second
+2:25
+step are scaled proportional to the number of inputs to that
+2:29
+given layer. And therefore, the first hidden layer, the number
+2:35
+of inputs would be the number of features in the data set. And
+2:38
+then the second layer, that would be the number of units in
+2:42
+the first hidden layer, and so forth. So here's how it looks
+2:49
+like. So assume that the weight is initialized from a Gaussian
+2:55
+distribution with mean zero and a small variance. And let's say
+3:02
+this is our weight matrix from this Gaussian distribution, or
+3:06
+random could also be a random normal uniform distribution,
+3:09
+sorry. And then you scale it by a factor of the square root of
+3:14
+one over ml minus one. So what is m, m is the feature number of
+3:19
+features, and l minus one is the layer index. So l minus one
+3:23
+means the number of features in the previous layer. So if I have
+3:27
+set up like this, and then everything is, of course,
+3:33
+connected to each other. So if I initialize the weights here, on
+3:40
+I want to initialize these weights here, they are
+3:43
+initialized based on the number of features here. Yeah, and if
+3:49
+you didn't initialize the bias units to all zeros, you can
+3:53
+also include those in the scaling. But yeah, it's fine to
+3:56
+initialize the bias units to all zeros. I'm just saying if you
+3:59
+don't, then I recommend also including those in that scaling.
+4:05
+Yeah, what is the rationale behind applying this scaling
+4:10
+factor here? So yeah, that goes back to making an assumption
+4:14
+that let's say when we compute the net input, we have a
+4:17
+multiplication between the weights and the activations from
+4:21
+the previous layer. And you can think of them as independent,
+4:25
+right? So and then if you have an increasing sample size, then
+4:33
+the variance of so here, I mean, if you have increasing number of
+4:39
+units in the previous layer, so that's what I'm thinking here
+4:42
+of the sample size, then the sum increases because you have
+4:47
+independent variables, right? And then you're just adding up
+4:49
+the variances. So you can think of it as the variance of the
+4:52
+sum of independent variables is the sum of the variances. And
+4:57
+then, yeah, we have a scaling by one over m, where m is the
+5:02
+number of the samples, or let's say, it's maybe maybe the number
+5:08
+of features would be more correct here. And yeah, the
+5:13
+square root is to consider the standard deviation. All right,
+5:18
+so yeah, here's just a very, very brief sketch of what I
+5:22
+meant. So if we have the variance of the net input, so
+5:27
+just focusing on one unit here, this can be expressed as the
+5:30
+sum over the weights times the activation from the previous
+5:35
+layer. So that's nothing new. And, um, yeah, we can, the
+5:41
+variance of the sum is the sum of the variances, right? So we
+5:46
+can rewrite this. And here, I'm just extending it into these
+5:52
+independent variables. And then essentially, because we have a
+6:00
+sum over these values, and they are the same for all the
+6:03
+different positions, right? So I can actually say instead of
+6:10
+summing over these, I can just say, it's m times this product
+6:14
+in a way. So this is where the m comes from, right? So we are
+6:19
+then scaling it back by one over m. And since the square root is
+6:26
+for the standard deviation here.
+6:29
+Alright, so but don't worry about it too much. It's
+6:32
+essentially a scaling factor, you can think of it more
+6:35
+broadly as a scaling factor that accounts for the number of
+6:39
+features that goes into a given layer. So that's the main
+6:43
+message here that we take into consideration the number of
+6:48
+features. And this is sometimes also called the number of
+6:51
+features from the previous layer, it's sometimes also
+6:53
+called fan in and I have no idea why it's called like that. It's
+6:57
+another term that is commonly used. There's actually a term
+7:02
+fan in and there's also the term fan out, I only know everyone is
+7:06
+using this like since 10 years ago or something, but I never
+7:10
+understood where this name comes from. Alright, so in practice,
+7:15
+also, sometimes, if you look at some initialization schemes,
+7:19
+sometimes people also include here, the number of output
+7:25
+units, for example, they would write it as
+7:27
+um, l, u, l is the output number of features that goes out from
+7:33
+that given layer. So that's also sometimes some things people
+7:36
+sometimes do. But yeah, in practice, I think fan in a small
+7:40
+comment and having both.
+7:43
+Yeah, so here's a visualization from the Xavier initialization
+7:47
+paper. So what they are showing here is a network with a 10 h
+7:51
+activation, and without Xavier initialization, just for
+7:55
+reference now. So here at the top, this is a histogram, a
+7:59
+normalized histogram, showing the activation value for the
+8:03
+different layers in the network. And you can see that in the
+8:07
+early layers, like one and two, the activations are more uniform
+8:11
+spread out. Whereas for the later layers, they are largely
+8:14
+zero, it just happens that how the signal propagates through
+8:19
+the network that we will see in later layers, the activations
+8:22
+are more centered at zero. And yeah, consequently, when we do
+8:26
+backpropagation, we have this multivariable chain rule, right?
+8:30
+So the we go usually from the right to the left. So if I have
+8:34
+a network, let's say like this, that's the forward pass. And
+8:37
+then in the backward pass, I start with layer five, and then
+8:43
+multiply things until I reach layer one when I do the updates.
+8:48
+So what you can see here is for layer fives, we have back
+8:51
+propagated gradients that look reasonable in a range, let's
+8:55
+say, between minus point one and point one. But then the further
+9:00
+back I go, I get this vanishing gradient problem, you can see
+9:03
+that the early layers almost get zero gradients most of the time,
+9:08
+which can then be a problem. So in this sense, the network will
+9:12
+mostly only update the later layers, but almost ignore the
+9:15
+earlier layers. So this can be a kind of, yeah, not good if you
+9:20
+want to train a neural network well. So then here's the
+9:25
+visualization showing what I showed you on the previous
+9:29
+slide. And here, a version with the Xavier Xavier initialization.
+9:35
+So you can see at the bottom, this looks much better if they
+9:39
+use the Xavier initialization, you can see that all the
+9:42
+gradients are in a reasonable range for all the different
+9:45
+layers. So in this way, that's actually pretty nice, it fixes
+9:48
+this issue that some layers learn better than others.
+9:54
+Alright, so there's another initialization scheme. So
+9:57
+Xavier initialization scheme was assuming that you use the 10 H
+10:03
+activation function, there's also something called initialization.
+10:07
+So this comes from the fact that the first author on that paper
+10:10
+was named Kim or his name is timing her. And yeah, like I
+10:16
+said, previously, we assumed that the activations had a zero
+10:19
+mean or mean zero, which is reasonable. When we use the 10
+10:25
+H activation, because it's centered at zero. But for you
+10:30
+for relu, it's different, because the activations are not
+10:34
+centered at zero anymore, right? If we have a relu function, I
+10:41
+will only have positive values, right? Because everything looks
+10:45
+almost like a leaky reload. Um, because everything here on the
+10:50
+left side, left from zero will be set to zero, right? So in
+10:56
+that way, we don't have the activation centered at zero
+10:59
+anymore. So this paper proposes a method that works better with
+11:03
+relu units where we don't have the weights centered at zero,
+11:07
+or sorry, the activation centered at zero. There's some
+11:09
+complicated math in that paper. If you're interested, you can
+11:12
+check that out. But the bottom line is that we would add just a
+11:17
+scaling factor of two here. So in total, we would add a
+11:21
+sometimes people call that gain, we would add a gain of square
+11:26
+root of two. And we can just put it inside here. So essentially,
+11:29
+it's just adding a scaling factor. And this addresses the
+11:33
+issue with having the activations not centered at zero
+11:37
+in the case of relu. Oh, sorry, it Okay, so yeah, so you don't
+11:45
+have to, I would say worry about these types of things too much
+11:48
+if you just use regular neural networks. So there are
+11:52
+reasonable defaults in pytorch. So this video was more like
+11:56
+illustrating that different weight initialization schemes
+12:00
+exist. But in practice, I mean, it is a good idea to choose a
+12:05
+good initialization scheme. But yeah, mostly, frameworks handle
+12:09
+this automatically pretty well these days. So I will actually
+12:13
+in the next video show you how this is done in pytorch and how
+12:17
+we can change the initialization scheme in pytorch.
+
+##v88:
+
+0:02
+Okay, let's now finish up this video by talking about how pytorch
+0:06
+handles weight initialization, and how we can change it if we
+0:10
+wanted to. So I looked at the current source code of pytorch,
+0:15
+because the other weight initialization that they do by
+0:18
+default, changed over the different version over time. So
+0:22
+currently in version 1.8, they use the climbing her uniform
+0:27
+weight initialization. So I found the source code a relevant
+0:31
+one here, if you want to check it out yourself. And this
+0:34
+corresponds to the fully connected to the linear layer.
+0:38
+For the convolutional layer, I saw it's the same though. So
+0:41
+they use the same weight initialization now for both the
+0:45
+fully connected and the convolution layer. In previous
+0:48
+versions, they had a slightly different weight initialization.
+0:51
+Yeah, and now looking at this here, you may wonder, besides
+0:58
+climbing uniform, what these different things are. So here,
+1:01
+this math square root five, this is I think, for the leaky relu.
+1:06
+So that is if you if you use a leaky relu, you would add that
+1:10
+number. So they are assuming that if you use a fully
+1:13
+connected layer, that you also use a leaky relu activation. In
+1:18
+practice, personally, I tried also using the zero, which is
+1:24
+usually what people would put in here for the regular relu. If I
+1:28
+use the regular relu, and I didn't really notice any
+1:30
+difference. So it might be better to use this for the leaky
+1:34
+relu and put set it to zero for the normal relu. I will show you
+1:37
+in the next slide how we can do that more conveniently than
+1:41
+modifying the source code. But in practice, personally, I didn't
+1:44
+notice a big difference. So yeah, here's an example of how
+1:49
+we could manually override the initialization that is done
+1:54
+automatically. Because if we initialize these layers, it will
+1:58
+basically execute this one to do the timing initialization. But
+2:03
+if we wanted to, we can override it. So how I like to do this, I
+2:07
+mean, in multiple ways, you can do it. But how I like to do it
+2:09
+is I like to put this for loop after my sequential loop. So
+2:13
+here, what I'm doing is I'm iterating through all the
+2:16
+modules in the network. However, here, I'm only interested in the
+2:21
+other fully connected modules, not in, let's say, relu, and
+2:24
+things like that. So here, I'm pulling out essentially only the
+2:28
+fully connected ones. And then I'm using torch and in it,
+2:31
+chiming uniform, and provided with the corresponding weight.
+2:36
+So the weight corresponding to m, the linear layer, and I'm
+2:40
+setting it to fan in and non linearity relu. So this is as
+2:45
+essentially the default, by the way, too. So this is what is
+2:48
+done by default, or not actually, that's not true. By
+2:51
+default, it should be leaky relu. But fan in, that's the
+2:55
+default. And usually, that's by default, leaky relu, I'm
+2:58
+changing it to relu. Personally, I don't don't notice any big
+3:02
+difference. Another thing, if you wanted to, you can set the
+3:05
+bias to zero, or you can use the initialization scheme they use
+3:09
+here. Also, for that, personally, I didn't notice any
+3:13
+difference. But I just trust that the pytorch developers did
+3:18
+a lot of testing and also considered community feedback.
+3:22
+So I think this one is probably better than this one. Except, of
+3:28
+course, yeah, the other one on the previous slide is more
+3:31
+geared towards leaky relu, and I have a regular relu here. But
+3:36
+anyways, your mileage may vary. And there's another thing I
+3:38
+also wanted to say at the end of the video why this may matter
+3:42
+less than you might think. So yeah, another example here is
+3:47
+the normal initialization. So using Gaussian distribution. So
+3:54
+same concept. Now I'm setting the weights here to Yeah,
+3:59
+values from a Gaussian distribution. So with mean zero
+4:02
+and standard deviation 0.001. So why am I using the detach here?
+4:08
+I also already used that in the previous slide, if you have
+4:10
+noticed here. So what is the detach? So that is because when
+4:14
+we initialize something that has weight parameters, so linear has
+4:20
+parameters. So let me go back to slides. So in pytorch, there is
+4:26
+a thing called parameter. And these are all the learnable
+4:29
+parameters. And they have the gradient on attribute activated
+4:35
+by default. And so what happens is that for that part for weight
+4:41
+and bias, pytorch will track the gradients when we do
+4:45
+computations. However, we don't want to have the weight
+4:49
+initialization be part of let's say, the computation graph or
+4:54
+the gradient computation. So here, by detaching it from the
+4:57
+computation graph, I kind of prevent that for this part, a
+5:01
+gradient is computed. So it's just like for convenience, not
+5:04
+convenience, I think otherwise, it might not even work. Because
+5:07
+it's kind of a weird operation to include in the computation
+5:12
+graph, because it's just, this should be essentially our
+5:15
+starting point and not part of the computation graph. Okay, so
+5:19
+yeah, here's the how we could then also initialize it from a
+5:22
+Gaussian distribution. And actually, when I run this, I get
+5:26
+get like some really funny results. So on the left hand
+5:29
+side, if you want to replicate that, by the way, here's all
+5:32
+the GitHub code. So there are also the other ones if you go
+5:35
+here. So when I was training this network, I noticed that
+5:40
+nothing happened for a while. So for about like, almost 20
+5:43
+epochs. And again, then suddenly, I don't know, it got
+5:46
+a push or something. And then the loss started to go down. So
+5:49
+it started training after epoch 20 or so, which was funny, I
+5:52
+have never seen something that weird, but usually also, I would
+5:56
+stop the training if it doesn't stop, start learning after a
+5:59
+few epochs. So anyways, so that was kind of funny, it eventually
+6:02
+learned to perform pretty well. But that was still interesting
+6:07
+for the timing initialization that trained pretty well. Yeah,
+6:13
+to begin with, I was not such an issue. So that looks actually
+6:16
+much better. And this is why we would, for example, use timing
+6:19
+initialization for network with relu activations. I should say
+6:24
+though, what I mentioned earlier, is that we use if we
+6:27
+use batch norm, then actually, this initial feature weight, or
+6:32
+weight choice is less important than you might think. So because
+6:36
+the other batch normalization normalizes the activations
+6:40
+anyways, so in that way, it's less important what type of
+6:42
+weight initialization we choose, at least in my opinion. So when
+6:46
+we try or when I tried this in practice, so we can see now that
+6:51
+on the left hand side, I'm showing you the Gaussian
+6:53
+initialization with batch norm, that things train also well for
+6:57
+this case. So actually, yeah, with batch norm, it trains even
+7:00
+faster than timing her without batch norm. Alright, so yeah,
+7:04
+this is just a brief overview of different weight initialization
+7:09
+schemes. It's maybe something you might want to consider. But
+7:13
+the pytorch defaults are reasonable. If you use the relu
+7:16
+activation, if you use different types of activation functions,
+7:20
+you may want to see whether there's a better weight
+7:22
+initialization scheme. But also, again, with batch norm, things
+7:26
+are quite robust. Alright, so this is the lecture on batch
+7:30
+norm and weight initialization, then and next week, we will
+7:33
+cover optimization algorithms.
+
+##v89:
+
+0:01
+Yeah, hi, everyone. Again, lots of exciting things to talk about
+0:04
+today. So you may have noticed in the past that I've been
+0:07
+covering a lot of these big projects from companies like
+0:11
+Facebook AI research and Google AI research, I wanted to
+0:14
+emphasize, I'm not affiliated with any of these companies or
+0:18
+projects. It's just like these are big projects and are very
+0:21
+catchy. And also, that makes them sometimes very interesting,
+0:24
+which is why I kind of kind of try to keep up with what other
+0:28
+people are doing. And these are usually the ones that kind of
+0:31
+stick out. But I also try in the upcoming weeks to be more
+0:35
+selective, or also, let's say more diverse in terms of
+0:38
+covering both little and big projects that are interesting.
+0:42
+So today, I don't have a particular theme, I just
+0:45
+selected some things that came to mind or that I stumbled upon.
+0:49
+So little projects, big projects, a little bit of both.
+0:52
+So because there are lots of things to talk about today, let
+0:55
+me not waste too much time on this introduction and get
+0:57
+started.
+Textbox Again
+0:59
+Yeah, so the first project I want to talk about today is this
+1:03
+text box again, I saw on GitHub this week, as far as I am
+1:07
+concerned, and as far as the author is concerned, this is
+1:10
+also the first application of again, to generating new text
+1:14
+boxes. So here are some examples of how they might look like. So
+1:19
+why are we interested in that? Well, maybe you can use that to
+1:23
+design a new poster or something like that. But essentially, I
+1:26
+think it's just like a nice and simple application of a GAN for
+1:29
+generating some new data. So later in this course, we will
+1:33
+also be talking about GANs in more detail. So here, it's just
+1:38
+like an example of how a GAN might look like. And also this
+1:41
+GitHub repository contains a really nice description of how
+1:45
+this works. And it's really just a nice example project here. So
+1:50
+what is going on here, maybe just to briefly walk you through
+1:53
+this. So again, usually consists of two parts, there's a
+1:58
+generator and a discriminator. So the generator is essentially
+2:02
+trying to generate new data that mimics the data in the training
+2:07
+set. And the discriminator is the task of the discriminator is to
+2:10
+tell a part whether the generator generated fake data,
+2:15
+like data that is different from the training set distribution,
+2:19
+or data that is similar to the training set distribution. So
+2:22
+essentially, the generator will learn what tries to learn to
+2:25
+fool the discriminator, such that the discriminator cannot
+2:29
+distinguish between generated and real images. And in that
+2:34
+sense, you can think of the generator as learning the
+2:36
+training data set distribution. So here, there's like a slight
+2:41
+modification. I mean, again, it's usually a little bit
+2:43
+simpler. So here, in addition to that, so there are two things
+2:46
+going on, a normal GAN usually gets some noises input. So the
+2:50
+noise gets encoded, it's basically an vector that goes
+2:53
+into the network, and the network then generates the new
+2:56
+data. So why the noise, it's such that otherwise, I mean, you
+3:00
+need the noise, otherwise, the generator will always produce
+3:04
+the same output, right, if you think of it as a function. So in
+3:07
+that way, the noise is such that it will create different
+3:10
+outputs. And here, in addition to that, there is also the word
+3:14
+encoder, which takes as input a word. So this word will be then
+3:18
+included in this output image. So and to ensure that this word
+3:25
+is indeed included in this output image, there's also this
+3:29
+OCR module, which will judge whether this text here resembles
+3:33
+the text that was put in. So yeah, this is also why you can't
+3:38
+use this module here for generating, let's say, image
+3:42
+captures, because then, like these captures that are used for
+3:45
+verifying whether you are human, when you log into a website, I
+3:49
+mean, here, this wouldn't be useful, because I would say it's
+3:52
+too easy to solve, because the OCR is able to tell which word
+3:55
+it is, right. So in that way, you can simply design a robot to
+3:58
+fool, but to fool this capture generator. But yeah, anyways,
+4:05
+this is actually a quite useful technique to just add an
+4:09
+additional constraint here. For instance, a couple of years ago,
+4:12
+we also worked on face privacy, where we wanted to hide certain
+4:17
+face attributes. And we also in project called privacy, oops,
+4:23
+privacy, privacy net, we also designed again, that hides face
+4:32
+information, while still maintaining face matching
+4:36
+accuracy, or the same face matching accuracy, so that the
+4:40
+generated images are still useful in practice. But then, so
+4:44
+the goal was essentially to having face images still being
+4:48
+useful for, let's say, passport verification purposes. But then,
+4:52
+if someone captures images on a security camera, it shouldn't,
+4:56
+the person shouldn't be able to do some data mining on, let's
+4:58
+say, the gender of the person and so forth. So here, then we
+5:01
+use face metric in a similar manner. Anyway, so here, then
+5:05
+the discriminator judges whether the generated image is fake or
+5:09
+not. And essentially, this whole network will then learn how to
+5:12
+generate new text boxes. Yeah, so here's a slightly larger
+Chinese Multimodal Pretrainer
+5:19
+project. I already wanted to cover it like one week ago, but
+5:22
+the episode was already too long. So I moved it into this
+5:24
+week's episode. But I think that is something worth talking
+5:27
+about. So this is like a large, really large model. It's called
+5:32
+m six, Chinese multimodal pretrainer. And this was a
+5:36
+collaboration between Alibaba and the Jinghua University. So
+5:40
+here, what they did is they trained, I think they use the
+5:44
+Megatron from Nvidia, they trained 1.9 terabytes of images,
+5:48
+or they trained on 1.9 terabytes of images, and 292
+5:53
+gigabytes of text. So it's a really large effort here. And
+5:57
+what's essentially new and interesting here is that it is
+5:59
+in Chinese and not English. So it's kind of interesting to see
+6:02
+that these language models also perform pretty well on other
+6:06
+other languages that are not English languages, because in
+6:09
+Chinese, they are also you probably know this better than I
+6:11
+do. But you have all these different types of characters.
+6:14
+So English text is I would say, much simpler, because you only
+6:17
+have 24 characters here, that's a little bit more challenging.
+6:21
+So it's kind of an interesting case study as well, I think. So
+6:25
+they trained actually two models, a 10 billion and a 100
+6:29
+billion parameter transformer. And so this was done with
+6:34
+a self supervised pre training. And then the pre trained model
+6:38
+can actually be used for many different tasks downstream. For
+6:41
+instance, the model can be used for generating descriptions,
+6:44
+doing image search for q&a, or poem generation, and yeah, many,
+6:48
+many different things. So just in a nutshell, I don't want to go
+Masking
+6:52
+into too much detail. But how did they accomplish that? How
+6:55
+can they use the model on so many different downstream
+6:59
+tasks? So essentially, how they achieve that is by masking. So
+7:03
+they have the same model, they call it here, unified encoder
+7:07
+decoder. I'm not an expert in these large language models. But
+7:11
+I think this is based on Nvidia's Megatron. I've, I've
+7:15
+seen something similar before. In any case, so here, they have
+7:18
+like these different masking strategies. So for instance,
+7:22
+when they want to use the model for text denoising, they would
+7:26
+mask out all the gray parts here, which is the IP, they call
+7:31
+it IP, and DT, mostly. So but they maintain some DT. So what
+7:37
+is IP, ET, and DT. So IP are image patches, ET are encoder
+7:43
+tokens and DTR decoder tokens. So encoder is can think of it as
+7:48
+the input tokens, let's say text input tokens, and decoder are
+7:52
+more like the output tokens. So for text denoising, the model
+7:57
+gets decoder and encoder tokens. And let's say for language
+8:02
+modeling, there's only the decoder tokens. And for image
+8:06
+captioning, they use, of course, the image patches together with
+8:10
+the decoder tokens and so forth. So in this way, based on the
+8:13
+task, they use different types of inputs. So they have like
+8:17
+this masking strategy. So with that, they are able to train one
+8:21
+single model, essentially. Yeah, totally unrelated to the previous
+8:26
+project, I saw a very interesting project on archive
+8:29
+this week. So this project essentially highlights how
+8:33
+fragile deep learning can still be in practice. And then we have
+8:36
+to be a bit careful about certain things when we are using
+8:38
+it. So the project I'm talking about is actually not the
+8:42
+project on this slide, but on the next slide. But it reminded
+8:45
+me of this one that I saw about approximately almost a year
+8:48
+ago. So here, just to describe you what's going on here. So
+8:52
+here, the authors try to fool Tesla's autopilot system. So if
+8:57
+you haven't heard of Tesla's autopilot, it's essentially a
+9:00
+self driving car program inside the Tesla car, which can, to
+9:05
+some extent, automatically control the Tesla car like
+9:09
+steering it on the highway. I don't have a Tesla, I only are
+9:13
+vaguely familiar with it. But based on what I hear from
+9:15
+people, it's, it's somewhat okay, but it's, of course, not
+9:20
+something that you want to blindly rely on. And this paper
+9:23
+also highlights some of the issues with that system. I'm
+9:25
+not sure if this is already fixed. But in any case, so
+9:29
+what's going on here is that the authors, yeah, they try to fool
+9:32
+the autopilot system. So what they did is they projected,
+9:34
+let's say, street signs into trees. And that was essentially
+9:39
+fooling the system, thinking that this is actually a real
+9:42
+street sign. And you can think of I mean, of a real world
+9:45
+application, if there's some malicious actor, they could
+9:48
+maybe essentially project certain things and then cause
+9:52
+crashes and stuff like that. Or here, for instance, they
+9:55
+projected a silhouette of Elon Musk onto the street. And the
+9:59
+car was then thinking there's a person on the street and was
+10:02
+breaking pretty hard and things like that. So yeah, what I saw
+10:06
+in the archive was essentially an update of that. Or I think
+10:09
+these are different authors, right? Yeah. But it was
+10:12
+essentially a pretty interesting project where they did something
+10:15
+similar with laser beams. So here, they essentially
+10:19
+projected laser beams into the image. And by that, they could
+10:24
+also fool the cars essentially. So I think this one here
+10:29
+definitely takes more effort if you are, let's say a malicious
+10:32
+actor. And yeah, you want to for some reason fool the car. I
+10:37
+think having something that can project a street sign, you need
+10:40
+a projector, essentially, it's a little bit more effort to do
+10:43
+that. But something like a laser beam, having something like
+10:46
+that, that might be more concerning because these laser
+10:49
+beams, they are more, I would say, easier to carry around and
+10:52
+things like that. So yeah, that essentially highlights there's
+10:55
+still a long way to go for making self driving cars safe.
+Fairness
+11:00
+Yeah, related to the topic of safety. There's also another
+11:04
+important topic fairness. So how do we design fair machine
+11:09
+learning and deep learning systems? Yeah, Facebook had a
+11:12
+blog post on that topic this week called on the ground
+11:15
+applying algorithmic fairness approaches to complex
+11:18
+production systems. And yeah, in this blog post, there was also a
+11:21
+link to a research paper. It's a very relatively long paper, but
+11:25
+the recommended read, I think it's an important topic. So in
+11:28
+this paper, they outline the challenges and approaches they
+11:32
+take to making machine learning and deep learning fair. So it's
+11:36
+actually a pretty tricky problem that they have there. So I'm not
+11:41
+an expert in this area. But it seems like it's Yeah, it's not
+11:44
+so easy to solve. But yeah, one thing I wanted to highlight from
+11:48
+that is regarding label fairness, because in practice,
+11:52
+we usually assume that the labels that we have for a given
+11:55
+data set, that they are correct, or that they are the definite
+11:59
+ground truth labels. But yeah, in the real world, it's not
+12:02
+always so obvious, or not always so clear whether these labels
+12:05
+are correct, or whether we should take them literally, or
+12:09
+whether we should take them with a grain of salt. So for instance,
+12:12
+as they say, here's things like when you have websites, so you
+12:18
+can perfectly measure whether users click on a given button.
+12:21
+So if you want to measure or predict website clicks, website
+12:24
+clicks themselves are labels that are pretty, yeah, I mean,
+12:28
+pretty confident, or you are pretty sure if someone clicks on
+12:31
+that, you can measure this pretty confidently a click or
+12:33
+not. But other things, for instance, if you deal with
+12:36
+topics like identifying bullying, so the labels that
+12:40
+you may use for that, they are usually, for instance, generated
+12:44
+by a human who is labeling certain posts, whether they are
+12:47
+related to bullying or not. And because that's based on human
+12:50
+judgment, it may also embed human biases. So in certain
+12:53
+cases, yeah, whether a label is correct or not, it's really,
+12:58
+it's more, I would say subtle, it's there's also a gray zone
+13:01
+and things like that. So also, like they say here, there's
+13:06
+usually a policy written down to identify bullying. And it's also
+13:10
+important, like to have a good policy for the label us to
+13:13
+apply. And then but different people, yeah, apply the policy
+13:17
+maybe differently. And there are like these implicit and explicit
+13:20
+biases that label us have. So in that way, in certain in certain
+13:25
+contexts, it's actually not so simple, we cannot always believe
+13:28
+that these labels are the definite ground truth. So that
+13:31
+kind of makes certain topics, or applications for machine
+13:35
+learning and deep learning a little more challenging than
+13:37
+others. But yeah, related to that, what I wanted to mention
+13:41
+for your class project, what might be also an interesting
+13:44
+thing to do is to take a sample of your data set. So if you are
+13:48
+working on a classification problem, let's say you have a
+13:52
+data set of 100 images, or set, let's say, let's say 100,000
+13:56
+images, sorry, take, let's say 100 images, and then look at
+14:00
+these 100 images. And without looking at the labels, try to
+14:05
+predict what class label it is. And then you count the numbers
+14:10
+of times you were correct, and then divide that number by 100.
+14:14
+And then you get a feeling for what the human accuracy is on
+14:17
+that data set, how or how the human predictions relate to the
+14:22
+labels that are actually the ones contained in your data set,
+14:26
+it gives you a feeling of the difficulty of the task to. So
+14:30
+for instance, if you have the MNIST data set, take maybe 100
+14:34
+MNIST digits and try to break which number it is. And let's
+14:38
+see whether you get 100% accuracy or not. So it gives
+14:41
+you also an idea of whether the labels are even correct in the
+14:45
+data set, but also how difficult the task is. Yes, since we
+Online vs Offline Generalization
+14:51
+talked about improving generalization performance this
+14:54
+week, and we will continue to talk about this topic. This
+14:57
+week, there was an interesting research article on
+15:00
+understanding generalization in deep learning from the
+15:03
+perspective of online and offline learning. So the title
+15:08
+of the article is good online learners are good offline
+15:11
+generalizers. So here they had two scenarios, a real world
+15:16
+scenario. So the real world scenario is essentially what we
+15:19
+have also always considered in class. So we have given training
+15:25
+set and we train a model on n training samples from that data
+15:30
+set where we have mini batch stochastic gradient descent. And
+15:34
+we run that for multiple epochs. So essentially, this thing is
+15:38
+just describing what we are doing when we are working with
+15:40
+a training set where we have, you know, where we do stochastic
+15:45
+gradient descent with mini batches. And we repeat that for
+15:48
+multiple epochs. But then they have another scenario, they call
+15:52
+that the ideal world. So here, instead of you're doing mini
+15:57
+batch gradient descent on the training set, instead of having
+16:00
+a fixed size training set, they have infinite data. So they are
+16:04
+drawing every time a new mini batch from the distribution of
+16:07
+new data. So they have an infinite pool of new data. And
+16:10
+they don't have epochs because the data never repeats, they
+16:13
+always draw new data. And here, what they're doing is they are
+16:18
+comparing how the real world compares to the ideal world. So
+16:23
+here, this is essentially illustrating that we once we
+16:27
+complete one epoch, we start from scratch, I mean, we do
+16:30
+another round and another round. So we reuse the same training
+16:33
+set for training in an ideal world, we always move forward
+16:37
+and have new samples. What they found was pretty interesting,
+16:40
+actually, that there is actually no difference, whether we have
+16:44
+the ideal world, or the real world case, in terms of the
+16:48
+generalization performance. So both the ideal world and real
+16:52
+world setting result in models that have the same performance
+16:56
+on the test set. So they have a test set where they measure the
+16:59
+performance then. And here, this is the number of iterations. So
+17:02
+you can, it's hard to see, but you can see there are two, two
+17:05
+lines here, a red line and a blue line. And blue corresponds
+17:09
+to the real world scenario and red to the ideal world. And you
+17:13
+can see there's virtually no difference. So there's one
+17:17
+caveat, though, with that study. So one is how they generate
+17:21
+generated the new data for the ideal world scenario. So here,
+17:25
+they used a model to do that. So they used a model that draw or
+17:31
+constructed 6 million synthetic cipher 10, like images by
+17:36
+sampling from a certain generative model. And how did
+17:40
+they then get the labels for that? They used another model
+17:43
+that was used then to label these images. Here, they had a
+17:47
+model with 98.5% accuracy. So yeah, I mean, this is an okay
+17:51
+approach, because yeah, well, where should you get all the
+17:54
+data from otherwise, right? But yeah, this is also a little
+17:56
+caveat, because these are not real images, they are generated
+18:01
+images that look like real images using a generative model.
+18:06
+Any case, it's still an interesting study. Yeah, and
+18:09
+another or another little thing I want to mention is, it's
+18:12
+actually not the test set error, it's something called test soft
+18:16
+error. So it's not a test of accuracy, but the soft error. I
+18:20
+was a bit confused by that. I haven't seen that before. So
+18:23
+they had a paragraph on that. So here, it's essentially what
+18:27
+they call a soft accuracy of classifiers defined as a soft
+18:32
+max probability on the correct label. So instead of using the
+18:36
+arc max on the soft max, where in the soft max recall, we have
+18:41
+class membership probabilities, they use the highest probability
+18:44
+score and compute the accuracy that way as a soft accuracy.
+18:48
+Honestly, I'm not exactly sure why they are doing that, why
+18:51
+they are not reporting the regular test set accuracy. But
+18:55
+yeah, that's that's an interesting point here. Yeah, and
+19:02
+to ensure that this observation was not just an artifact,
+19:04
+particular to this resonant model that they use, they also
+19:08
+tried it with different models and saw the same effect. Yeah,
+Pretraining
+19:13
+one more visualization from that paper. So here, they also looked
+19:17
+on at pre training. So what they did is here, they had a model for
+19:23
+the ideal and real world scenario, and with and without
+19:28
+pre training. So the one without pre training, this is like the
+19:32
+random weight initialization, and pre training is essentially
+19:35
+pre training here, the model on image net, and then using the
+19:38
+weights and training it further on that cipher 10 data set. So
+19:42
+what they found here is, if you look at, so the dotted line is
+19:47
+ideal world, and the real world is the solid line. And in red,
+19:51
+that is the random, it's a little bit hard to read this
+19:54
+graph, to be honest, or not hard, but you have to think a
+19:56
+little bit about it. So this is the random in it, and the blue
+20:00
+ones are pre training. And then what you can see here is the
+20:08
+dotted one is again, the ideal. And the solid one is the real
+20:15
+world, you can see, for the random initialization, like
+20:17
+we've seen before, there's no difference, really, whether we
+20:21
+use the real world or ideal world scenario. And the same is
+20:25
+true for the pre trained model, there's also no, but not, not
+20:29
+much difference. However, what is interesting here, though, is
+20:34
+yeah, of course, that pre training really helps. So this
+20:37
+is the again, test soft error. And you can see that the pre
+20:41
+trained model has an error that goes down much, much, much
+20:44
+quicker than the one for the random tested. So it highlights
+20:47
+that pre training a model on a larger data set first, instead
+20:52
+of doing a random weight initialization, it's actually
+20:54
+really good for getting good performance faster. Also, what's
+20:59
+also interesting is that the final performance is also a huge
+21:02
+gap. So it's not only training faster, but it also results in a
+21:05
+better model here. Yeah, and related to pre training. So
+Selfsupervised learning
+21:11
+there was another interesting project called seer seer stands
+21:15
+for self supervised. So pre training is essentially very
+21:19
+similar to self supervised learning. So self supervised
+21:22
+learning is a form of pre training in that sense. So on
+21:25
+the previous slide, I showed you that they pre trained a model
+21:28
+on image net. But there, they just use the labels that were
+21:31
+contained in image net. self supervised learning is
+21:34
+basically, yeah, it's like pre training. But you use a data
+21:39
+set that is unlabeled, and then you generate the labels for that
+21:43
+based on some information on the data set. For example, you can
+21:46
+mask certain things in an image, or you can cluster the images
+21:49
+and things like that. So we talked a little bit about
+21:52
+self supervised learning before, it's a little bit beyond the
+21:55
+scope of this class. So I mentioned for some class
+21:58
+project feedbacks, that it might be something interesting for you
+22:01
+to look into. But you don't have to, of course, because it would
+22:04
+be more something more advanced. But in any case, this was an
+22:08
+interesting project. So what they did here is they trained a
+22:11
+billion parameter model using self supervised learning. And
+22:15
+they used unlabeled data from Instagram. So doing that, they
+22:20
+were able to reach a new state of the art performance for
+22:24
+self supervised learning, getting 84.2% top one accuracy on image
+22:30
+net. How did they do that? Um, yeah, they used online
+22:34
+clustering algorithm, which is actually a pretty efficient one.
+22:37
+It's called swath. And this one doesn't rely on pairwise image
+22:41
+comparisons. But yeah, again, since this is a already very
+22:44
+long blog post, not blog post, sorry, video, I don't want to go
+22:47
+into too much detail, I will probably end this week's stuff
+22:52
+in the news section. There's only one more thing I wanted to
+22:54
+mention in connection to this project here. There is another
+22:58
+interesting library or module, I would call it library that came
+23:03
+out it's for self supervised learning benchmarks. So it's a
+23:08
+library for self for state of the art self supervised
+23:11
+learning, supporting pytorch. And it's essentially a library
+23:15
+that provides benchmarks and pre trained models that you can
+23:19
+compare with, let's say your models. So it's essentially a
+23:23
+benchmark library that provides pre trained self supervised
+23:26
+models. It's I think a nice thing if you are interested in
+23:29
+self supervised learning, let's say for your class project, an
+23:32
+interesting thing to check out.
+
+##v90:
+
+0:00
+Yeah, hi, everyone. I hope you had a nice weekend. So today is
+0:04
+the last time I want to dedicate a whole lecture to just your
+0:08
+techniques for improving generalization performance in
+0:10
+neural networks. So in the upcoming lectures, I will talk
+0:14
+about new neural network architectures, for instance,
+0:17
+convolutional networks, recurrent neural networks,
+0:21
+auto encoders, generative generative adversarial
+0:24
+networks, transformers, and so forth. So yeah, today is really
+0:29
+the last time we will just talk about improving generalization
+0:33
+performance. And in particular, the topics I have in mind are
+0:37
+optimization related. So there's one topic called learning rate
+0:41
+schedulers. So it's how we can improve stochastic gradient
+0:46
+descent learning by decreasing the learning rate over time
+0:49
+during the course of training. And the other topic is here
+0:52
+replacing stochastic gradient descent by modified versions of
+0:56
+stochastic gradient descent. For instance, there is a momentum
+0:59
+term that we can add. And there's also something called
+1:02
+adaptive learning rates. So we will learn about an algorithm
+1:05
+called Adam, which combines adaptive learning rates and
+1:08
+momentum to make learning I would say easier. So you have to
+1:13
+do less fiddling with hyper parameters, but also it can
+1:16
+converge faster. So I should say though, everything we talked
+1:21
+about so far in terms of these tricks like batch norm dropout
+1:24
+and so forth, activation functions today, the
+1:28
+optimization algorithms, they also apply to all the
+1:31
+architectures we are going to cover in future lectures. So
+1:34
+it's all kind of relevant, I thought it's just like, yeah,
+1:37
+nice to get that out of the way. And then when you learn about
+1:40
+new architectures, you are already familiar with these
+1:42
+tricks. And you don't have to think about what these different
+1:45
+terms mean when I show you some implementations of those that
+1:49
+make use of these tricks. So with that, yeah, let's get
+1:52
+started. And yeah, and by the way, if you're watching this on
+1:54
+Wednesday, also, yeah, happy send per text day. Yeah, in the
+Recap
+1:59
+past couple of weeks, we already covered a bunch of topics
+2:03
+related to improving neural network training. For example,
+2:08
+we talked about regularization to reduce overfitting. Examples
+2:12
+of that included L two regularization, what we call also
+2:16
+weight decay, or yet robot. And then last week, we discussed how
+2:21
+we normalize our inputs and hidden layer activations. And
+2:25
+for instance, yeah, the input standardization and batch
+2:28
+normalization. And there were some other tricks like weight
+2:31
+initialization schemes like Xavier glorot and kaming her,
+2:35
+which can also improve neural network training. So in this
+2:39
+lecture, we will discuss tricks related to the optimization
+2:43
+algorithm. So there will be a section on the learning rate
+2:47
+decay, momentum learning and adaptive learning. I should say
+2:52
+these are all techniques that concern your first order
+2:56
+methods for optimization, stochastic gradient descent. So
+3:00
+they are essentially all modifications of stochastic
+3:04
+gradient descent. If you are familiar with more advanced
+3:08
+optimization techniques, you may wonder why we don't talk about
+3:12
+second order methods. For example, if you consider the
+3:15
+Hessian matrix, and you have the partial, the second order
+3:19
+partial derivatives. So the reason is, yeah, people, many
+3:22
+people tried using those techniques, but it just turns
+3:27
+out they don't work very well in practice, they're either way too
+3:30
+expensive, but also don't really result in faster training in
+3:35
+terms of your epochs and better performance. So usually, even
+3:41
+maybe if you find that it requires fewer epochs, these
+3:44
+methods are computation is still so expensive that you don't gain
+3:48
+anything by using second order methods, or at least I haven't
+3:51
+seen up to this day are convincing method that really is
+3:57
+widely used in practice. But maybe I mean, never, never say
+4:02
+never. So it doesn't mean there won't be any technique in in the
+4:06
+future that may work well. It's just like that we don't have
+4:09
+them yet. So the topics we are going to cover today are these
+Topics
+4:15
+six. So first, I want to talk about learning rate decay. So a
+4:20
+very simple topic concerning the learning rate and reducing it
+4:25
+over the course of training to reduce the noise and stochastic
+4:29
+gradient descent, I will show you then how we can do that in
+4:32
+pytorch. And then we will talk about a momentum term that we
+4:37
+can add to our gradients to help accelerate gradient descent in
+4:43
+the right moments and slow it down in other moments or steer
+4:47
+it better in that way. Yeah, there's also a topic of adaptive
+4:51
+learning rates. So adaptive learning rates, especially
+4:55
+coupled with momentum are commonly used nowadays, there's
+4:59
+one algorithm called Adam, which is probably the most widely used
+5:02
+optimization algorithm, I use it all the time, because it works
+5:06
+very well out of the box, you can get good results with
+5:10
+stochastic gradient descent and momentum too. But in my
+5:14
+experience, at least, it requires more hyper parameter
+5:17
+searching over the learning rate and Adam is usually more robust
+5:21
+and works often better out of the box, it requires less work in
+5:25
+a sense. I will then show you how we can use these algorithms
+5:29
+in Python. And there are also so many other algorithms besides
+5:36
+that say Adam and momentum that have been emerging in the recent
+5:40
+years. I have a huge list of these topics that I find also
+5:43
+sometimes relatively interesting where I do some reading here and
+5:47
+there about the latest trends. So I will make a separate video
+5:51
+outlining some of these advanced studying topics. So you don't
+5:56
+have to Yeah, you won't have to know these things in detail. But
+6:01
+for those who are interested to in reading a little bit more,
+6:05
+let's say beyond the scope of the class, I will just include
+6:08
+some references here that you may want to check out in the
+6:11
+future and on your own, for example. Alright, so let's get
+6:15
+started then with the first topic learning rate decay.
+
+##v91:
+
+0:02
+Yeah, our first topic today is learning rate decay, that is
+0:05
+decreasing the learning rate over the course of training. So
+0:10
+just to briefly recap, what is again, mini batch learning. So
+0:14
+mini batch learning is a form of stochastic gradient descent,
+0:18
+where we draw mini batches from the training set. So each mini
+0:21
+batch can be considered as a sample drawn from this training
+0:24
+set, where the training set itself is in turn a sample
+0:28
+drawn from a population, right. So the training set is just what
+0:31
+we have access to, like a sample from a distribution that we
+0:34
+train on. And during mini batch learning, we use your sub
+0:38
+samples or smaller samples, each mini batch is a sample of the
+0:42
+training set, which itself is a sample. And then we do the
+0:46
+forward and backward pass on each mini batch. So if we draw
+0:52
+these small mini batches, these small samples, we will actually
+0:55
+get noisier gradients compared to using the whole training
+0:58
+training set. But this can have advantages and disadvantages
+1:02
+using these smaller mini batches compared to the whole training
+1:05
+set for computing the gradient. So it can lead using mini batch,
+1:10
+mini batches instead of the whole training set can lead to
+1:12
+noisier gradients. But yeah, they can actually be quite good
+1:16
+because they can help us to escape local minima. So here on
+1:20
+the left hand side, I'm showing you the loss surface for cost
+1:27
+surface for convex loss function where the Yeah, the center here
+1:33
+is the global minimum that we want to reach. Here are the two
+1:37
+weights, it's just a simple model, you can think of it as
+1:39
+let's say, a linear regression model. But in the context of
+1:43
+deep learning, we have a non convex loss function. And
+1:46
+actually, this noise gradient can help us to escape local
+1:52
+minima where the algorithm may get trapped. But the problem is
+1:55
+that it can lead to oscillation. So let's say in this case here
+2:00
+on the left hand side, I take steps perpendicular to the
+2:05
+contours, if I use the whole training set. But I have like
+2:14
+these noisy updates here, if I use mini batches. So this can be
+2:21
+quite, I mean, it's not so bad, but it is of course not as good
+2:26
+as the direct path, right. So there are pros and cons of using
+2:30
+mini batch learning. Today, we will learn also about a
+2:32
+technique, like momentum that can help help with that. But
+2:37
+also one way you can help with this oscillation is yeah, by
+2:41
+having decreasing the learning rate that it is not so big that
+2:44
+the algorithm doesn't take very large steps in the wrong
+2:48
+direction, but also by collecting more
+2:51
+representative samples, like having larger mini batches can
+2:54
+also reduce the noise. But yeah, before we talk about that, what
+2:59
+is also another advantage of mini batch learning. So we
+3:02
+talked about the convergence speed, because compared to
+3:06
+regular stochastic gradient descent, where we only have one
+3:09
+training example per update, mini batch gradient descent is
+3:13
+actually faster. And it's also it can be faster than doing the
+3:17
+updates compared to the whole training set. And if you maybe
+3:22
+don't recall why that is, we covered this in the in an earlier
+3:26
+lecture, but maybe just be a good idea to just think about
+3:30
+this again, why is mini batch gradient descent faster than
+3:34
+stochastic gradient descent with only one training example per
+3:38
+update? And why is mini batch gradient descent faster than
+3:42
+gradient descent using the whole training set? Okay, but yeah,
+3:48
+moving on, here's another example of this oscillation, I
+3:51
+was drawing this with a tool available on this website, which
+3:56
+is essentially a visualization tool for different optimization
+4:00
+algorithms, it's actually a pretty neat tool. So here, on
+4:03
+top, I'm using SGD with a very large learning rate, you can
+4:08
+see that if the learning rate is too large, we can also increase
+4:12
+the noise, or we have this big oscillation, basically, where we
+4:16
+are overshooting. So if the minimum is here in the center,
+4:19
+if a lot of a large learning rate, then I may overshoot. So I
+4:24
+go too far, my first update goes, maybe I should use the
+4:27
+yellow here, my first update goes until here, it overshoots.
+4:31
+And then we have to go back for a second update. And then see
+4:35
+you see that's very inefficient. So a large learning rate is
+4:38
+actually bad. But if we hear how can we fix this problem, we can
+4:42
+use actually a small learning rate that is shown here at the
+4:45
+bottom, what you can see here at the bottom, though, unfortunately
+4:48
+is that it takes a long time to converge. So here we have a lot,
+4:54
+a lot of baby steps till we converge. And one problem is,
+4:59
+yeah, in the context of deep learning, we have these non
+5:04
+convex loss function. So if this is my loss for let's say, a
+5:07
+given weight, they are non convex and something like that.
+5:11
+And they may get trapped. So let's say, my global minimum is
+5:16
+here. And I'm currently here, I do update here, and then it gets
+5:21
+trapped here, because here, the gradient is zero. And it can't
+5:24
+get over this hump, because my learning rate is too small. So
+5:27
+sometimes a noisier update can actually help overcoming these
+5:32
+local minima. So noise is not necessarily bad, too. So there
+5:36
+is essentially a sweet spot between having too little noise
+5:41
+and too much noise. So in the beginning of the training, it
+5:44
+might be good to have large noise to overcome some of the
+5:47
+local minima. But then over time to decrease this noise. And this
+5:51
+is essentially what learning rate decays, yeah, intending to
+5:55
+do. Yeah, but before we talk about learning rate decay, let
+5:58
+me give you one more practical tip for many, many batches. So
+6:01
+usually, it is recommended to use large mini batches. Some
+6:05
+people recommend small mini batches, because they find that
+6:08
+it helps with generalization. But usually, another
+6:11
+recommendation is you're choosing batch sizes that are
+6:15
+reasonably large, let's say 256 512 1024, something along that
+6:20
+on size. Why is that? So it has also something to do with
+6:25
+utilizing the GPU well, but then also with having not updates that
+6:31
+are too noisy, because if you have a data set, so that's what
+6:35
+I'm trying to illustrate here. If you have a data set like this
+6:38
+iris data set, it's just showing the distribution of the three
+6:41
+classes here. And then you split it into smaller samples. So
+6:45
+here's the training set with size 100. And here with 50. So
+6:49
+what I wanted to show is that if we have a larger sample, we kind
+6:54
+of roughly maintain the distribution, or at least we
+6:58
+maintain the distribution better compared to a smaller sample,
+7:02
+like here, you can see that the distribution here and here is,
+7:06
+yeah, kind of different. So it's not a big deal if the
+7:10
+distribution differs. I mean, we have multiple mini batches, and
+7:12
+the noise can be good. But if it differs too large, too much,
+7:17
+that's maybe not ideal. So having larger batch sizes will
+7:21
+stabilize that a little bit. So in that way, having batch
+7:25
+sizes also somewhat proportional to the number of classes in the
+7:29
+data set is also a good idea. For instance, if you only have
+7:32
+two classes, maybe a batch size of 128, and what 256 is a good
+7:38
+number. If you have more classes, maybe you're choosing
+7:42
+512 mini as a mini batch size might be better, for example. So
+7:47
+here, I ran an experiment on MNIST, just illustrating how
+7:51
+training with different batch sizes looks like. So on the
+7:54
+left hand side, I used 10,000 1024 examples per mini batch on
+8:01
+the right hand side, I used 64 examples, you can see the
+8:04
+performance in the end is, you know, it's about the same is
+8:08
+almost identical here. You can see here on the left hand side,
+8:13
+though, that this one is way less noisy than this one here,
+8:18
+which is expected, right? Because on the left hand side,
+8:20
+you have these larger mini batches, I trained for the same
+8:25
+number of epochs 100. And you can see that the smaller one
+8:30
+converges faster, because yeah, we have simply more updates. So
+8:34
+here we have 80,000 iterations, so 80,000 updates. And here on
+8:38
+the left hand side, only 5000 updates, then you can see, based
+8:42
+on the training and validation accuracy here, it converges kind
+8:46
+of faster compared to here, it takes a little bit longer to
+8:50
+to converge, it doesn't even converge until he still
+8:53
+improves. So having larger batch sizes helps stabilizing
+8:57
+training. But also, it can actually run faster overall,
+9:03
+because it has something to do with utilizing the other
+9:06
+computer better by having a few large updates in that way here.
+9:11
+So here, we have this training finishes faster, it may finish
+9:16
+even faster. If I use a larger batch size, it's it's not quite
+9:19
+clear, because maybe I'll have to run it then for more epochs.
+9:22
+But here 1024 seems to be actually a good trade off. So
+9:28
+but, like I said, if we want to just reduce the noise, in one
+9:32
+way is choosing larger batch sizes. Another way is
+9:36
+decreasing the learning rate over the course of training, I
+9:39
+can actually do both, I can use a large batch size and decrease
+9:41
+the learning rate. That's another possibility.
+9:45
+So yeah, let's talk now about learning rate decay. Like I
+9:49
+mentioned before, we can get these so called batch effects
+9:52
+where the mini batches are samples of the training set. And
+9:54
+then, yeah, the mini batch loss and the gradients are
+9:58
+approximations of the full gradient that we would compute
+10:01
+on the full training set. So here in red, this line would or
+10:05
+should symbolize the loss on the whole training set. And when we
+10:10
+use these mini batches, it's usually much noisier. And
+10:16
+usually, we still I mean, the farther we go, the smaller the
+10:20
+loss will become. So the oscillation will somewhat become
+10:23
+smaller, because the other network learns well, and the
+10:27
+loss is just smaller, so the gradients will be smaller, and
+10:30
+then the updates will be smaller. But usually, we still
+10:33
+get these oscillations here at the tail end. And if we want to
+10:38
+decay or dampen these oscillations, we can use a
+10:42
+decaying learning rate. So we can shrink the learning rate.
+10:44
+Once we are reaching this point, so making the learning rate,
+10:49
+instead of having the noisy, making it like smoother, like
+10:52
+this, and we use a different color, like this. So and then
+10:59
+stabilizing, stabilizing the training. But like I'm drawing
+11:02
+here, there's actually one danger with that. It's if we
+11:04
+decay the learning rate too early, we may stop the network
+11:10
+network from learning too early. So maybe, if I let me go back,
+11:15
+so if I have this oscillation, and I dampen the learning rate
+11:18
+at this point, then maybe a dampen it too much, and then the
+11:22
+network stops updating. So the loss stays here at this point.
+11:26
+And this is also not ideal. So in practice, what I usually
+11:30
+recommend is training a network first without learning rate
+11:33
+decay, then saving this performance as a baseline, and
+11:37
+then adding a learning decay method and see whether you can
+11:41
+improve over that baseline. Because what happens to me is
+11:44
+when I use learning rate decay, I usually decay too much. And
+11:48
+then actually, the performance is worse compared without
+11:51
+learning rate decay. It's like a real possibility to decay too
+11:55
+much. Yeah, so let me show you some common ways we can decay
+12:01
+the learning rate. So one of the most common variants of learning
+12:04
+rate decay is the exponential decay, where on here, at zero
+12:10
+is the initial learning rate, and t here and eta t, t would
+12:23
+be the time set step, either the iteration, but most often the
+12:27
+epoch. So we do an update every let's say epoch, but you can
+12:32
+also say, do an update every 10th epoch. And then, yeah, we
+12:36
+are decaying by multiplying this learning rate by term e to the
+12:45
+power of minus k, where k is the decay rate times the epoch. And
+12:51
+yeah, I was plotting this on the right hand side. And if you
+12:55
+update after each epoch, you can see if you choose a decay rate
+12:58
+of point 1.1, then you would see that the network essentially
+13:05
+stops learning at epoch 40, if you start with an initial
+13:09
+learning rate of point five. So it really depends. So you can
+13:13
+basically do 40 updates with this learning rate decay rate,
+13:17
+and then the network will essentially stop learning. So
+13:20
+you have to also factor this in if you want to have more
+13:24
+updates, more small updates, maybe choose a decay rate of
+13:28
+point or one. So here, this will decay slower. And this is also
+13:32
+another hyper parameter, which is why I recommend just doing
+13:36
+doing the training first without learning rate decay, and then
+13:39
+adding it later to see whether it improves it or not. Um, but
+13:42
+it's Yeah, it's just another thing to worry about in deep
+13:46
+learning training. So there are lots of little things to tune
+13:49
+and change to see how it affects the performance. Another common
+13:55
+variant for learning rate decay is halving the learning rate. So
+13:59
+that is usually something I use most often in practice. So you
+14:04
+basically update the learning rate after each step t so could
+14:09
+be each epoch or each 10th epoch. So I will show you
+14:12
+another modification of that that I personally use in
+14:15
+practice. But yeah, so essentially, you are halving the
+14:18
+learning rate every, let's say teeth, iteration or epoch. And
+14:24
+then there's also in inverse decay, which is essentially
+14:27
+similar to the exponential decay, it's just computed
+14:29
+slightly differently. So and again, here on the right hand
+14:32
+side, I'm plotting this here for reference. But essentially, it's
+14:36
+very similar to the exponential decay. There are also many other
+14:43
+types of learning rate, decay, schedulers. So this topic is
+14:47
+also sometimes called learning rate scheduling. And here was a
+14:53
+paper, for example, on a cyclical learning rate, I'm
+14:56
+mentioning it because I also see many people using that in
+14:59
+practice. Personally, I haven't had success with that. But I
+15:04
+hear often from people that it can improve things. So here,
+15:08
+essentially, the cyclical learning rate, it's increasing
+15:11
+the learning rate and decreasing, increasing, decreasing,
+15:14
+and so forth. So it's going up and down. And yeah, that's just
+15:18
+an interesting, interesting technique. There's also another
+15:23
+paper, I think it's actually the first for the same author as the
+15:28
+author who worked on the cyclical raining learning rate.
+15:31
+So here, the author or authors on this paper recommend
+15:37
+essentially, instead of doing a learning rate decay, increasing
+15:44
+the batch size because it can have a similar effect. So here,
+15:51
+they're saying it reaches equivalent test accuracy is after
+15:54
+the same number of training epochs, but with fewer
+15:57
+parameter updates leading to greater parallelism and shorter
+16:00
+training times. So essentially, you're increasing the batch
+16:03
+size can have the same positive effect as decaying the learning
+16:07
+rate, but could be more efficient. It's also quite
+16:09
+interesting. So yes, a simulation of that. So we're on
+16:14
+the left hand side, um, they have two decaying learning
+16:19
+rates. That's the validation set accuracy for the number of
+16:24
+epochs. And here they have the increasing batch sizes. And you
+16:29
+can see essentially, that in the end, they approximately reach
+16:34
+the same performance. And on the right hand side, they show that
+16:41
+with a larger batch size, you have fewer parameter updates,
+16:44
+yeah, just because your mini batches are bigger. So yeah,
+16:49
+that was essentially learning rate decay in a nutshell. In the
+16:53
+next video, I will show you my favorite way of doing learning
+16:57
+rate decay. So it's like a version of halving the learning
+17:00
+rate. And I will also show you how you can do that in
+17:05
+practice.
+
+##v92:
+
+##v93:
+
+##v94:
+
+##v95:
+
+##v96:
+
+##v97:
+
+##v98:
+
+##v99:
+
+##v100:
+
+
+
+
 
