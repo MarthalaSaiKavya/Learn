@@ -1,6 +1,4 @@
-##1
 
-1.
 Two Pointers
 
 The Two Pointers pattern uses two coordinated pointers or iterators to traverse data efficiently.
@@ -484,6 +482,7 @@ med
 Home
 Courses
 Grokking the Coding Interview Patterns
+##1
 Problem: Valid Palindrome
 75
 easy
