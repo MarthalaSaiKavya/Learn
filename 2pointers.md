@@ -810,14 +810,440 @@ def appendCharacters(source, target):
 
 ##16
 
+Problem: Squares of a Sorted Array
+easy
+15 min
+Explore how to apply the two pointers approach to transform a sorted integer array by squaring its elements and maintaining sorted order. Understand the problem constraints and develop a solution that handles edge cases efficiently, preparing you for coding interview challenges.
+Statement
+You are given an integer array, nums, sorted in non-decreasing order. Your task is to return a new array containing the squares of each number, also sorted in non-decreasing order.
+
+Constraints:
+
+1
+≤
+1≤
+ nums.length 
+≤
+1
+0
+3
+≤10 
+3
+ 
+
+−
+1
+0
+4
+≤
+−10 
+4
+ ≤
+ nums[i] 
+≤
+1
+0
+4
+≤10 
+4
+ 
+
+nums is sorted in non-decreasing order.
+
+def sortedSquares(nums):
+    
+    for i in range(len(nums) ):
+        nums [i ] = nums[i] * nums[i]
+        
+    
+    nums.sort()
+    
+    return nums
 
 ##17
+
+Problem: Reverse String
+easy
+15 min
+Explore how to reverse a string in-place by applying the two pointers technique to modify the original character array without additional memory. This lesson helps you understand and implement an efficient solution for linear data structures, reinforcing concepts useful in coding interviews.
+Statement
+You are given a character array, s, representing a string. Write a function that reverses the array in-place.
+
+The reversal must be done by modifying the original array directly.
+
+You cannot use extra memory beyond a constant amount 
+O
+(
+1
+)
+O(1)
+.
+
+Constraints
+
+1
+1
+ 
+<
+=
+<=
+ s.length 
+<
+=
+<=
+ 
+1000
+1000
+
+Each s[i] is a printable ASCII character.
+
+def reverseString(s):
+    
+    left, right = 0, len(s) - 1
+    while left < right:
+        s[left], s[right] = s[right], s[left]
+        left += 1
+        right -= 1
 
 
 ##18
 
+Problem: Intersection of Two Linked Lists
+easy
+15 min
+Explore how to identify the intersection point of two singly linked lists by using the two-pointer approach. This lesson helps you understand the problem constraints, assess if two lists share nodes in memory, and implement an efficient solution to return the intersection node or null if none exists.
+Statement
+You are given the heads of two singly linked lists, headA and headB, to determine whether the two lists intersect. If they intersect, return the node where the intersection begins. Otherwise, return NULL.
+
+Note: Linked lists intersect if they share a common node in memory, not just a node with the same value.
+
+Constraints:
+
+1
+≤
+1≤
+ node.val 
+≤
+1
+0
+5
+≤10 
+5
+ 
+
+The number of nodes of 
+l
+i
+s
+t
+A
+listA
+ is in the 
+m
+m
+.
+
+The number of nodes of 
+l
+i
+s
+t
+B
+listB
+ is in the 
+n
+n
+.
+
+1
+≤
+m
+,
+n
+≤
+1
+0
+3
+1≤m,n≤10 
+3
+
+# Input Format (As handled by the judge. Your program is not given these inputs )
+# listA – The first linked list.
+# listB – The second linked list.
+# skipA – The number of nodes to skip in listA (starting from the head) to reach the intersection node.
+# skipB – The number of nodes to skip in listB (starting from the head) to reach the intersection node.
+# intersectVal – The value of the node where the intersection begins. Set to 0 if the two linked lists do not intersect.
+# Using these inputs, the judge constructs the linked lists and connects them at the intersection point, if one exists.
+# The two list heads, headA and headB, are then passed to your function.
+# If your function correctly identifies and returns the intersecting node, the solution is accepted.
+def getIntersectionNode(headA, headB):
+
+    # Replace this placeholder return statement with your code
+    return None
 
 ##19
 
+Problem: Remove Element
+easy
+15 min
+Understand how to use the two pointers pattern to remove all instances of a specific value from an array in place. This lesson teaches efficient array modification without extra memory allocation and returns the new length of the array excluding the target value. Practice this approach to prepare for coding interviews that test your mastery of array manipulation and pointers.
+Statement
+You are given an integer array, nums, and an integer, val. Your task is to remove all occurrences of val from nums in place, meaning no additional memory allocation should be used. The relative order of the elements in the array may be changed. After modifying the array, return the number of elements that are not equal to val.
+
+Let 
+k
+k
+ represent the number of elements in nums that are not equal to val. To successfully solve this problem, you need to ensure the following:
+
+Modify the array, nums, such that the first 
+k
+k
+ elements contain values that are not equal to val.
+
+The remaining elements in the array do not matter, and the size of nums is irrelevant after the first 
+k
+k
+ elements.
+
+Return the value of 
+k
+k
+.
+
+Constraints:
+
+0
+≤
+0≤
+ nums.length 
+≤
+100
+≤100
+
+0
+≤
+0≤
+ nums[i] 
+≤
+50
+≤50
+
+0
+≤
+0≤
+ val 
+≤
+100
+≤100
+
+def removeElement(nums, val):
+    k = 0  
+    
+    for j in range(len(nums)):
+        if nums[j] != val:
+            nums[k] = nums[j]
+            k += 1
+
+
+    return k
 
 ##20
+
+Problem: Rotate Array
+med
+30 min
+Understand how to apply the two pointers technique to rotate an integer array to the right by a given number of steps. This lesson helps you solve array rotation problems efficiently, reinforcing pattern recognition and algorithm implementation skills in Python.
+Statement
+Given an integer array, nums, shift its elements to the right by k positions. In other words, rotate the array to the right by k steps, where k is non-negative.
+
+Constraints:
+
+1
+≤
+1≤
+ nums.length 
+≤
+1
+0
+3
+≤10 
+3
+ 
+
+−
+2
+−
+31
+≤
+−2 
+−31
+ ≤
+ nums[i] 
+2
+31
+−
+1
+2 
+31
+ −1
+
+0
+≤
+0≤
+ k 
+≤
+1
+0
+3
+≤10 
+3
+
+def rotate(nums, k):
+    n = len(nums)
+
+    # If k is greater than the array length, only the remainder of k rotations matters
+    k = k % n
+
+    # Helper function to reverse a portion of the array
+    def reverse(left, right):
+        while left < right:
+            # Swap the elements at left and right
+            nums[left], nums[right] = nums[right], nums[left]
+
+            # Move the pointers toward the center
+            left += 1
+            right -= 1
+
+    # Step 1: Reverse the entire array
+    reverse(0, n - 1)
+
+    # Step 2: Reverse the first k elements
+    reverse(0, k - 1)
+
+    # Step 3: Reverse the remaining elements
+    reverse(k, n - 1)
+
+##21
+
+Problem: Next Permutation
+med
+30 min
+Explore how to find the next lexicographically greater permutation of an array by applying a two-pointer technique. Understand in-place rearrangement strategies and improve your problem-solving skills for coding interviews focused on array manipulation.
+Statement
+Your task is to rearrange an array, nums, containing positive integers to form the next lexicographically greater permutation. This means finding the next permutation in the sequence of all possible arrangements sorted in dictionary order.
+
+For example, given the array 
+[
+4
+,
+5
+,
+6
+]
+[4,5,6]
+, the next permutation is 
+[
+4
+,
+6
+,
+5
+]
+[4,6,5]
+. In the same way, 
+[
+5
+,
+6
+,
+4
+]
+[5,6,4]
+ becomes 
+[
+6
+,
+4
+,
+5
+]
+[6,4,5]
+.
+
+If the array is already in its highest possible order (sorted in descending order), such as 
+[
+6
+,
+5
+,
+4
+]
+[6,5,4]
+, it’s not possible to find a lexicographically larger permutation. In this case, you must rearrange the array to its lowest possible order (sorted in ascending order), which would be 
+[
+4
+,
+5
+,
+6
+]
+[4,5,6]
+.
+
+The entire operation must be completed in-place while using only a constant amount of extra memory.
+
+Constraints:
+
+1
+≤
+1≤
+ nums.length 
+≤
+100
+≤100
+
+0
+≤
+0≤
+ nums[i] 
+≤
+100
+≤100
+
+
+def nextPermutation(nums):
+    n = len(nums)
+
+    # Find the pivot:
+
+    i = n - 2
+
+    while i >= 0 and nums[i] >= nums[i + 1]:
+        i -= 1
+
+    # 2. If pivot exists, find the smallest number from the right that is bigger than nums[i]
+    if i >= 0:
+        j = n - 1
+
+        while nums[j] <= nums[i]:
+            j -= 1
+
+        # Swap pivot with that no
+        nums[i], nums[j] = nums[j], nums[i]
+
+    # 3. Reverse everything after the pivot,  This makes the suffix as small as possible
+    left = i + 1
+    right = n - 1
+
+    while left < right:
+        nums[left], nums[right] = nums[right], nums[left]
+        left += 1
+        right -= 1
+
+    return nums
+
+
+##22
+
+
+
